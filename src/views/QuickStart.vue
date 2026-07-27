@@ -12,8 +12,8 @@ const { user: authUser } = storeToRefs(authStore);
 
 <template>
     <div>
-        <h1>Hi {{authUser?.username}}!</h1>
-        <p>You're logged in with Vue 3 + Pinia & JWT!!</p>
-       
+        <h1>Welcome to BHCAIS</h1>
+       <h2>Quick Start:</h2>
+       WIP
     </div>
 </template>

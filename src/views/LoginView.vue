@@ -15,12 +15,18 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
         .catch(error => setErrors({ apiError: error }));
 }
 </script>
-
+<style>
+@import '../../public/css/login.css';
+h2 {
+    text-align:center;
+    margin-bottom: 20px;
+}
+</style>
 <template>
-    <div>
-     
-        <h2>Login</h2>
+    <div >
+        
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
+        <h2>Login</h2>
             <div class="form-group">
                 <label>Username</label>
                 <Field name="username" type="text" class="form-control" :class="{ 'is-invalid': errors.username }" />
@@ -28,12 +34,12 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <Field name="password" type="password" class="form-control"
+                <Field name="password" type="password" class="form-control "
                     :class="{ 'is-invalid': errors.password }" />
                 <div class="invalid-feedback">{{ errors.password }}</div>
             </div>
             <div class="form-group">
-                <button class="btn btn-primary" :disabled="isSubmitting">
+                <button class="button btn-primary" :disabled="isSubmitting">
                     <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
                     Login
                 </button>
