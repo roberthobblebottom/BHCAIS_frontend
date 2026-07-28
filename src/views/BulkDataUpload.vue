@@ -1,108 +1,175 @@
 <template>
     <div>
-        <Form @submit="onSubmit" v-slot="{ errors, isSubmitting }">
+        <Form @submit="onSubmit" v-slot="{ errors, isSubmitting }" url="">
 
             <div class="form-group">
 
-                <h2>Bulk Data Upload</h2>
+                <h1>Bulk Data Upload</h1>
+                <p class="instructions">Drag and drop files to here to upload or click to select multiple files here
+                    Entries with existing data will be overwritten.
+                    Only csv and single sheet xlsx are accepted.</p>
                 <FileUpload custom-upload @select="onUploadFileSelection($event)" :multiple="true" accept=".csv,.xlsx"
-                    name="file-upload" url="/upload">
-                    <p>Drag and drop files to here to upload or click to select multiple files here
-                        Entries with existing data will be overwritten.
-                        csv and single sheet xlsx Only </p>
+                    name="file-upload" :showUploadButton="false" ref="fu">
+
+                    <template #content="{ files, removeFileCallback }">
+                        <h2>Selected files:</h2>
+                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" >
+                            <div class="file-entry" >
+                                {{ file.name }} {{ file.size }} bytes <Button class="remove-btn"
+                                    @click="removeFileCallback(index)">x</Button>
+                            </div>
+                        </div>
+                    </template>
+                    <template #empty>
+                        <h2>Please Select file(s) before uploading</h2>
+                    </template>
                 </FileUpload>
-                <button class="btn btn-primary" :disabled="isSubmitting">
+                <button class="btn btn-primary">
                     <span v-show="isSubmitting" class="spinner-border 
                     spinner-border-sm mr-1"></span>
                     Upload
                 </button>
             </div>
-            <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
+            <Dialog v-model:visible="error_dialog" modal :closable="false" class='dialog'>
+                <div class="flex flex-col gap-4 dialog-div ">
+                    <h2>Error </h2>
+                    <p class="text-surface-500 dark:text-surface-400 text-sm mt-0 mb-0">{{ error_message }}</p>
+                    <div class="flex justify-end gap-2">
+                        <Button severity="secondary" @click="error_dialog = false">Ok</Button>
+                    </div>
+                </div>
+            </Dialog>
         </Form>
     </div>
 </template>
-<script setup lang='ts'>
-import { Form, Field, type FormActions, type GenericObject } from 'vee-validate';
-import * as Yup from 'yup';
-import { useAuthStore } from '../stores/auth.store.ts';
-import FileUpload, { type FileUploadBeforeSendEvent, type FileUploadSelectEvent } from 'primevue/fileupload';
-import * as xlsx from 'xlsx'
-// const schema = Yup.object().shape({
-//     username: Yup.string().required('Username is required'),
-//     password: Yup.string().required('Password is required')
-// });
-import { useToast } from "primevue/usetoast";
-import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
-function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
-    console.log('on submit')
-    console.log('values', values)
-    // fetchWrapper.post("", '')
+<style>
+@import '../../public/css/dialog.css';
+
+.instructions {
+    margin-bottom: 5%;
+}
+.file-entry{
+    width: 100%;
+    justify-content: space-between;
 }
 
-const onUploadFileSelection = (event: FileUploadSelectEvent): void => {
-    console.log('before upload')
-    // console.log(event.files)
+h1 {
+    text-align: center;
+}
 
-    event.files.forEach((file: any) => {
-        console.log(file)
+
+
+.remove-btn {
+    background-color: white;
+    color: black;
+    width: 20px;
+    height: 5px;
+}
+
+.remove-btn.hover {
+    background-color: gray !important;
+}
+</style>
+<script setup lang='ts'>
+import { Form, type FormActions, type GenericObject } from 'vee-validate';
+import FileUpload, { type FileUploadRemoveEvent, type FileUploadSelectEvent } from 'primevue/fileupload';
+import * as xlsx from 'xlsx'
+import Dialog from 'primevue/dialog';
+import { ref } from 'vue';
+
+const error_dialog = ref(false);
+const error_message = ref("");
+const fu = ref();
+
+function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
+    console.log('on submit', fu.value.files.length)
+    if (fu.value.files.length == 0) {
+        error_message.value = 'please select file(s) to upload'
+        error_dialog.value = true
+        return
+    }
+
+}
+
+
+const onUploadFileSelection = (event: FileUploadSelectEvent) => {
+    const names_of_files_with_headers_only: string[] = []
+    const names_of_files_with_zero_bytes: string[] = []
+    const x = event.files.map((file: any) => {
+        return new Promise<void>((resolve) => {
+            if (file.size == 0) {
+                names_of_files_with_zero_bytes.push(file.name)
+                fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                resolve()
+            }
             const reader = new FileReader()
-        if (file.name.includes('.xlsx')) {
-            console.log('123')
-            reader.onload = (e: ProgressEvent<FileReader>) => {
+            if (file.name.includes('.xlsx')) {
+                reader.onload = (e: ProgressEvent<FileReader>) => {
 
-                try {
                     // Read the file as an array buffer
                     const data = new Uint8Array(e.target?.result as ArrayBuffer);
-                    
-                    // Parse the workbook
-                    const workbook = xlsx.read(data, { type: 'array', sheetRows: 1 });
 
-                    // Get the first sheet
+                    const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 });
                     const sheetName = workbook.SheetNames[0]!;
                     const worksheet: any = workbook.Sheets[sheetName];
 
                     // Extract headers (first row)
-                    const headers = xlsx.utils.sheet_to_json(worksheet, {
+                    let tempHeadersValues: string[] = xlsx.utils.sheet_to_json(worksheet, {
                         header: 1
-                    })[0] as string[];
+                    })
+                    const headers: string = tempHeadersValues[0]!
+                    const content: string = tempHeadersValues[1]!
 
-                    console.log(`Headers from ${file.name}:`, headers);
+                    if (content == null) {
+                        // names_of_headers_only_files.push(file.name)
+                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        names_of_files_with_headers_only.push(file.name)
+                    }
+
+                    resolve()
+
                 }
-                catch (error) {
-                    console.error('error reading file', error)
-                }
+                reader.readAsArrayBuffer(file)
             }
-            reader.readAsArrayBuffer(file)
-        }
-        else if (file.name.includes('.csv')) {
-            //TODO: check header
-             reader.onload = (e: ProgressEvent<FileReader>) => {
+            else if (file.name.includes('.csv')) {
+                reader.onload = (e: ProgressEvent<FileReader>) => {
 
-                try {
-                    // Read the file as an array buffer
-                   
                     const csv = e.target?.result as string
-                    const headers =  csv.split('\n')[0]
-                    console.log(`Headers from ${file.name}:`, headers);
+                    let headers = csv.split('\n')[0]
+                    headers = headers?.toLocaleLowerCase()
+                    // console.log(`Headers from ${file.name}:\n`, headers);
+                    const content = csv.split('\n').slice(1)
+                    if (content.length == 1 && content[0] == "") {
+                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        names_of_files_with_headers_only.push(file.name)
+                    }
+
+                    resolve()
                 }
-                catch (error) {
-                    console.error('error reading file', error)
-                }
+                reader.readAsText(file)
             }
-            reader.readAsText(file)
-        }
-        // const workbookHeaders = xlsx.readFile(x.name, { sheetRows: 1 });
-        // console.log(workbookHeaders.Sheets)
-        // const columnsArray = xlsx.utils.sheet_to_json(workbookHeaders.Sheets[sheetName]!, { header: 1 })[0];
+        })
+
     })
-    // event.formData.forEach((value,key,parent)=>{
-    //     console.log(key,value)
-    // })
+
+
+    Promise.all(x).then(() => {
+        let errorMessage = ''
+        if (names_of_files_with_headers_only.length > 0)
+            errorMessage += "These file(s) only have headers: \n" + names_of_files_with_headers_only.join("\n") + "\n\n"
+        if (names_of_files_with_zero_bytes.length > 0)
+            errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
+        if (errorMessage != "") {
+            error_message.value = errorMessage + "All of these file(s) will not be selected."
+            error_dialog.value = true
+        }
+
+    })
+
 }
 
-// const toast = useToast();
 
-// const onAdvancedUpload = () => {
-//     toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-// };
+
+
+
 </script>
