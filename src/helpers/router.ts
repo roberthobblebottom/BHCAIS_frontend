@@ -19,14 +19,9 @@ router.beforeEach(async (to:any) => {
     const publicPages = ['/Login'];
     const authRequired = !publicPages.includes(to.path);
     const auth = useAuthStore();
-    console.log('to',to)
     if (authRequired && !auth.user) {
     console.log("unauthorized access detected, going back to homepage")
         auth.returnUrl = to.fullPath;
         return '/Login';
-    }
-    else if (auth.user && to.path=="/Login"){
-        console.log('trys to go to login, redirecting back to QuickStart')
-        return '/QuickStart'
     }
 });

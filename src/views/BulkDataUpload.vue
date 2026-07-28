@@ -13,8 +13,8 @@
 
                     <template #content="{ files, removeFileCallback }">
                         <h2>Selected files:</h2>
-                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size">
-                            <div class="file-entry">
+                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" >
+                            <div class="file-entry" >
                                 {{ file.name }} {{ file.size }} bytes <Button class="remove-btn"
                                     @click="removeFileCallback(index)">x</Button>
                             </div>
@@ -48,8 +48,7 @@
 .instructions {
     margin-bottom: 5%;
 }
-
-.file-entry {
+.file-entry{
     width: 100%;
     justify-content: space-between;
 }
@@ -77,8 +76,6 @@ import FileUpload, { type FileUploadRemoveEvent, type FileUploadSelectEvent } fr
 import * as xlsx from 'xlsx'
 import Dialog from 'primevue/dialog';
 import { ref } from 'vue';
-import {slides_headers,print_headers,oral_histories_headers,negative_headers,library_and_archieve_headers} from '../constants';
-import { header } from '@primeuix/themes/aura/accordion';
 
 const error_dialog = ref(false);
 const error_message = ref("");
@@ -98,7 +95,6 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 const onUploadFileSelection = (event: FileUploadSelectEvent) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
-    const names_of_files_with_incorrect_headers: string[] = []
     const x = event.files.map((file: any) => {
         return new Promise<void>((resolve) => {
             if (file.size == 0) {
@@ -112,6 +108,7 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
 
                     // Read the file as an array buffer
                     const data = new Uint8Array(e.target?.result as ArrayBuffer);
+
                     const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 });
                     const sheetName = workbook.SheetNames[0]!;
                     const worksheet: any = workbook.Sheets[sheetName];
@@ -120,25 +117,8 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
                     let tempHeadersValues: string[] = xlsx.utils.sheet_to_json(worksheet, {
                         header: 1
                     })
-                    const headersTemp= tempHeadersValues[0]!
-                    let headers = ""
-                    console.log(file.name,headersTemp)
+                    const headers: string = tempHeadersValues[0]!
                     const content: string = tempHeadersValues[1]!
-                    for (let x =0 ;x<headersTemp.length;x++){
-                        const temp = headersTemp[x]!.toLowerCase().trim()
-                        headers += x == headersTemp.length-1 ? temp : temp+"," 
-                    }
-                    console.log('headers',headers)
-                    if (headers != slides_headers ||
-                        headers != print_headers ||
-                        headers != oral_histories_headers||
-                        headers != negative_headers ||
-                        headers != library_and_archieve_headers
-                    ) {
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
-                        names_of_files_with_incorrect_headers.push(file.name)
-                        resolve()
-                    }
 
                     if (content == null) {
                         // names_of_headers_only_files.push(file.name)
@@ -156,19 +136,8 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
 
                     const csv = e.target?.result as string
                     let headers = csv.split('\n')[0]
-                    headers = headers?.split(',').map(col => col.trim().toLowerCase()).join(',')
-
-                    if (headers != slides_headers ||
-                        headers != print_headers ||
-                        headers != oral_histories_headers||
-                        headers != negative_headers ||
-                        headers != library_and_archieve_headers
-                    ) {
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
-                        names_of_files_with_incorrect_headers.push(file.name)
-                        resolve()
-                    }
-                    console.log(`Headers from ${file.name}:\n`, headers);
+                    headers = headers?.toLocaleLowerCase()
+                    // console.log(`Headers from ${file.name}:\n`, headers);
                     const content = csv.split('\n').slice(1)
                     if (content.length == 1 && content[0] == "") {
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
@@ -189,9 +158,7 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
         if (names_of_files_with_headers_only.length > 0)
             errorMessage += "These file(s) only have headers: \n" + names_of_files_with_headers_only.join("\n") + "\n\n"
         if (names_of_files_with_zero_bytes.length > 0)
-            errorMessage += "These file(s) are empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
-        if (names_of_files_with_incorrect_headers.length > 0)
-            errorMessage += "These file(s) have incorrect or missing header columns: \n" + names_of_files_with_incorrect_headers.join('\n') + "\n\n"
+            errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
         if (errorMessage != "") {
             error_message.value = errorMessage + "All of these file(s) will not be selected."
             error_dialog.value = true
