@@ -90,10 +90,10 @@ const added = (files: readonly File[]) => {
                     const content: string = tempHeadersValues[1]!
                     const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString()
                     if (headersString != print_headers
-                        || headersString != negative_headers
-                        || headersString != slides_headers
-                        || headersString != library_and_archives_header
-                        || headersString != oral_histories_headers
+                        && headersString != negative_headers
+                        && headersString != slides_headers
+                        && headersString != library_and_archives_header
+                        && headersString != oral_histories_headers
                     ) {
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
@@ -116,11 +116,12 @@ const added = (files: readonly File[]) => {
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString()
+                    console.log(headersString != slides_headers)
                     if (headersString != print_headers
-                        || headersString != negative_headers
-                        || headersString != slides_headers
-                        || headersString != library_and_archives_header
-                        || headersString != oral_histories_headers
+                        && headersString != negative_headers
+                        && headersString != slides_headers
+                        && headersString != library_and_archives_header
+                        && headersString != oral_histories_headers
                     ) {
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
@@ -149,7 +150,7 @@ const added = (files: readonly File[]) => {
         if (names_of_files_with_zero_bytes.length > 0)
             errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
         if (names_of_files_with_incorrect_headers.length > 0)
-            errorMessage += "These file(s) have incorrect headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
+            errorMessage += "These file(s) have incorrect (or missing) headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
         if (errorMessage != "") {
             console.log(errorMessage)
             error_message.value = errorMessage + "All of these file(s) will not be selected."
