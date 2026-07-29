@@ -1,23 +1,25 @@
 <template>
 
-    <div>
-        <form @submit="submit">
-            <h3>Bulk Data Upload</h3>
-            <q-uploader :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop files to here to upload or click to select multiple files here
+    <form @submit="submit">
+        <h3>Bulk Data Upload</h3>
+        <q-uploader class="fu" :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop files to here to upload or click to select multiple files here
             Entries with existing data will be overwritten.
             Only csv and single sheet xlsx are accepted." @added="added" ref="fu" :url="url_" field-name="files"
-                method="POST" />
-            <button type="submit">Upload</button>
-        </form>
-    </div>
+            method="POST" />
+        <!-- <button type="submit">Upload</button> -->
+    </form>
 
     <div>
         <q-dialog v-model="dialog" class="dialog" persistent backdrop-filter="blur(4px)">
-            <q-card-section class="row items-center q-pb-none text-h6 ">
+            <q-card-section class="row items-center q-pb-none text-h6 dialog ">
+                <h3>ERROR</h3>
+                </br>
                 {{ error_message }}
+
+                </br>
+                <q-btn label="Ok" color="primary" v-close-popup />
             </q-card-section>
             <q-card-actions align="right">
-                <q-btn flat label="Ok" color="primary" v-close-popup />
             </q-card-actions>
         </q-dialog>
     </div>
@@ -29,15 +31,21 @@
     margin-bottom: 5%;
 }
 
+form {}
 
 h1 {
     text-align: center;
+}
+
+.fu {
+    width: 500px !important;
 }
 </style>
 <script setup lang='ts'>
 import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader } from 'quasar';
+import { library_and_archives_header, negative_headers, oral_histories_headers, print_headers, slides_headers } from '../constants';
 const error_message = ref("");
 const fu = ref();
 const dialog = ref(false)
@@ -55,6 +63,7 @@ const backdropFilterFunction = () => {
 const added = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
+    const names_of_files_with_incorrect_headers: string[] = []
     const x = files.map((file: any) => {
         return new Promise<void>((resolve) => {
             if (file.size == 0) {
@@ -74,12 +83,22 @@ const added = (files: readonly File[]) => {
                     const worksheet: any = workbook.Sheets[sheetName];
 
                     // Extract headers (first row)
-                    let tempHeadersValues: string[] = xlsx.utils.sheet_to_json(worksheet, {
+                    let tempHeadersValues: any[] = xlsx.utils.sheet_to_json(worksheet, {
                         header: 1
                     })
-                    const headers: string = tempHeadersValues[0]!
+                    const headers: Object = tempHeadersValues[0]!
                     const content: string = tempHeadersValues[1]!
-                    console.log("headers", headers)
+                    const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString()
+                    if (headersString != print_headers
+                        || headersString != negative_headers
+                        || headersString != slides_headers
+                        || headersString != library_and_archives_header
+                        || headersString != oral_histories_headers
+                    ) {
+                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        names_of_files_with_incorrect_headers.push(file.name)
+                    }
+                    console.log("headers", headersString)
                     if (content == null) {
                         // names_of_headers_only_files.push(file.name)
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
@@ -95,8 +114,17 @@ const added = (files: readonly File[]) => {
                 reader.onload = (e: ProgressEvent<FileReader>) => {
 
                     const csv = e.target?.result as string
-                    let headers = csv.split('\n')[0]
-                    headers = headers?.toLocaleLowerCase()
+                    let headersString = csv.split('\n')[0]?.split(",")
+                        .map(col => col.trim().toLocaleLowerCase()).toString()
+                    if (headersString != print_headers
+                        || headersString != negative_headers
+                        || headersString != slides_headers
+                        || headersString != library_and_archives_header
+                        || headersString != oral_histories_headers
+                    ) {
+                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        names_of_files_with_incorrect_headers.push(file.name)
+                    }
                     // console.log(`Headers from ${file.name}:\n`, headers);
                     const content = csv.split('\n').slice(1)
                     if (content.length == 1 && content[0] == "") {
@@ -120,6 +148,8 @@ const added = (files: readonly File[]) => {
             errorMessage += "These file(s) only have headers: \n" + names_of_files_with_headers_only.join("\n") + "\n\n"
         if (names_of_files_with_zero_bytes.length > 0)
             errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
+        if (names_of_files_with_incorrect_headers.length > 0)
+            errorMessage += "These file(s) have incorrect headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
         if (errorMessage != "") {
             console.log(errorMessage)
             error_message.value = errorMessage + "All of these file(s) will not be selected."

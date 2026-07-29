@@ -17,4 +17,5 @@
     min-height: 200px;
     min-width: 700px;
     border-radius: 15px;
+    justify-content: center;
 }

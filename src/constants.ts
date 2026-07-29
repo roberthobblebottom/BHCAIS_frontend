@@ -30,7 +30,7 @@ const print_headers = [
     "Date of QC",
     "Checked by",
     "Object Condition (QC2)"
-]
+].map(col => col.trim().toLocaleLowerCase()).toString()
 const oral_histories_headers = [
     "S/N",
     "Name of Interviewee",
@@ -55,7 +55,7 @@ const oral_histories_headers = [
     "Catalogued By",
     "Catalogue Date",
     "Comments"
-]
+].map(col => col.trim().toLocaleLowerCase()).toString()
 
 const negative_headers = [
     "S/N no.",
@@ -88,7 +88,7 @@ const negative_headers = [
     "Date of QC",
     "Checked by",
     "Object Condition (QC2)"
-]
+].map(col => col.trim().toLocaleLowerCase()).toString()
 
 const slides_headers = [
     "S/N no.",
@@ -124,9 +124,9 @@ const slides_headers = [
     "Date of QC",
     "Checked by",
     "Object Condition (QC2)",
-    null,
+    "",
     "Data Tier (2 or 3)"
-]
+].map(col => col.trim().toLocaleLowerCase()).toString()
 
 const library_and_archives_header = [
     "S/N",
@@ -167,6 +167,6 @@ const library_and_archives_header = [
     "Recorded year",
     "Scan file media",
     "Transcription file media"
-]
+].map(col => col.trim().toLocaleLowerCase()).toString()
 
 export { library_and_archives_header, negative_headers, slides_headers, oral_histories_headers, print_headers }
