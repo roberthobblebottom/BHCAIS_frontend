@@ -2,25 +2,23 @@
 
     <form @submit="submit">
         <h3>Bulk Data Upload</h3>
-        <q-uploader class="fu" :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop files to here to upload or click to select multiple files here
-            Entries with existing data will be overwritten.
-            Only csv and single sheet xlsx are accepted." @added="added" ref="fu" :url="url_" field-name="files"
-            method="POST" />
+        <p>Entries with existing data will be overwritten.
+            Only csv and single sheet xlsx are accepted.</p>
+        <q-uploader class="fu" :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop file(s) here to upload or click to select file(s) here
+            " @added="onAddedListener" ref="fu" :url="url_" field-name="files" method="POST"
+            @uploaded="onUploadedListener" @failed="onFailedListener" />
         <!-- <button type="submit">Upload</button> -->
     </form>
 
     <div>
-        <q-dialog v-model="dialog" class="dialog" persistent backdrop-filter="blur(4px)">
+        <q-dialog v-model="dialog" persistent backdrop-filter="blur(4px)">
             <q-card-section class="row items-center q-pb-none text-h6 dialog ">
-                <h3>ERROR</h3>
-                </br>
-                {{ error_message }}
-
-                </br>
+                <h3>{{ dialog_header }}</h3>
+                <p>{{ dialog_message }}
+                </p>
                 <q-btn label="Ok" color="primary" v-close-popup />
             </q-card-section>
-            <q-card-actions align="right">
-            </q-card-actions>
+
         </q-dialog>
     </div>
 </template>
@@ -30,8 +28,6 @@
 .instructions {
     margin-bottom: 5%;
 }
-
-form {}
 
 h1 {
     text-align: center;
@@ -46,21 +42,13 @@ import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader } from 'quasar';
 import { library_and_archives_header, negative_headers, oral_histories_headers, print_headers, slides_headers } from '../constants';
-const error_message = ref("");
+const dialog_header = ref("")
+const dialog_message = ref("");
 const fu = ref();
 const dialog = ref(false)
-
-const backdropFilter = ref('blur(4px)')
-
 const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles`);
-console.log(url_)
-const backdropFilterFunction = () => {
-    // console.log('backdrop filter function')
-    // backdropFilter.value = "blur(4px)"
-    // console.log(backdropFilter.value)
 
-}
-const added = (files: readonly File[]) => {
+const onAddedListener = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
     const names_of_files_with_incorrect_headers: string[] = []
@@ -98,7 +86,7 @@ const added = (files: readonly File[]) => {
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-                    console.log("headers", headersString)
+                    // console.log("headers", headersString)
                     if (content == null) {
                         // names_of_headers_only_files.push(file.name)
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
@@ -116,7 +104,6 @@ const added = (files: readonly File[]) => {
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString()
-                    console.log(headersString != slides_headers)
                     if (headersString != print_headers
                         && headersString != negative_headers
                         && headersString != slides_headers
@@ -152,35 +139,29 @@ const added = (files: readonly File[]) => {
         if (names_of_files_with_incorrect_headers.length > 0)
             errorMessage += "These file(s) have incorrect (or missing) headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
         if (errorMessage != "") {
-            console.log(errorMessage)
-            error_message.value = errorMessage + "All of these file(s) will not be selected."
+            dialog_header.value = "Error"
+            dialog_message.value = errorMessage + "All of these file(s) will not be selected."
             dialog.value = true
-            backdropFilterFunction()
         }
 
     })
 
 }
+const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
+    dialog_header.value = "Successful"
+    dialog_message.value = "sucessfully uploaded file(s)"
+    dialog.value = true
+    fu.value.reset()
+}
 
-const submit = (event: SubmitEvent) => {
-
+const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
+    if (info.xhr.status == 0)
+        return
+    dialog_header.value = "Error: Upload Failed"
+    dialog_message.value = info.xhr.response.toString()
+    dialog.value = true
+}
+const submit = () => {
     // event.preventDefault()
 }
-// function factoryFunction(files: readonly File[]): QUploaderFactoryObject | Promise<QUploaderFactoryObject> {
-//     const url = baseUrl + '/uploadFiles'
-//     console.log('factoryfunc')
-//     console.log('url', url)
-//     const formFields: readonly File[] = Array.from(files).map(file => (
-//         {
-//             name: file.name,
-//             value: file
-//         } 
-//     ))
-//     return ({
-//         url: url,
-//         method: 'POST',
-//         formFields:formFields 
-//     })
-// }
-
 </script>

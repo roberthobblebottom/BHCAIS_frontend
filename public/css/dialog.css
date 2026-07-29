@@ -1,14 +1,9 @@
 .dialog {
-    min-width: 300px;
     background-color: white !Important;
     padding: 5%;
     margin: 10%;
-    border-radius: 10%;
-
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     white-space: pre-wrap;
-    min-width: 400px;
-    background-color: white !important;
     position-anchor: --siderbar;
     position: fixed;
     right: anchor(left);
@@ -17,5 +12,6 @@
     min-height: 200px;
     min-width: 700px;
     border-radius: 15px;
-    justify-content: center;
+    display: flex;
+    align-items: center;
 }
