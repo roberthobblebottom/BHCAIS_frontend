@@ -1,45 +1,25 @@
 <template>
+
     <div>
-        <Form @submit="onSubmit" v-slot="{ errors, isSubmitting }" url="">
+        <form @submit="submit">
+            <h3>Bulk Data Upload</h3>
+            <q-uploader :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop files to here to upload or click to select multiple files here
+            Entries with existing data will be overwritten.
+            Only csv and single sheet xlsx are accepted." @added="added" ref="fu" :url="url_" field-name="files"
+                method="POST" />
+            <button type="submit">Upload</button>
+        </form>
+    </div>
 
-            <div class="form-group">
-
-                <h1>Bulk Data Upload</h1>
-                <p class="instructions">Drag and drop files to here to upload or click to select multiple files here
-                    Entries with existing data will be overwritten.
-                    Only csv and single sheet xlsx are accepted.</p>
-                <FileUpload custom-upload @select="onUploadFileSelection($event)" :multiple="true" accept=".csv,.xlsx"
-                    name="file-upload" :showUploadButton="false" ref="fu">
-
-                    <template #content="{ files, removeFileCallback }">
-                        <h2>Selected files:</h2>
-                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" >
-                            <div class="file-entry" >
-                                {{ file.name }} {{ file.size }} bytes <Button class="remove-btn"
-                                    @click="removeFileCallback(index)">x</Button>
-                            </div>
-                        </div>
-                    </template>
-                    <template #empty>
-                        <h2>Please Select file(s) before uploading</h2>
-                    </template>
-                </FileUpload>
-                <button class="btn btn-primary">
-                    <span v-show="isSubmitting" class="spinner-border 
-                    spinner-border-sm mr-1"></span>
-                    Upload
-                </button>
-            </div>
-            <Dialog v-model:visible="error_dialog" modal :closable="false" class='dialog'>
-                <div class="flex flex-col gap-4 dialog-div ">
-                    <h2>Error </h2>
-                    <p class="text-surface-500 dark:text-surface-400 text-sm mt-0 mb-0">{{ error_message }}</p>
-                    <div class="flex justify-end gap-2">
-                        <Button severity="secondary" @click="error_dialog = false">Ok</Button>
-                    </div>
-                </div>
-            </Dialog>
-        </Form>
+    <div>
+        <q-dialog v-model="dialog" class="dialog" persistent backdrop-filter="blur(4px)">
+            <q-card-section class="row items-center q-pb-none text-h6 ">
+                {{ error_message }}
+            </q-card-section>
+            <q-card-actions align="right">
+                <q-btn flat label="Ok" color="primary" v-close-popup />
+            </q-card-actions>
+        </q-dialog>
     </div>
 </template>
 <style>
@@ -48,54 +28,34 @@
 .instructions {
     margin-bottom: 5%;
 }
-.file-entry{
-    width: 100%;
-    justify-content: space-between;
-}
+
 
 h1 {
     text-align: center;
 }
-
-
-
-.remove-btn {
-    background-color: white;
-    color: black;
-    width: 20px;
-    height: 5px;
-}
-
-.remove-btn.hover {
-    background-color: gray !important;
-}
 </style>
 <script setup lang='ts'>
-import { Form, type FormActions, type GenericObject } from 'vee-validate';
-import FileUpload, { type FileUploadRemoveEvent, type FileUploadSelectEvent } from 'primevue/fileupload';
 import * as xlsx from 'xlsx'
-import Dialog from 'primevue/dialog';
 import { ref } from 'vue';
-
-const error_dialog = ref(false);
+import { QUploader } from 'quasar';
 const error_message = ref("");
 const fu = ref();
+const dialog = ref(false)
 
-function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
-    console.log('on submit', fu.value.files.length)
-    if (fu.value.files.length == 0) {
-        error_message.value = 'please select file(s) to upload'
-        error_dialog.value = true
-        return
-    }
+const backdropFilter = ref('blur(4px)')
+
+const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles`);
+console.log(url_)
+const backdropFilterFunction = () => {
+    // console.log('backdrop filter function')
+    // backdropFilter.value = "blur(4px)"
+    // console.log(backdropFilter.value)
 
 }
-
-
-const onUploadFileSelection = (event: FileUploadSelectEvent) => {
+const added = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
-    const x = event.files.map((file: any) => {
+    const x = files.map((file: any) => {
         return new Promise<void>((resolve) => {
             if (file.size == 0) {
                 names_of_files_with_zero_bytes.push(file.name)
@@ -119,7 +79,7 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
                     })
                     const headers: string = tempHeadersValues[0]!
                     const content: string = tempHeadersValues[1]!
-
+                    console.log("headers", headers)
                     if (content == null) {
                         // names_of_headers_only_files.push(file.name)
                         fu.value.files.splice(fu.value.files.indexOf(file), 1)
@@ -140,8 +100,9 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
                     // console.log(`Headers from ${file.name}:\n`, headers);
                     const content = csv.split('\n').slice(1)
                     if (content.length == 1 && content[0] == "") {
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        fu.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
+
                     }
 
                     resolve()
@@ -160,16 +121,35 @@ const onUploadFileSelection = (event: FileUploadSelectEvent) => {
         if (names_of_files_with_zero_bytes.length > 0)
             errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
         if (errorMessage != "") {
+            console.log(errorMessage)
             error_message.value = errorMessage + "All of these file(s) will not be selected."
-            error_dialog.value = true
+            dialog.value = true
+            backdropFilterFunction()
         }
 
     })
 
 }
 
+const submit = (event: SubmitEvent) => {
 
-
-
+    // event.preventDefault()
+}
+// function factoryFunction(files: readonly File[]): QUploaderFactoryObject | Promise<QUploaderFactoryObject> {
+//     const url = baseUrl + '/uploadFiles'
+//     console.log('factoryfunc')
+//     console.log('url', url)
+//     const formFields: readonly File[] = Array.from(files).map(file => (
+//         {
+//             name: file.name,
+//             value: file
+//         } 
+//     ))
+//     return ({
+//         url: url,
+//         method: 'POST',
+//         formFields:formFields 
+//     })
+// }
 
 </script>

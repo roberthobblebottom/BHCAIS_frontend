@@ -1,7 +1,7 @@
 <template>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <div>
-        <nav v-if="authStore.user" v-show="authStore.user" class="navbar navbar-expand navbar-dark bg-dark">
+        <nav v-if="authStore.user" v-show="authStore.user" class="sidebar">
             <div class="sidebar" v-if="authStore.user">
                 <div class="logo">
                     <img src="/images/Group-1.svg" alt="LKCNHM Logo" />
@@ -18,7 +18,10 @@
                 </div>
             </div>
         </nav>
-            <RouterView class="main-content"/>
+        <div class="main-content">
+
+            <RouterView />
+        </div>
     </div>
 </template>
 
