@@ -5,16 +5,17 @@
         <p>Entries with existing data will be overwritten.
             Only csv and single sheet xlsx are accepted.</p>
         <q-uploader class="fu" :multiple="true" persistent accept=".csv,.xlsx" label="Drag and drop file(s) here to upload or click to select file(s) here
-            " @added="onAddedListener" ref="fu" :url="url_" field-name="files" method="POST"
-            @uploaded="onUploadedListener" @failed="onFailedListener" />
+            " @added="onAddedListener" ref="fileUploaderRef" :url="url_" field-name="files" method="POST"
+            @uploaded="onUploadedListener" @failed="onFailedListener" :form-fields="formFields" />
         <!-- <button type="submit">Upload</button> -->
     </form>
 
     <div>
-        <q-dialog v-model="dialog" persistent backdrop-filter="blur(4px)">
+        <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
+            ref="dialogRef">
             <q-card-section class="row items-center q-pb-none text-h6 dialog ">
-                <h3>{{ dialog_header }}</h3>
-                <p>{{ dialog_message }}
+                <h3>{{ dialogHeader }}</h3>
+                <p>{{ dialogMessage }}
                 </p>
                 <q-btn label="Ok" color="primary" v-close-popup />
             </q-card-section>
@@ -40,14 +41,17 @@ h1 {
 <script setup lang='ts'>
 import * as xlsx from 'xlsx'
 import { ref } from 'vue';
-import { QUploader } from 'quasar';
+import { QUploader, QDialog } from 'quasar';
 import { library_and_archives_header, negative_headers, oral_histories_headers, print_headers, slides_headers } from '../constants';
-const dialog_header = ref("")
-const dialog_message = ref("");
-const fu = ref();
-const dialog = ref(false)
-const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles`);
-
+const dialogHeader = ref("")
+const dialogMessage = ref("");
+const fileUploaderRef = ref();
+const dialogEnable = ref(false)
+const dialogPersistentIsEnabled = ref(false)
+const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${localStorage.getItem('user_id')}`);
+const formFields = ref(
+    [{ name: 'user_id', value: localStorage.getItem("user_id")! }]
+)
 const onAddedListener = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
@@ -56,7 +60,7 @@ const onAddedListener = (files: readonly File[]) => {
         return new Promise<void>((resolve) => {
             if (file.size == 0) {
                 names_of_files_with_zero_bytes.push(file.name)
-                fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                 resolve()
             }
             const reader = new FileReader()
@@ -83,13 +87,13 @@ const onAddedListener = (files: readonly File[]) => {
                         && headersString != library_and_archives_header
                         && headersString != oral_histories_headers
                     ) {
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     // console.log("headers", headersString)
                     if (content == null) {
                         // names_of_headers_only_files.push(file.name)
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_headers_only.push(file.name)
                     }
 
@@ -110,13 +114,13 @@ const onAddedListener = (files: readonly File[]) => {
                         && headersString != library_and_archives_header
                         && headersString != oral_histories_headers
                     ) {
-                        fu.value.files.splice(fu.value.files.indexOf(file), 1)
+                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     // console.log(`Headers from ${file.name}:\n`, headers);
                     const content = csv.split('\n').slice(1)
                     if (content.length == 1 && content[0] == "") {
-                        fu.value.removeFile(file)
+                        fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
 
                     }
@@ -139,27 +143,36 @@ const onAddedListener = (files: readonly File[]) => {
         if (names_of_files_with_incorrect_headers.length > 0)
             errorMessage += "These file(s) have incorrect (or missing) headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
         if (errorMessage != "") {
-            dialog_header.value = "Error"
-            dialog_message.value = errorMessage + "All of these file(s) will not be selected."
-            dialog.value = true
+            dialogHeader.value = "Error"
+            dialogMessage.value = errorMessage + "All of these file(s) will not be selected."
+            dialogEnable.value = true
         }
 
     })
 
 }
 const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
-    dialog_header.value = "Successful"
-    dialog_message.value = "sucessfully uploaded file(s)"
-    dialog.value = true
-    fu.value.reset()
+    dialogHeader.value = "Successful"
+    dialogMessage.value = "sucessfully uploaded file(s)"
+    dialogPersistentIsEnabled.value = false
+    dialogEnable.value = true
+
+    fileUploaderRef.value.reset()
+
 }
 
 const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
+    // this listener calls out even when there is not Failure of upload so i have to check:
     if (info.xhr.status == 0)
         return
-    dialog_header.value = "Error: Upload Failed"
-    dialog_message.value = info.xhr.response.toString()
-    dialog.value = true
+
+
+    dialogHeader.value = "Error: Upload Failed"
+    dialogMessage.value = JSON.parse(info.xhr.response).detail
+    dialogPersistentIsEnabled.value = true
+    dialogEnable.value = true
+
+    fileUploaderRef.value.reset()
 }
 const submit = () => {
     // event.preventDefault()

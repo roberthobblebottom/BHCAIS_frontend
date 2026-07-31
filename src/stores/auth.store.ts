@@ -21,7 +21,8 @@ export const useAuthStore = defineStore(
                 this.user = user;
 
                 // store user details and jwt in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('email', JSON.stringify(user.email));
+                localStorage.setItem('user_id', JSON.stringify(user.user_id));
 
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
