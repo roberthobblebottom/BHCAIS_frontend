@@ -10,6 +10,9 @@
                 </div>
                 <div>
                     <div class="row">
+                        <h3>BHCAIS</h3>
+                    </div>
+                    <div class="row">
                         You are logged in as {{ authStore.user.email }}
                     </div>
                     <div class="row">
@@ -40,7 +43,7 @@
 </template>
 
 <style scoped>
-@import '../public/css/navbar.css'
+@import '../public/css/navbar.css';
 </style>
 
 <script setup lang="ts">

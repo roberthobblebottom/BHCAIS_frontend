@@ -8,7 +8,7 @@
   top: 0;
   height: 100%;
   width: 250px;
-  background-color: #0f0015;
+  background-color: #280401;
   display: flex;
   flex-direction: column;
   padding: 20px 0;
@@ -17,6 +17,8 @@
   color: white;
 
   anchor-name: --sidebar;
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .row {
@@ -26,8 +28,9 @@
 
 a,
 .nav-links {
-  color: #7e3ff2;
+  color: #b67300;
   cursor: pointer;
+  text-decoration: none;
 }
 
 
@@ -45,6 +48,8 @@ a,
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 5%;
 }
 
 .loginDetails {

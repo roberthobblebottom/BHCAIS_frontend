@@ -17,16 +17,12 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 </script>
 <style>
 @import '../../public/css/login.css';
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
 </style>
 <template>
-    <div>
+    <div class="login-content">
 
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
+            <h1>BHCAIS</h1>
             <h2>Login</h2>
             <div class="form-group">
                 <label>Username</label>

@@ -5,19 +5,46 @@
   font-family: 'Inter', sans-serif;
 }
 
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 body,
 html {
   height: 100%;
   background-image:
-    linear-gradient(135deg, #06247b, #c1562f3d, #160a59),
-    url('images/MG_4179-Editsmall1.jpg');
+    linear-gradient(135deg, #472207, #5705053d, #511800),
+    url('images/01-0101.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 
 
+.form-group {
+  margin-top: 10%;
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-content {
+  /* position-anchor: none !important;
+  position: relative !important; */
+  /* top: 10% !important; */
+
+  /* margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important; */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 500px !important;
+}
 
 
 
