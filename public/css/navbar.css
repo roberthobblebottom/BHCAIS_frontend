@@ -1,5 +1,5 @@
 * {
-  font-size: small;
+  font-size: large;
 }
 
 .sidebar {
@@ -17,6 +17,17 @@
   color: white;
 
   anchor-name: --sidebar;
+}
+
+.row {
+  margin-bottom: 10%;
+  margin-left: 5%;
+}
+
+a,
+.nav-links {
+  color: #7e3ff2;
+  cursor: pointer;
 }
 
 
