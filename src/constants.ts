@@ -124,7 +124,6 @@ const slides_headers = [
     "Date of QC",
     "Checked by",
     "Object Condition (QC2)",
-    "",
     "Data Tier (2 or 3)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 

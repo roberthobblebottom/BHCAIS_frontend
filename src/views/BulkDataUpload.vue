@@ -120,7 +120,7 @@ const onAddedListener = (files: readonly File[]) => {
                     })
                     const headers: Object = tempHeadersValues[0]!
                     const content: string = tempHeadersValues[1]!
-                    const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString()
+                    const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
                     if (headersString != print_headers
                         && headersString != negative_headers
                         && headersString != slides_headers
@@ -147,7 +147,8 @@ const onAddedListener = (files: readonly File[]) => {
 
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
-                        .map(col => col.trim().toLocaleLowerCase()).toString()
+                        .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
+
                     if (headersString != print_headers
                         && headersString != negative_headers
                         && headersString != slides_headers
