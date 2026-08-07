@@ -23,14 +23,35 @@
                     </div>
                     <div class="row">
                         <RouterLink to="/BulkDataUpload" class="nav-item nav-link">
-                            <i class="fas fa-sign-out-alt"></i>
+                            <i class="fas fa-upload"></i>
                             Bulk Data Upload
                         </RouterLink>
 
                     </div>
                     <div class="row">
-                        <i class="fas fa-globe"></i>
-                        <a @click="authStore.logout()" class="nav-item nav-link">Logout</a>
+                        <RouterLink to="/Catalogues" class="nav-item nav-link">
+                            <i class="fas fa-rectangle-list"></i>
+                            Catalogues
+                        </RouterLink>
+
+                    </div>
+                    <div class="row">
+                        <RouterLink to="/DownloadReport" class="nav-item nav-link">
+                            <i class="fas fa-file-arrow-down"></i>
+                            Download Report(s)
+                        </RouterLink>
+
+                    </div>
+                    <div class="row">
+                        <RouterLink to="/ChangePassword" class="nav-item nav-link">
+                            <i class="fas fa-key"></i>
+                            Change Password
+                        </RouterLink>
+
+                    </div>
+                    <div class="row">
+                        <i class="fas fa-right-from-bracket"></i>
+                        <a @click="authStore.logout()" class="nav-item nav-link"> Logout</a>
                     </div>
                 </div>
 

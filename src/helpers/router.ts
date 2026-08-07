@@ -3,6 +3,9 @@ import { useAuthStore } from '../stores/auth.store';
 import LoginView from '../views/LoginView.vue';
 import QuickStart from '../views/QuickStart.vue';
 import BulkDataUpload from '../views/BulkDataUpload.vue';
+import ChangePassword from '../views/ChangePassword.vue';
+import Catalogues from '../views/Catalogues.vue';
+import DownloadReport from '../views/DownloadReport.vue';
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     linkActiveClass: 'active',
@@ -10,7 +13,10 @@ export const router = createRouter({
 
         { path: '/QuickStart', component: QuickStart },
         { path: '/Login', component: LoginView },
-        { path: '/BulkDataUpload', component: BulkDataUpload }
+        { path: '/BulkDataUpload', component: BulkDataUpload },
+        { path: '/ChangePassword', component: ChangePassword },
+        { path: '/Catalogues', component: Catalogues },
+        { path: '/DownloadReport', component: DownloadReport }
     ]
 });
 
