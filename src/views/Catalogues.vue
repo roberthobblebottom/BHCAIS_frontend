@@ -12,7 +12,7 @@
     <div class="q-pa-md large common">
         <h1>View Catalogues </h1>
         <h2>{{ catalogueName }}</h2>
-        <q-btn-dropdown color="primary" label="Select A Catalogue to View/Delete">
+        <q-btn-dropdown color="primary dropdown" label="Select A Catalogue to View/Delete">
             <q-list>
                 <q-item clickable v-close-popup @click='onItemClick("print")'>
                     <q-item-section>
@@ -23,30 +23,34 @@
                 <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
                     <q-item-section>
                         <q-item-label>Oral Histories</q-item-label>
+
                     </q-item-section>
                 </q-item>
 
                 <q-item clickable v-close-popup @click='onItemClick("slide")'>
                     <q-item-section>
                         <q-item-label>Slides</q-item-label>
+
                     </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="onItemClick('negative')">
                     <q-item-section>
                         <q-item-label>Negatives</q-item-label>
+
                     </q-item-section>
 
                 </q-item>
                 <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
                     <q-item-section>
                         <q-item-label>Library and Archives</q-item-label>
+
                     </q-item-section>
                 </q-item>
             </q-list>
         </q-btn-dropdown>
         <div class="q-pa-md table-div">
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-            <q-table v-if="showTable" v-model:rows="rows" :columns="columns" :row-key="rowKey"
+            <q-table class="table-div" v-if="showTable" v-model:rows="rows" :columns="columns" :row-key="rowKey"
                 v-model:pagination="pagination" ref="tableRef" @request="onRequest" :visible-columns="visibleColumns"
                 :filter="filter" :loading="loading" selection="multiple" v-model:selected="selected"
                 @selection="onSelection">
@@ -86,6 +90,11 @@
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
+
+.dropdown,
+.table-div {
+    width: 100%;
+}
 
 .search-delete-div {
     display: flex;
