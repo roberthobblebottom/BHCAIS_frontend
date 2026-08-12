@@ -130,9 +130,7 @@ const onAddedListener = (files: readonly File[]) => {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-                    // console.log("headers", headersString)
                     if (content == null) {
-                        // names_of_headers_only_files.push(file.name)
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_headers_only.push(file.name)
                     }
@@ -158,8 +156,7 @@ const onAddedListener = (files: readonly File[]) => {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-                    // console.log(`Headers from ${file.name}:\n`, headers);
-                    const content = csv.split('\n').slice(1)
+                    const content = csv.split('\n').slice(2)
                     if (content.length == 1 && content[0] == "") {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
