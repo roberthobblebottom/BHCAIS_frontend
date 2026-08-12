@@ -45,9 +45,10 @@
         </q-btn-dropdown>
         <div class="q-pa-md table-div">
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-            <q-table v-if="showTable" :rows="rows" :columns="columns" row-key="name" v-model:pagination="pagination"
-                ref="tableRef" @request="onRequest" :visible-columns="visibleColumns" :filter="filter"
-                :loading="loading">
+            <q-table v-if="showTable" v-model:rows="rows" :columns="columns" :row-key="rowKey"
+                v-model:pagination="pagination" ref="tableRef" @request="onRequest" :visible-columns="visibleColumns"
+                :filter="filter" :loading="loading" selection="multiple" v-model:selected="selected"
+                @selection="onSelection">
                 <template v-slot:top="props">
                     <div class="col-2 q-table__title"></div>
 
@@ -68,26 +69,31 @@
                             <q-icon name="search" />
                         </template>
                     </q-input>
+                    <button v-if="showDeleteSelectedButton" @click="deleteSelected">Delete Selected</button>
                 </template>
             </q-table>
+            <div class="q-mt-md"> Selected: {{ selected }} </div>
             {{ errorMessage }}
-        </div>
+        </div @click="deleteSelected">
     </div>
 
 </template>
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
 import { fetchWrapper } from '../helpers/fetch-wrapper';
-import { QTable } from 'quasar';
+import { QDialog, QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
-const rows = ref([])
+const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")
 const loading = ref(false)
 const filter = ref('')
 const tableRef: ShallowRef<QTable | null> = useTemplateRef<QTable>("tableRef")
+const rowKey = ref('')
+const selected = ref([])
+const showDeleteSelectedButton = ref(false)
 const pagination = ref({
     sortBy: 'desc',
     descending: false,
@@ -95,8 +101,55 @@ const pagination = ref({
     rowsPerPage: 10,
     rowsNumber: 10
 })
-let catalogueName = ""
+let catalogueName: String = ""
 defineExpose({ tableRef })
+function onSelection(details: any) {
+    // before selected reference is updated
+    // if selected length < 1 and details.added = false (this is sellection adding or removing) 
+    // then it is removing the only selected for a empty selected 
+    // so the delete button should not be shown.
+    if (selected.value.length > 1
+        || (details.added == true && details.rows.length > 0)
+    )
+        showDeleteSelectedButton.value = true
+    else
+        showDeleteSelectedButton.value = false
+    const temp = []
+}
+
+async function deleteSelected() {
+    const selectedIds: any[] = []
+    console.log(selected.value)
+    for (const x of selected.value) {
+        console.log("x", x)
+        selectedIds.push(Object.values(x)[0])
+    }
+    console.log(selectedIds)
+
+    let url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
+    const response = await fetchWrapper.post(url,
+        {
+            ids_to_be_deleted: selectedIds,
+            catalogue_name: catalogueName
+        })
+    if (!response.ok) {
+        console.error("response not okay")
+        console.log(response)
+        return
+    }
+    const newRows = []
+    for (const row of rows.value) {
+        const x = Object.values({ ...row })[0]
+        if (!selectedIds.includes(x))
+            newRows.push(row)
+    }
+    rows.value = newRows
+
+    selected.value = []
+
+    await nextTick()
+    tableRef.value!.requestServerInteraction()
+}
 
 async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
@@ -105,7 +158,6 @@ async function onRequest(props: any) {
     loading.value = true
     // emulate server
     // setTimeout(async () => {
-    console.log(props.pagination)
     let url = `${import.meta.env.VITE_API_URL}/getCatalogue/`
         + `?catalogue_name=${catalogueName}`
         + `&rows_per_page=${rowsPerPage}`
@@ -146,6 +198,7 @@ async function onRequest(props: any) {
     }
 
     columns.value = temp
+    rowKey.value = columns.value[0].name
     rows.value = results
     visibleColumns.value = visibleColumnsTemp
     showTable.value = true
