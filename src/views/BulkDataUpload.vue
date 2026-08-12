@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="medium common">
         <form @submit="submit">
             <h3>Bulk Data Upload</h3>
             <p>Entries with existing data will be overwritten.
@@ -61,6 +61,7 @@
 </template>
 <style>
 @import '../../public/css/dialog.css';
+@import '../../public/css/main-content-variants.css';
 
 .instructions {
     margin-bottom: 5%;

@@ -35,20 +35,20 @@ a,
 
 
 .main-content {
-  background-color: white !important;
+  /* background-color: white !important; */
   position-anchor: --siderbar;
   position: fixed;
   right: anchor(left);
   top: anchor(top);
   margin-left: 300px;
   margin-top: 10px;
-  min-height: 500px;
-  min-width: 700px;
+  min-height: 100%;
+  min-width: 100%;
   border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
   padding: 5%;
 }
 

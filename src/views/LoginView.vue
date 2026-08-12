@@ -19,7 +19,7 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 @import '../../public/css/login.css';
 </style>
 <template>
-    <div class="login-content">
+    <div class="content">
 
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
             <h1>BHCAIS</h1>

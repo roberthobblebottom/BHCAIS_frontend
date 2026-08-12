@@ -9,8 +9,9 @@
 }
 </style>
 <template>
-    <div class="q-pa-md dropdown">
-        <h1>Catalogues</h1>
+    <div class="q-pa-md large common">
+        <h1>View Catalogues </h1>
+        <h2>{{ catalogueName }}</h2>
         <q-btn-dropdown color="primary" label="Select A Catalogue to View/Delete">
             <q-list>
                 <q-item clickable v-close-popup @click='onItemClick("print")'>
@@ -64,24 +65,38 @@
 
                     <q-btn flat round dense :icon="props.inFullscreen ?
                         'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md" />
-                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                    <button v-if="showDeleteSelectedButton" @click="deleteSelected">Delete Selected</button>
+                    <div class="search-delete-div">
+                        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
+                        <button v-if="showDeleteSelectedButton" @click="deleteSelected">Delete Selected</button>
+                    </div>
                 </template>
             </q-table>
-            <div class="q-mt-md"> Selected: {{ selected }} </div>
+            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v, i, a) => {
+                console.log(v)
+                return Object.values(v)[0]
+            })}} </div>
             {{ errorMessage }}
         </div @click="deleteSelected">
     </div>
 
 </template>
+<style scoped>
+@import "../../public/css/main-content-variants.css";
+
+.search-delete-div {
+    display: flex;
+    align-items: center;
+    column-gap: 5%;
+}
+</style>
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
+import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
 import { fetchWrapper } from '../helpers/fetch-wrapper';
-import { QDialog, QTable, QTr } from 'quasar';
+import { QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
@@ -101,7 +116,7 @@ const pagination = ref({
     rowsPerPage: 10,
     rowsNumber: 10
 })
-let catalogueName: String = ""
+const catalogueName = ref("")
 defineExpose({ tableRef })
 function onSelection(details: any) {
     // before selected reference is updated
@@ -159,7 +174,7 @@ async function onRequest(props: any) {
     // emulate server
     // setTimeout(async () => {
     let url = `${import.meta.env.VITE_API_URL}/getCatalogue/`
-        + `?catalogue_name=${catalogueName}`
+        + `?catalogue_name=${catalogueName.value}`
         + `&rows_per_page=${rowsPerPage}`
         + `&current_page_number=${page}`
         + `&filter_str=${filterStr}`
@@ -176,7 +191,7 @@ async function onRequest(props: any) {
     pagination.value.descending = descending
 
     if (results.length == 0) {
-        errorMessage.value = "This is no results for " + catalogueName + " and search term " + filterStr
+        errorMessage.value = "This is no results for " + catalogueName.value + " and search term " + filterStr
         loading.value = false
         return
     } else
@@ -212,7 +227,7 @@ async function onRequest(props: any) {
 
 
 async function onItemClick(catalogue_name1: string) {
-    catalogueName = catalogue_name1
+    catalogueName.value = catalogue_name1
     showTable.value = true;
     await nextTick()
     tableRef.value!.requestServerInteraction()

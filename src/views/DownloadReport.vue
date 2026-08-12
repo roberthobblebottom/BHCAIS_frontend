@@ -9,15 +9,15 @@ function onItemClick() {
 }
 </script>
 <style>
-.dropdown {}
+@import '../../public/css/main-content-variants.css';
 </style>
 <template>
 
-    <div class="q-pa-md dropdown">
+    <div class="q-pa-md large common">
         <form>
 
             <h1>Download Reports</h1>
-            <q-btn-dropdown color="primary" label="Catalogues" multiple>
+            <q-btn-dropdown color=" primary" label="Catalogues" multiple>
                 <q-list>
                     <q-item clickable v-close-popup @click="onItemClick">
                         <q-item-section>

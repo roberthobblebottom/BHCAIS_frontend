@@ -15,9 +15,10 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 </script>
 <style>
 @import '../../public/css/login.css';
+@import '../../public/css/main-content-variants.css'
 </style>
 <template>
-    <div class="login-content">
+    <div class="small common">
 
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
             <h1>Change Password</h1>

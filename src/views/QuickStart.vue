@@ -7,7 +7,7 @@ storeToRefs(authStore);
 </script>
 
 <template>
-    <v-container>
+    <v-container class="medium common">
         <v-row>
 
             <h1>Welcome to BHCAIS</h1>
@@ -25,3 +25,6 @@ storeToRefs(authStore);
 
     </v-container>
 </template>
+<style>
+@import "../../public/css/main-content-variants.css"
+</style>

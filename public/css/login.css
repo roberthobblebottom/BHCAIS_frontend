@@ -32,18 +32,21 @@ html {
   flex-direction: column;
 }
 
-.login-content {
+.content {
   /* position-anchor: none !important;
   position: relative !important; */
   /* top: 10% !important; */
 
-  /* margin-top: 0 !important;
-  margin-right: 0 !important;
-  margin-left: 0 !important; */
+  /* margin-top: 0 !important;*/
+  margin-right: 20% !important;
+
+  background-color: white;
+  border-radius: 15px;
+  min-width: 800px;
+  min-height: 600px;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  width: 500px !important;
 }
 
 
