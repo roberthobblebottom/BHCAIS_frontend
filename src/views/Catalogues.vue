@@ -11,13 +11,14 @@
 <template>
     <div class="q-pa-md large common">
         <h1>View Catalogues </h1>
-        <h2>{{ catalogueName }}</h2>
-        <q-btn-dropdown color="primary dropdown" label="Select A Catalogue to View/Delete">
+        <q-btn-dropdown color="primary" class="dropdown"
+            :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
             <q-list>
                 <q-item clickable v-close-popup @click='onItemClick("print")'>
                     <q-item-section>
                         <q-item-label>Prints</q-item-label>
                     </q-item-section>
+
                 </q-item>
 
                 <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
@@ -48,15 +49,15 @@
                 </q-item>
             </q-list>
         </q-btn-dropdown>
-        <div class="q-pa-md table-div">
+        <div class="q-pa-md download-reports-form">
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
             <q-table class="table-div" v-if="showTable" v-model:rows="rows" :columns="columns" :row-key="rowKey"
                 v-model:pagination="pagination" ref="tableRef" @request="onRequest" :visible-columns="visibleColumns"
                 :filter="filter" :loading="loading" selection="multiple" v-model:selected="selected"
-                @selection="onSelection">
+                @selection="onSelection" :wrap-cells="true">
                 <template v-slot:top="props">
                     <div class="col-2 q-table__title"></div>
-
+                    <p>These toggles are for hiding individual rows</p>
                     <div class="check" v-if="$q.screen.gt.xs">
                         <div v-for="v in columns" class="col">
                             <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
@@ -75,7 +76,8 @@
                                 <q-icon name="search" />
                             </template>
                         </q-input>
-                        <button v-if="showDeleteSelectedButton" @click="deleteSelected">Delete Selected</button>
+                        <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
+                            Selected</button>
                     </div>
                 </template>
             </q-table>
@@ -86,20 +88,43 @@
             {{ errorMessage }}
         </div @click="deleteSelected">
     </div>
+    <q-dialog v-model="confirm" persistent>
+        <q-card>
+            <q-card-section class="row items-center">
+                <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+                <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
+                    {{selected.map((v, i, a) => {
 
+                        return Object.values(v)[0]
+                    })}}
+                    from {{ catalogueName }}_raw table?
+                </span>
+            </q-card-section>
+
+            <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="primary" v-close-popup />
+                <q-btn flat label="Delete" color="primary" v-close-popup @click="deleteSelected" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-.dropdown,
-.table-div {
+.dropdown {
     width: 100%;
+    font-size: x-large;
 }
 
-.search-delete-div {
-    display: flex;
-    align-items: center;
-    column-gap: 5%;
+.large {
+
+    /* margin-left: 10%; */
+}
+
+
+.table-div {
+    max-width: 1400px !important;
+    height: 1500px;
 }
 </style>
 <script setup lang="ts">
@@ -109,6 +134,7 @@ import { QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
+
 const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")
@@ -126,6 +152,7 @@ const pagination = ref({
     rowsNumber: 10
 })
 const catalogueName = ref("")
+const confirm = ref(false)
 defineExpose({ tableRef })
 function onSelection(details: any) {
     // before selected reference is updated
@@ -143,22 +170,17 @@ function onSelection(details: any) {
 
 async function deleteSelected() {
     const selectedIds: any[] = []
-    console.log(selected.value)
-    for (const x of selected.value) {
-        console.log("x", x)
+    for (const x of selected.value)
         selectedIds.push(Object.values(x)[0])
-    }
-    console.log(selectedIds)
 
     let url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
     const response = await fetchWrapper.post(url,
         {
             ids_to_be_deleted: selectedIds,
-            catalogue_name: catalogueName
+            catalogue_name: catalogueName.value
         })
     if (!response.ok) {
-        console.error("response not okay")
-        console.log(response)
+        console.error("response not okay \n" + response)
         return
     }
     const newRows = []

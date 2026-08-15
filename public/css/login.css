@@ -33,13 +33,7 @@ html {
 }
 
 .content {
-  /* position-anchor: none !important;
-  position: relative !important; */
-  /* top: 10% !important; */
-
-  /* margin-top: 0 !important;*/
   margin-right: 20% !important;
-
   background-color: white;
   border-radius: 15px;
   min-width: 800px;
