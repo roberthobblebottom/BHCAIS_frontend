@@ -57,16 +57,17 @@
                 @selection="onSelection" :wrap-cells="true">
                 <template v-slot:top="props">
                     <div class="col-2 q-table__title"></div>
-                    <p>These toggles are for hiding individual rows</p>
-                    <div class="check" v-if="$q.screen.gt.xs">
-                        <div v-for="v in columns" class="col">
-                            <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                    <q-btn-dropdown label="hide columns">
+                        <p>These toggles are for hiding individual rows</p>
+                        <div class="check" v-if="$q.screen.gt.xs">
+                            <div v-for="v in columns" class="col">
+                                <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                            </div>
                         </div>
-                    </div>
-                    <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                        :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                        option-value="name" style="min-width: 150px" />
-
+                        <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                            :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                            option-value="name" style="min-width: 150px" />
+                    </q-btn-dropdown>
 
                     <q-btn flat round dense :icon="props.inFullscreen ?
                         'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md" />

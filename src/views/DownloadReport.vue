@@ -44,26 +44,26 @@ const quasarConfig = (state: any) => ({
 
 
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
-const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
+// const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
 
 function clearDates(event: any) {
-    console.log(dateRange.value)
-    dateRange.value = []
+    // console.log(dateRange.value)
+    // dateRange.value = []
 }
 
 const onSubmit = handleSubmit(async (values) => {
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_term: searchTerm.value,
-        date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
+        // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }
     let url = `${import.meta.env.VITE_API_URL}/downloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
     const results = response.results
     const allCatalogueResultsInStringFormat = []
     const searchTerm2 = queryData.search_term == "" ? "" : " search term: " + queryData.search_term
-    const dateRangeArray = queryData.date_range != null ? Object.values(queryData.date_range) : []
-    const dateRangeString: string = dateRangeArray.length != 0 ? "from " + dateRangeArray[0] + " to " + dateRangeArray[1] : ""
+    // const dateRangeArray = queryData.date_range != null ? Object.values(queryData.date_range) : []
+    // const dateRangeString: string = dateRangeArray.length != 0 ? "from " + dateRangeArray[0] + " to " + dateRangeArray[1] : ""
 
     cataloguesWithNoResults.value = []
     showAllCataloguesHaveNoResultsMessage.value = false
@@ -81,7 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         allCatalogueResultsInStringFormat.push({
             name: result.catalogue_name + "_raw" + searchTerm2
-                + dateRangeString + " downloaded on " + new Date() + '.csv',
+                + " downloaded on " + new Date() + '.csv',
             input: Buffer.from('data:text/csv;charset=utf-8,' + encodeURIComponent(tableInStringFormat))
         })
 
@@ -94,7 +94,7 @@ const onSubmit = handleSubmit(async (values) => {
     const blob = await downloadZip(allCatalogueResultsInStringFormat as unknown as InputWithoutMeta[]).blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
-    link.download = "BHCAIS" + searchTerm2 + dateRangeString
+    link.download = "BHCAIS" + searchTerm2
         + " downloaded on " + new Date().toLocaleDateString("en-UK") + '.zip'
     link.click()
     link.remove()
@@ -139,7 +139,7 @@ const onSubmit = handleSubmit(async (values) => {
                 hint="Select catalogue(s). Click on the same catalogue to unselect" multiple></q-select>
             <q-input v-model="searchTerm" label="Search Term (Optional)" />
             <div class="row">
-                <q-date class="dateSelector" title="select dates (Optional)"
+                <!-- <q-date class="dateSelector" title="select dates (Optional)"
                     subtitle="click on two dates on the calendar to select the start and end date. " v-model="dateRange"
                     range multiple>
                     <template #default>
@@ -147,7 +147,7 @@ const onSubmit = handleSubmit(async (values) => {
                             cannnot select one or more dates or ranges {{ dateRangeProps["error-message"] }}</label>
                         <button class="button" @click.prevent="clearDates">clear dates</button>
                     </template>
-                </q-date>
+</q-date> -->
             </div>
             <button class="button" type="submit" @click="onSubmit">
                 Download</button>
