@@ -28,7 +28,10 @@ export const useAuthStore = defineStore(
                 router.push(this.returnUrl || '/QuickStart');
 
             }
-            catch (Exception) { }
+            catch (error) {
+                console.log('here', error)
+                return Promise.reject(error);
+            }
 
         },
         logout() {

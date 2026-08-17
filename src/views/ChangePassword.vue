@@ -1,15 +1,28 @@
 <script setup lang='ts'>
 import { Form, Field, type FormActions, type GenericObject } from 'vee-validate';
 import * as Yup from 'yup';
-import { useAuthStore } from '../stores/auth.store.ts';
+import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
+import { passwordError, passwordRegex } from '../constants.ts';
+import commonPasswords from '../common-passwords.txt?raw'
 const schema = Yup.object().shape({
-    username: Yup.string().required('Username is required'),
-    password: Yup.string().required('Password is required')
+    oldPassword: Yup.string().required('required'),
+    //temporary changed to one min char
+    newPassword: Yup.string().min(1, 'minimum of 7 characters for password   ')
+        .matches(passwordRegex, passwordError)
+        .notOneOf(commonPasswords.split("\n"), "The password is too common"),
+    confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
 });
 
 function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
-    const authStore = useAuthStore();
-    const { username, password } = values;
+    const { oldPassword, newPassword, confirmNewPassword } = values;
+    const url = import.meta.env.BASE_URL + "/"
+    const response = fetchWrapper.post(url, {
+        'old_passwrod': oldPassword,
+        'new_password': newPassword,
+        'confirm_new_password': confirmNewPassword
+    })
+    console.log(response)
+
 
 } 
 </script>
@@ -25,21 +38,21 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 
             <div class="form-group">
                 <label>Old Password</label>
-                <Field name="old-password" type="password" class="form-control "
-                    :class="{ 'is-invalid': errors.password }" />
-                <div class="invalid-feedback">{{ errors.password }}</div>
+                <Field name="oldPassword" type="password" class="form-control"
+                    :class="{ 'is-invalid': errors.oldPassword }" />
+                <div class="invalid-feedback">{{ errors.oldPassword }}</div>
             </div>
             <div class="form-group">
                 <label>New Password </label>
-                <Field name="new-password" type="password" class="form-control "
-                    :class="{ 'is-invalid': errors.password }" />
-                <div class="invalid-feedback">{{ errors.password }}</div>
+                <Field name="newPassword" type="password" class="form-control "
+                    :class="{ 'is-invalid': errors.newPassword }" />
+                <div class="invalid-feedback">{{ errors.newPassword }}</div>
             </div>
             <div class="form-group">
                 <label>Reconfirmed New Password </label>
-                <Field name="confirm-new-password" type="password" class="form-control "
-                    :class="{ 'is-invalid': errors.password }" />
-                <div class="invalid-feedback">{{ errors.password }}</div>
+                <Field name="confirmNewPassword" type="password" class="form-control "
+                    :class="{ 'is-invalid': errors.confirmNewPassword }" />
+                <div class="invalid-feedback">{{ errors.confirmNewPassword }}</div>
             </div>
             <div class="form-group">
                 <button class="button btn-primary" :disabled="isSubmitting">

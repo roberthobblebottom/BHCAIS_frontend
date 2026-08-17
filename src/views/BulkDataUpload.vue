@@ -83,7 +83,7 @@ label {
 import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
-import { library_and_archives_header, negative_headers, oral_histories_headers, print_headers, slides_headers } from '../constants';
+import { libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
 const fileUploaderRef = ref();
@@ -122,11 +122,11 @@ const onAddedListener = (files: readonly File[]) => {
                     const headers: Object = tempHeadersValues[0]!
                     const content: string = tempHeadersValues[1]!
                     const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-                    if (headersString != print_headers
-                        && headersString != negative_headers
-                        && headersString != slides_headers
-                        && headersString != library_and_archives_header
-                        && headersString != oral_histories_headers
+                    if (headersString != printHeaders
+                        && headersString != negativeHeaders
+                        && headersString != slideHeaders
+                        && headersString != libraryAndArchiveHeader
+                        && headersString != oralHistoryHeaders
                     ) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
@@ -148,11 +148,11 @@ const onAddedListener = (files: readonly File[]) => {
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
 
-                    if (headersString != print_headers
-                        && headersString != negative_headers
-                        && headersString != slides_headers
-                        && headersString != library_and_archives_header
-                        && headersString != oral_histories_headers
+                    if (headersString != printHeaders
+                        && headersString != negativeHeaders
+                        && headersString != slideHeaders
+                        && headersString != libraryAndArchiveHeader
+                        && headersString != oralHistoryHeaders
                     ) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)

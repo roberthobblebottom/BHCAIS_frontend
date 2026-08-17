@@ -12,11 +12,18 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
     const { username, password } = values;
 
     return authStore.login(username, password)
-        .catch(error => setErrors({ apiError: error }));
+        .catch(error => {
+            console.log('here')
+            return setErrors({ apiError: error })
+        });
 }
 </script>
 <style>
 @import '../../public/css/login.css';
+
+.alert {
+    color: red;
+}
 </style>
 <template>
     <div class="content">
@@ -24,6 +31,7 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
             <h1>BHCAIS</h1>
             <h2>Login</h2>
+            <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
             <div class="form-group">
                 <label>Username</label>
                 <Field name="username" type="text" class="form-control" :class="{ 'is-invalid': errors.username }" />
@@ -41,7 +49,6 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
                     Login
                 </button>
             </div>
-            <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
         </Form>
     </div>
 </template>

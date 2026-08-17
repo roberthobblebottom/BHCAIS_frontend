@@ -7,7 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import path from "path";
 import { join } from 'node:path'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-
+import { promises as fs } from "fs";
 export default defineConfig({
   server: { port: 5173 },
   plugins: [
@@ -18,7 +18,7 @@ export default defineConfig({
     // https://github.com/quasarframework/quasar/blob/dev/vite-plugin/index.d.ts
     quasar({
       sassVariables: join(import.meta.dirname, 'src/quasar-variables.sass')
-    })
+    }),
   ],
   resolve: {
     alias: {

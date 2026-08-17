@@ -1,4 +1,4 @@
-const print_headers = [
+const printHeaders = [
     "Continuous S/N no.",
     "UID",
     "Album no.",
@@ -31,7 +31,7 @@ const print_headers = [
     "Checked by",
     "Object Condition (QC2)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
-const oral_histories_headers = [
+const oralHistoryHeaders = [
     "S/N",
     "Name of Interviewee",
     "Name of Interviewee (2)",
@@ -57,7 +57,7 @@ const oral_histories_headers = [
     "Comments"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
-const negative_headers = [
+const negativeHeaders = [
     "S/N no.",
     "UID",
     "Ziplock bag no.",
@@ -90,7 +90,7 @@ const negative_headers = [
     "Object Condition (QC2)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
-const slides_headers = [
+const slideHeaders = [
     "S/N no.",
     "UID",
     "Box no.",
@@ -127,7 +127,7 @@ const slides_headers = [
     "Data Tier (2 or 3)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
-const library_and_archives_header = [
+const libraryAndArchiveHeader = [
     "S/N",
     "Category",
     "Subcategory",
@@ -168,4 +168,6 @@ const library_and_archives_header = [
     "Transcription file media"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
-export { library_and_archives_header, negative_headers, slides_headers, oral_histories_headers, print_headers }
+const passwordRegex = /^(?=.*[a-z])(?=.*[0-9])\S{7,}$/
+const passwordError = "Passwords must at least have 7 charactors, one lower case and one upper case"
+export { passwordRegex, passwordError, libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders }

@@ -117,11 +117,6 @@
     font-size: x-large;
 }
 
-.large {
-
-    /* margin-left: 10%; */
-}
-
 
 .table-div {
     max-width: 1400px !important;
