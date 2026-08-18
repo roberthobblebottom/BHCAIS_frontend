@@ -86,7 +86,7 @@
                 console.log(v)
                 return Object.values(v)[0]
             })}} </div>
-            {{ errorMessage }}
+            <p class="alert"> {{ errorMessage }}</p>
         </div @click="deleteSelected">
     </div>
     <q-dialog v-model="confirm" persistent>
@@ -121,6 +121,10 @@
 .table-div {
     max-width: 1400px !important;
     height: 1500px;
+}
+
+.alert {
+    color: red;
 }
 </style>
 <script setup lang="ts">
@@ -220,6 +224,7 @@ async function onRequest(props: any) {
     if (results.length == 0) {
         errorMessage.value = "This is no results for " + catalogueName.value + " and search term " + filterStr
         loading.value = false
+        showTable.value = false
         return
     } else
         errorMessage.value = ""

@@ -47,6 +47,10 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
 @import '../../public/css/login.css';
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
+
+.invalid-feedback {
+    color: red;
+}
 </style>
 <template>
     <div class="small common">
