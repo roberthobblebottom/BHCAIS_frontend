@@ -55,31 +55,34 @@
                 v-model:pagination="pagination" ref="tableRef" @request="onRequest" :visible-columns="visibleColumns"
                 :filter="filter" :loading="loading" selection="multiple" v-model:selected="selected"
                 @selection="onSelection" :wrap-cells="true">
-                <template v-slot:top="props">
+                <template v-slot:top="props" class="items-center column">
                     <div class="col-2 q-table__title"></div>
                     <q-btn-dropdown label="hide columns">
-                        <p>These toggles are for hiding individual rows</p>
-                        <div class="check" v-if="$q.screen.gt.xs">
-                            <div v-for="v in columns" class="col">
-                                <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                        <div class="q-pa-md">
+
+                            <p>These toggles are for hiding individual rows</p>
+                            <div class="check" v-if="$q.screen.gt.xs">
+                                <div v-for="v in columns">
+                                    <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                </div>
                             </div>
+                            <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                option-value="name" style="min-width: 150px" />
+
                         </div>
-                        <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                            :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                            option-value="name" style="min-width: 150px" />
                     </q-btn-dropdown>
 
                     <q-btn flat round dense :icon="props.inFullscreen ?
-                        'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md" />
-                    <div class="search-delete-div">
-                        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-                            <template v-slot:append>
-                                <q-icon name="search" />
-                            </template>
-                        </q-input>
-                        <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
-                            Selected</button>
-                    </div>
+                        'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md">Full
+                        Screen</q-btn>
+                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                        <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
+                        Selected</button>
                 </template>
             </q-table>
             <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v, i, a) => {
@@ -92,8 +95,8 @@
     <q-dialog v-model="confirm" persistent>
         <q-card class="column items-center 
             q-pb-none text-h6 dialog">
-            <q-card-section class="  q-pb-none">
-                <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+            <q-card-section class="  items-center column q-pb-none">
+                <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
                 <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
                     {{selected.map((v, i, a) => {
 

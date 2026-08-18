@@ -50,6 +50,9 @@
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
 
+                <q-avatar :icon="dialogHeader == 'Sucessful' ? 'error' : 'done'" color="primary" text-color="white"
+                    class="" />
+
                 <h3>{{ dialogHeader }}</h3>
                 <p>{{ dialogMessage }}
                 </p>

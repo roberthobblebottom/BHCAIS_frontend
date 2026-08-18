@@ -156,15 +156,20 @@ const onSubmit = handleSubmit(async (values) => {
         </q-form>
         <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
 
-            <q-card-section class="column items-center 
+            <q-card class="column items-center 
             q-pb-none text-h6 dialog ">
-                <h3>{{ showAllCataloguesHaveNoResultsMessage ?
-                    "All catalogues do not have results."
-                    : "There are no results from these catalogues: "
-                    + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}</h3>
 
-                <q-btn label="Ok" color="primary" v-close-popup />
-            </q-card-section>
+                <q-card-section class="  items-center column q-pb-none">
+                    <q-avatar icon="error" color="primary" text-color="white" class="" />
+                    {{ showAllCataloguesHaveNoResultsMessage ?
+                        "All catalogues do not have results."
+                        : "There are no results from these catalogues: "
+                        + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}
+
+                    <q-btn label="Ok" color="primary" v-close-popup />
+                </q-card-section>
+
+            </q-card>
 
         </q-dialog>
     </div>
