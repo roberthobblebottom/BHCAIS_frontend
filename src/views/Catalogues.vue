@@ -160,6 +160,18 @@ const pagination = ref({
 const catalogueName = ref("")
 const confirm = ref(false)
 defineExpose({ tableRef })
+
+function columnClassFn(column: any) {
+
+    console.log(column)
+    return 'bg-primary'
+}
+
+function columnStyleFn(column: any) {
+    console.log(column)
+    return 'color:#fff'
+}
+
 function onSelection(details: any) {
     // before selected reference is updated
     // if selected length < 1 and details.added = false (this is sellection adding or removing) 

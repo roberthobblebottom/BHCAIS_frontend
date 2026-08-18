@@ -21,18 +21,31 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.app-name {
+  font-size: xx-large !important;
+  margin-left: -10%;
+  font-weight: 900;
+}
+
 .row {
   margin-bottom: 10%;
   margin-left: 5%;
 }
+
+
 
 a,
 .nav-links {
   color: #b67300;
   cursor: pointer;
   text-decoration: none;
+  width: 100%;
 }
 
+/* a {
+  display: block;
+  width: 100%;
+} */
 
 .main-content {
   /* background-color: white !important; */

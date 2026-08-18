@@ -9,10 +9,10 @@
                     <img src="/images/Group-1.svg" alt="LKCNHM Logo" />
                 </div>
                 <div>
+
                     <div class="row">
-                        <h3>BHCAIS</h3>
-                    </div>
-                    <div class="row">
+
+                        <p class="app-name">BHCAIS</p>
                         You are logged in as {{ authStore.user.email }}
                     </div>
                     <div class="row">
@@ -50,8 +50,10 @@
 
                     </div>
                     <div class="row">
-                        <i class="fas fa-right-from-bracket"></i>
-                        <a @click="authStore.logout()" class="nav-item nav-link"> Logout</a>
+                        <RouterLink to="/Login" @click="authStore.logout()" class="nav-item nav-link">
+                            <i class="fas fa-key"></i>
+                            logout
+                        </RouterLink>
                     </div>
                 </div>
 
