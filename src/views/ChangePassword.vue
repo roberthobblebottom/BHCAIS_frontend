@@ -22,7 +22,6 @@ const schema = Yup.object().shape({
 async function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
     const { oldPassword, newPassword, confirmNewPassword } = values;
     const url = `${import.meta.env.VITE_API_URL}/changePassword/`
-    console.log(url)
     let response = null
     try {
         response = await fetchWrapper.post(url, {
@@ -40,8 +39,6 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
         alertMessage.value = "sucessfully changed password"
         showAlert.value = true;
     }
-
-    console.log(response)
 
 
 } 
