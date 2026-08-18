@@ -90,23 +90,26 @@
         </div @click="deleteSelected">
     </div>
     <q-dialog v-model="confirm" persistent>
-        <q-card>
-            <q-card-section class="row items-center">
+        <q-card class="column items-center 
+            q-pb-none text-h6 dialog">
+            <q-card-section class="  q-pb-none">
                 <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
                 <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
                     {{selected.map((v, i, a) => {
 
                         return Object.values(v)[0]
-                    })}}
-                    from {{ catalogueName }}_raw table?
+                    }).join(',')}}
+                    from {{ catalogueName }} table?
                 </span>
             </q-card-section>
-
-            <q-card-actions align="right">
+            <q-card-section class="row ">
                 <q-btn flat label="Cancel" color="primary" v-close-popup />
                 <q-btn flat label="Delete" color="primary" v-close-popup @click="deleteSelected" />
-            </q-card-actions>
+            </q-card-section>
+
+
         </q-card>
+
     </q-dialog>
 </template>
 <style scoped>

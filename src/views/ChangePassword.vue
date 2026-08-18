@@ -84,18 +84,13 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
             </div>
             <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
         </Form>
-        <q-dialog v-model="showAlert">
-            <q-card>
-                <q-card-section class="row items-center">
-                    <span class="q-ml-sm">
-                        {{ alertMessage }}
-                    </span>
-                </q-card-section>
+        <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
+            <q-card-section class="column items-center 
+            q-pb-none text-h6 dialog ">
+                <h3>{{ alertMessage }}</h3>
+                <q-btn label="Ok" color="primary" v-close-popup />
+            </q-card-section>
 
-                <q-card-actions align="right">
-                    <q-btn flat label="Ok" color="primary" v-close-popup />
-                </q-card-actions>
-            </q-card>
         </q-dialog>
     </div>
 </template>

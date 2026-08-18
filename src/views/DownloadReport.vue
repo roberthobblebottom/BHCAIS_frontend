@@ -108,6 +108,7 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 <style>
 @import '../../public/css/main-content-variants.css';
+@import '../../public/css/dialog.css';
 
 .download-report-form {
     display: grid;
@@ -154,22 +155,17 @@ const onSubmit = handleSubmit(async (values) => {
 
         </q-form>
         <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
-            <q-card>
-                <q-card-section>
-                    <div class="text-h6">Alert</div>
-                </q-card-section>
 
-                <q-card-section class="q-pt-none">
-                    {{ showAllCataloguesHaveNoResultsMessage ?
-                        "All catalogues do not have results."
-                        : "There are no results from these catalogues: "
-                        + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}
-                </q-card-section>
+            <q-card-section class="column items-center 
+            q-pb-none text-h6 dialog ">
+                <h3>{{ showAllCataloguesHaveNoResultsMessage ?
+                    "All catalogues do not have results."
+                    : "There are no results from these catalogues: "
+                    + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}</h3>
 
-                <q-card-actions align="right">
-                    <q-btn flat label="OK" color="primary" v-close-popup />
-                </q-card-actions>
-            </q-card>
+                <q-btn label="Ok" color="primary" v-close-popup />
+            </q-card-section>
+
         </q-dialog>
     </div>
 </template>

@@ -1,7 +1,7 @@
 .dialog {
     background-color: white !Important;
-    padding: 5%;
-    margin: 10%;
+    /* padding: 5%; */
+    /* margin: 10%; */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     white-space: pre-wrap;
     position-anchor: --siderbar;
@@ -13,3 +13,5 @@
     min-width: 500px;
     border-radius: 15px;
 }
+
+.card-sec {}
