@@ -4,23 +4,43 @@ import * as Yup from 'yup';
 import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
 import { passwordError, passwordRegex } from '../constants.ts';
 import commonPasswords from '../common-passwords.txt?raw'
+import { ref } from 'vue';
+import { useAuthStore } from '../stores/auth.store.ts';
+const showAlert = ref(false)
+const alertMessage = ref('')
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('required'),
     //temporary changed to one min char
-    newPassword: Yup.string().min(1, 'minimum of 7 characters for password   ')
+    newPassword: Yup.string()
+        .min(7, 'minimum of 7 characters for password   ')
         .matches(passwordRegex, passwordError)
+        // ,
         .notOneOf(commonPasswords.split("\n"), "The password is too common"),
     confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
 });
 
-function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
+async function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
     const { oldPassword, newPassword, confirmNewPassword } = values;
-    const url = import.meta.env.BASE_URL + "/"
-    const response = fetchWrapper.post(url, {
-        'old_passwrod': oldPassword,
-        'new_password': newPassword,
-        'confirm_new_password': confirmNewPassword
-    })
+    const url = `${import.meta.env.VITE_API_URL}/changePassword/`
+    console.log(url)
+    let response = null
+    try {
+        response = await fetchWrapper.post(url, {
+            'username': useAuthStore().user.email,
+            'old_password': oldPassword,
+            'new_password': newPassword,
+
+            'confirm_new_password': confirmNewPassword
+        })
+    } catch (error: any) {
+        alertMessage.value = "ERROR: " + error.toString()
+        showAlert.value = true
+    }
+    if (response != null) {
+        alertMessage.value = "sucessfully changed password"
+        showAlert.value = true;
+    }
+
     console.log(response)
 
 
@@ -28,7 +48,8 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 </script>
 <style>
 @import '../../public/css/login.css';
-@import '../../public/css/main-content-variants.css'
+@import '../../public/css/main-content-variants.css';
+@import '../../public/css/dialog.css';
 </style>
 <template>
     <div class="small common">
@@ -62,5 +83,18 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
             </div>
             <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
         </Form>
+        <q-dialog v-model="showAlert">
+            <q-card>
+                <q-card-section class="row items-center">
+                    <span class="q-ml-sm">
+                        {{ alertMessage }}
+                    </span>
+                </q-card-section>
+
+                <q-card-actions align="right">
+                    <q-btn flat label="Ok" color="primary" v-close-popup />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
     </div>
 </template>

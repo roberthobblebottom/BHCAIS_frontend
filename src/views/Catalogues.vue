@@ -169,7 +169,7 @@ async function deleteSelected() {
     for (const x of selected.value)
         selectedIds.push(Object.values(x)[0])
 
-    let url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
+    const url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
     const response = await fetchWrapper.post(url,
         {
             ids_to_be_deleted: selectedIds,
