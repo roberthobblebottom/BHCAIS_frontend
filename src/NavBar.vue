@@ -13,7 +13,14 @@
                     <div class="row">
 
                         <p class="app-name">BHCAIS</p>
-                        You are logged in as {{ authStore.user.email }}
+
+                        <p class="user-details">User: {{ authStore.user.email }}</p>
+                        <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
+                    </div>
+                    <div class="row" v-if="authStore.user.user_type == 'admin'">
+                        <RouterLink to="/ViewAllUsers" class="nav-item nav-link ">
+                            <i class="fas fa-globe"></i> User Management
+                        </RouterLink>
                     </div>
                     <div class="row">
 
@@ -67,6 +74,11 @@
 
 <style scoped>
 @import '../public/css/navbar.css';
+
+.user-details {
+    font-size: medium;
+    text-align: left !important;
+}
 </style>
 
 <script setup lang="ts">

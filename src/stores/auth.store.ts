@@ -22,7 +22,7 @@ export const useAuthStore = defineStore(
                 // store user details and jwt in local storage to keep user logged in between page refreshes
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));
-
+                localStorage.setItem('user_type', JSON.stringify(user.user_type))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
 
@@ -34,7 +34,12 @@ export const useAuthStore = defineStore(
         },
         logout() {
             this.user = null;
-            localStorage.removeItem('user');
+            localStorage.removeItem('user_id');
+
+            localStorage.removeItem('email');
+            localStorage.removeItem('user_type');
+
+            localStorage.clear();
             router.push('/Login');
         }
     }

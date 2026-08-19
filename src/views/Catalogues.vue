@@ -51,10 +51,10 @@
         </q-btn-dropdown>
         <div class="q-pa-md download-reports-form">
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-            <q-table class="table-div" v-if="showTable" v-model:rows="rows" :columns="columns" :row-key="rowKey"
-                v-model:pagination="pagination" ref="tableRef" @request="onRequest" :visible-columns="visibleColumns"
-                :filter="filter" :loading="loading" selection="multiple" v-model:selected="selected"
-                @selection="onSelection" :wrap-cells="true">
+            <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
+                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
+                :visible-columns="visibleColumns" :filter="filter" :loading="loading" selection="multiple"
+                v-model:selected="selected" @selection="onSelection" :wrap-cells="true">
                 <template v-slot:top="props" class="items-center column">
                     <div class="col-2 q-table__title"></div>
                     <q-btn-dropdown label="hide columns">

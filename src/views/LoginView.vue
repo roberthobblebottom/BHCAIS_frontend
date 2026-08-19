@@ -13,7 +13,6 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 
     return authStore.login(username, password)
         .catch(error => {
-            console.log('here')
             return setErrors({ apiError: error })
         });
 }
