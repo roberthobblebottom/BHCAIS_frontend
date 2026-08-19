@@ -106,7 +106,7 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 </script>
-<style>
+<style scoped>
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
 

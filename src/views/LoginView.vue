@@ -18,6 +18,8 @@ function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObjec
 }
 </script>
 <style>
+/**do not scope this style block **/
+
 @import '../../public/css/login.css';
 
 .alert {

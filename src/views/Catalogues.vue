@@ -55,42 +55,44 @@
                 :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
                 :visible-columns="visibleColumns" :filter="filter" :loading="loading" selection="multiple"
                 v-model:selected="selected" @selection="onSelection" :wrap-cells="true">
-                <template v-slot:top="props" class="items-center column">
-                    <div class="col-2 q-table__title"></div>
-                    <q-btn-dropdown label="hide columns">
-                        <div class="q-pa-md">
+                <template v-slot:top="props">
+                    <div class="table-header-div">
+                        <div class="col-2 q-table__title"></div>
+                        <q-btn-dropdown label="hide columns">
+                            <div class="q-pa-md">
 
-                            <p>These toggles are for hiding individual rows</p>
-                            <div class="check" v-if="$q.screen.gt.xs">
-                                <div v-for="v in columns">
-                                    <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                <p>These toggles are for hiding individual rows</p>
+                                <div class="check" v-if="$q.screen.gt.xs">
+                                    <div v-for="v in columns">
+                                        <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                    </div>
                                 </div>
+                                <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                    :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                    option-value="name" style="min-width: 150px" />
+
                             </div>
-                            <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                option-value="name" style="min-width: 150px" />
+                        </q-btn-dropdown>
 
-                        </div>
-                    </q-btn-dropdown>
-
-                    <q-btn flat round dense :icon="props.inFullscreen ?
-                        'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md">Full
-                        Screen</q-btn>
-                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
-                        Selected</button>
+                        <q-btn flat round dense :icon="props.inFullscreen ?
+                            'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md">Full
+                            Screen</q-btn>
+                        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
+                        <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
+                            Selected</button>
+                    </div>
                 </template>
             </q-table>
-            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v, i, a) => {
+            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v) => {
                 console.log(v)
                 return Object.values(v)[0]
             })}} </div>
             <p class="alert"> {{ errorMessage }}</p>
-        </div @click="deleteSelected">
+        </div>
     </div>
     <q-dialog v-model="confirm" persistent>
         <q-card class="column items-center 
@@ -98,7 +100,7 @@
             <q-card-section class="  items-center column q-pb-none">
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
                 <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
-                    {{selected.map((v, i, a) => {
+                    {{selected.map((v) => {
 
                         return Object.values(v)[0]
                     }).join(',')}}
@@ -132,6 +134,12 @@
 .alert {
     color: red;
 }
+
+.table-header-div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
 </style>
 <script setup lang="ts">
 import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
@@ -161,16 +169,7 @@ const catalogueName = ref("")
 const confirm = ref(false)
 defineExpose({ tableRef })
 
-function columnClassFn(column: any) {
 
-    console.log(column)
-    return 'bg-primary'
-}
-
-function columnStyleFn(column: any) {
-    console.log(column)
-    return 'color:#fff'
-}
 
 function onSelection(details: any) {
     // before selected reference is updated
@@ -183,7 +182,6 @@ function onSelection(details: any) {
         showDeleteSelectedButton.value = true
     else
         showDeleteSelectedButton.value = false
-    const temp = []
 }
 
 async function deleteSelected() {
@@ -216,7 +214,7 @@ async function deleteSelected() {
 }
 
 async function onRequest(props: any) {
-    const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
 
     loading.value = true

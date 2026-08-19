@@ -43,7 +43,7 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
 
 } 
 </script>
-<style>
+<style scoped>
 @import '../../public/css/login.css';
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
