@@ -56,7 +56,7 @@
                 <h3>{{ dialogHeader }}</h3>
                 <p>{{ dialogMessage }}
                 </p>
-                <q-btn label="Ok" color="primary" v-close-popup />
+                <q-btn label="Ok" color="primary" v-close-popup autofocus />
             </q-card-section>
 
         </q-dialog>

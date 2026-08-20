@@ -166,7 +166,7 @@ const onSubmit = handleSubmit(async (values) => {
                         : "There are no results from these catalogues: "
                         + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}
 
-                    <q-btn label="Ok" color="primary" v-close-popup />
+                    <q-btn label="Ok" color="primary" v-close-popup autofocus />
                 </q-card-section>
 
             </q-card>

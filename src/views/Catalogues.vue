@@ -74,9 +74,7 @@
                             </div>
                         </q-btn-dropdown>
 
-                        <q-btn flat round dense :icon="props.inFullscreen ?
-                            'fullscreen_exit' : 'fullscreen'" @click="props.toggleFullscreen" class="q-ml-md">Full
-                            Screen</q-btn>
+
                         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                             <template v-slot:append>
                                 <q-icon name="search" />
