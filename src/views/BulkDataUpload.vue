@@ -134,11 +134,14 @@ const onAddedListener = (files: readonly File[]) => {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-                    if (content == null) {
+
+                    const isInvalidContent = (content == null) ? true : (content.trim() == "" || !content.includes(",")) ? true : false
+
+                    if (isInvalidContent) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_headers_only.push(file.name)
-                    }
 
+                    }
                     resolve()
 
                 }
@@ -150,7 +153,6 @@ const onAddedListener = (files: readonly File[]) => {
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-
                     if (headersString != printHeaders
                         && headersString != negativeHeaders
                         && headersString != slideHeaders
@@ -161,10 +163,9 @@ const onAddedListener = (files: readonly File[]) => {
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     const content = csv.split('\n').slice(2)
-                    if (content.length == 1 && content[0] == "") {
+                    if (content.length == 1 || content[0]?.trim() == "" || !content.includes(',')) {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
-
                     }
 
                     resolve()
