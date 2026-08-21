@@ -1,9 +1,19 @@
 <template>
     <div class="medium common">
         <form @submit="submit">
-            <h3>Bulk Data Upload</h3>
-            <p>Entries with existing data will be overwritten.
-                Only csv and single sheet xlsx are accepted.</p>
+            <div class="flex justify-between">
+                <div class="col-3">
+                    <h3>Bulk Data Upload</h3>
+
+                    <p>Entries with existing data will be overwritten. <br>
+                        Only csv and single sheet xlsx are accepted.</p>
+
+                </div>
+                <div class="col items-end">
+
+                    <button class="button" @click="downloadTemplatesForTheCatelogs">Download Template</button>
+                </div>
+            </div>
             <q-uploader class="fu " :multiple="true" persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
                 @failed="onFailedListener" :form-fields="formFields" color="grey-9">
@@ -43,7 +53,6 @@
             </q-uploader>
             <!-- <button type="submit">Upload</button> -->
         </form>
-        <button class="button" @click="downloadTemplatesForTheCatelogs">Download Template</button>
     </div>
     <div>
         <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
@@ -102,7 +111,7 @@ const formFields = ref(
 async function downloadTemplatesForTheCatelogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatelogs/`;
 
-    const response = getFiles(url).then((download) => {
+    getFiles(url).then((download) => {
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;
@@ -140,8 +149,8 @@ const onAddedListener = (files: readonly File[]) => {
                         header: 1
                     })
                     const headers: Object = tempHeadersValues[0]!
-                    const content: string = tempHeadersValues[1]!
-                    const headersString: string = Object.values(headers).map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
+                    const content: any[] = tempHeadersValues[1]!
+                    const headersString: string = Object.values(headers).map((col: string) => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
                     if (headersString != printHeaders
                         && headersString != negativeHeaders
                         && headersString != slideHeaders
@@ -151,8 +160,8 @@ const onAddedListener = (files: readonly File[]) => {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-
-                    const isInvalidContent = (content == null) ? true : (content.trim() == "" || !content.includes(",")) ? true : false
+                    console.log('content', content)
+                    const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
 
                     if (isInvalidContent) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
@@ -196,6 +205,7 @@ const onAddedListener = (files: readonly File[]) => {
 
     Promise.all(x).then(() => {
         let errorMessage = ''
+        console.log('error message', errorMessage)
         if (names_of_files_with_headers_only.length > 0)
             errorMessage += "These file(s) only have headers: \n" + names_of_files_with_headers_only.join("\n") + "\n\n"
         if (names_of_files_with_zero_bytes.length > 0)

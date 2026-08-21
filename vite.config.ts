@@ -4,10 +4,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tsconfigPaths from 'vite-tsconfig-paths';
-import path from "path";
 import { join } from 'node:path'
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { promises as fs } from "fs";
+import { quasar } from '@quasar/vite-plugin'
 export default defineConfig({
   server: { port: 5173 },
   plugins: [

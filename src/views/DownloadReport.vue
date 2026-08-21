@@ -135,7 +135,7 @@ const onSubmit = handleSubmit(async (values) => {
 
     <div class="q-pa-md small common ">
         <q-form class="download-report-form" @submit.prevent="onSubmit">
-            <h1>Download Reports</h1>
+            <h3>Download Reports</h3>
             <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" class="select" :options="options"
                 hint="Select catalogue(s). Click on the same catalogue to unselect" multiple></q-select>
             <q-input v-model="searchTerm" label="Search Term (Optional)" />

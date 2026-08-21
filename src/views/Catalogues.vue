@@ -1,16 +1,6 @@
-<style>
-.table-div {
-    max-width: 1000px;
-}
-
-.check {
-    display: flex;
-    flex-wrap: wrap;
-}
-</style>
 <template>
     <div class="q-pa-md large common">
-        <h1>View Catalogues </h1>
+        <h3>View Catalogues </h3>
         <q-btn-dropdown color="primary" class="dropdown"
             :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
             <q-list>
@@ -49,48 +39,43 @@
                 </q-item>
             </q-list>
         </q-btn-dropdown>
-        <div class="q-pa-md download-reports-form">
-            <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-            <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
-                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
-                :visible-columns="visibleColumns" :filter="filter" :loading="loading" selection="multiple"
-                v-model:selected="selected" @selection="onSelection" :wrap-cells="true">
-                <template v-slot:top="props">
-                    <div class="table-header-div">
-                        <div class="col-2 q-table__title"></div>
-                        <q-btn-dropdown label="hide columns">
-                            <div class="q-pa-md">
+        <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
+        <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
+            :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
+            :visible-columns="visibleColumns" :filter="filter" :loading="loading" selection="multiple"
+            v-model:selected="selected" @selection="onSelection" :wrap-cells="true">
+            <template v-slot:top="props">
+                <div class="table-header-div">
+                    <q-btn-dropdown label="hide columns">
+                        <div class="q-pa-md">
 
-                                <p>These toggles are for hiding individual rows</p>
-                                <div class="check" v-if="$q.screen.gt.xs">
-                                    <div v-for="v in columns">
-                                        <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
-                                    </div>
+                            <p>These toggles are for hiding individual rows</p>
+                            <div class="check" v-if="$q.screen.gt.xs">
+                                <div v-for="v in columns">
+                                    <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
                                 </div>
-                                <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                    :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                    option-value="name" style="min-width: 150px" />
-
                             </div>
-                        </q-btn-dropdown>
+                            <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                option-value="name" style="min-width: 150px" />
 
-
-                        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-                            <template v-slot:append>
-                                <q-icon name="search" />
-                            </template>
-                        </q-input>
-                        <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
-                            Selected</button>
-                    </div>
-                </template>
-            </q-table>
-            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v) => {
-                console.log(v)
-                return Object.values(v)[0]
-            })}} </div>
-            <p class="alert"> {{ errorMessage }}</p>
-        </div>
+                        </div>
+                    </q-btn-dropdown>
+                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                        <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
+                        Selected</button>
+                </div>
+            </template>
+        </q-table>
+        <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v) => {
+            console.log(v)
+            return Object.values(v)[0]
+        })}} </div>
+        <p class="alert"> {{ errorMessage }}</p>
     </div>
     <q-dialog v-model="confirm" persistent>
         <q-card class="column items-center 
@@ -118,25 +103,25 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
+
+
 .dropdown {
-    width: 100%;
     font-size: x-large;
+    width: 100%
 }
 
 
-.table-div {
-    max-width: 1400px !important;
-    height: 1500px;
-}
 
 .alert {
     color: red;
 }
 
 .table-header-div {
-    width: 100%;
+    width: 50%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
+    align-content: center;
+    flex-direction: row;
 }
 </style>
 <script setup lang="ts">

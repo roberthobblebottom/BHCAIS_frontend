@@ -2,27 +2,34 @@
 
     background-color: white;
     border-radius: 15px;
-    margin-right: 20%;
     padding: 2%;
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .large {
-    width: 100%;
-    min-height: 1800px;
+    min-width: 50vw;
+    max-width: 85vw;
+    max-height: 100vh;
+    min-height: 80vh;
 }
 
 .medium {
-    width: 60%;
-    min-height: 1800px;
-
+    max-width: 50vw;
+    min-height: 20vh;
 }
 
 .small {
-    width: 40%;
-    min-height: 700px;
-
+    max-width: 30vw;
+    min-height: 20vh;
 }
 
 .button {
     max-width: 200px !important;
+
+    float: right;
+}
+
+h3 {
+    margin-bottom: 1vh;
 }

@@ -56,7 +56,7 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
     <div class="small common">
 
         <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
-            <h1>Change Password</h1>
+            <h3>Change Password</h3>
 
             <div class="form-group">
                 <label>Old Password</label>
