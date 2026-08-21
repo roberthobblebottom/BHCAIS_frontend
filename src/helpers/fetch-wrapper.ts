@@ -6,6 +6,7 @@ export const fetchWrapper = {
     post: request('POST'),
     put: request('PUT'),
     delete: request('DELETE')
+
 };
 
 function request(method: string) {
@@ -39,7 +40,14 @@ export const login = (url: string, body: any) => {
     return fetch(url, requestOptions).then(handleResponse);
 }
 
+export const getFiles = (url: string) => {
+    const requestOptions: RequestInit = {
+        method: 'GET',
+        headers: authHeader(url)
+    };
 
+    return fetch(url, requestOptions).then(handleResponseForFiles);
+}
 // export const uploadFiles = (url: string, body: any){ 
 //     const requestOptions:RequestInit = {
 //             method:'POST',
@@ -82,6 +90,23 @@ function handleResponse(response: Response) {
 
             const error = data.detail;
             return Promise.reject(error);
+        }
+
+        return data;
+    });
+}
+
+function handleResponseForFiles(response: Response) {
+    return response.blob().then(data => {
+        if (!response.ok) {
+            const { user, logout } = useAuthStore();
+            if ([401, 403].includes(response.status) && user) {
+                // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
+                logout();
+            }
+
+
+            return Promise.reject('error downloading file(s)');
         }
 
         return data;

@@ -43,6 +43,7 @@
             </q-uploader>
             <!-- <button type="submit">Upload</button> -->
         </form>
+        <button class="button" @click="downloadTemplatesForTheCatelogs">Download Template</button>
     </div>
     <div>
         <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
@@ -87,6 +88,7 @@ import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 import { libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
+import { fetchWrapper, getFiles } from '../helpers/fetch-wrapper';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
 const fileUploaderRef = ref();
@@ -96,6 +98,21 @@ const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${localSt
 const formFields = ref(
     [{ name: 'user_id', value: localStorage.getItem("user_id")! }]
 )
+
+async function downloadTemplatesForTheCatelogs() {
+    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatelogs/`;
+
+    const response = getFiles(url).then((download) => {
+        var url = window.URL.createObjectURL(download);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = "templates for the catelogs";
+        document.body.appendChild(a); // append the element to the dom
+        a.click();
+        a.remove(); // afterwards, remove the element 
+    })
+}
+
 const onAddedListener = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []

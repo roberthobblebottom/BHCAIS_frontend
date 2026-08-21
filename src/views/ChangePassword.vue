@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
 
 async function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
     const { oldPassword, newPassword, confirmNewPassword } = values;
-    const url = `${import.meta.env.VITE_API_URL}/changePassword/`
+    const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
     try {
         response = await fetchWrapper.post(url, {
