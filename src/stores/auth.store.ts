@@ -42,6 +42,9 @@ export const useAuthStore = defineStore(
             localStorage.clear();
             router.push('/Login');
         }
+    },
+    persist: {
+        storage: sessionStorage
     }
 }
 );

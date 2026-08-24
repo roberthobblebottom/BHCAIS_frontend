@@ -71,6 +71,7 @@ function authHeader(url: string): HeadersInit {
     const { user } = useAuthStore();
     const isLoggedIn = !!user?.token;
     const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
+    console.log('auth header isloggedin', isLoggedIn)
     if (isLoggedIn && isApiUrl) {
         return { Authorization: `Bearer ${user.token}` };
     } else {
@@ -80,6 +81,7 @@ function authHeader(url: string): HeadersInit {
 
 function handleResponse(response: Response) {
     return response.text().then(text => {
+        console.log('response', response)
         const data = text && JSON.parse(text);
         if (!response.ok) {
             const { user, logout } = useAuthStore();
