@@ -1,80 +1,23 @@
-<script setup lang='ts'>
-import { Form, Field, type FormActions, type GenericObject } from 'vee-validate';
-import * as Yup from 'yup';
-import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
-import { passwordError, passwordRegex } from '../constants.ts';
-import commonPasswords from '../common-passwords.txt?raw'
-import { ref } from 'vue';
-import { useAuthStore } from '../stores/auth.store.ts';
-const showAlert = ref(false)
-const alertMessage = ref('')
-const schema = Yup.object().shape({
-    oldPassword: Yup.string().required('required'),
-    //temporary changed to one min char
-    newPassword: Yup.string()
-        .min(7, 'minimum of 7 characters for password   ')
-        .matches(passwordRegex, passwordError)
-        // ,
-        .notOneOf(commonPasswords.split("\n"), "The password is too common"),
-    confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
-});
-
-async function onSubmit(values: GenericObject, { setErrors }: FormActions<GenericObject>) {
-    const { oldPassword, newPassword, confirmNewPassword } = values;
-    const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
-    let response = null
-    try {
-        response = await fetchWrapper.post(url, {
-            'username': useAuthStore().user.email,
-            'old_password': oldPassword,
-            'new_password': newPassword,
-
-            'confirm_new_password': confirmNewPassword
-        })
-    } catch (error: any) {
-        alertMessage.value = "ERROR: " + error.toString()
-        showAlert.value = true
-    }
-    if (response != null) {
-        alertMessage.value = "sucessfully changed password"
-        showAlert.value = true;
-    }
-
-
-} 
-</script>
-<style scoped>
-@import '../../public/css/login.css';
-@import '../../public/css/main-content-variants.css';
-@import '../../public/css/dialog.css';
-
-.invalid-feedback {
-    color: red;
-}
-</style>
 <template>
     <div class="small common">
 
-        <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
+        <q-form validation-observer @submit.prevent="onSubmit">
             <h3>Change Password</h3>
 
             <div class="form-group">
                 <label>Old Password</label>
-                <Field name="oldPassword" type="password" class="form-control"
-                    :class="{ 'is-invalid': errors.oldPassword }" />
-                <div class="invalid-feedback">{{ errors.oldPassword }}</div>
+                <q-input name="oldPassword" type="password" class="form-control" v-model="oldPassword"
+                    v-bind="oldPasswordProps" />
             </div>
             <div class="form-group">
                 <label>New Password </label>
-                <Field name="newPassword" type="password" class="form-control "
-                    :class="{ 'is-invalid': errors.newPassword }" />
-                <div class="invalid-feedback">{{ errors.newPassword }}</div>
+                <q-input name="newPassword" type="password" class="form-control " v-model="newPassword"
+                    v-bind="newPasswordProps" />
             </div>
             <div class="form-group">
                 <label>Reconfirmed New Password </label>
-                <Field name="confirmNewPassword" type="password" class="form-control "
-                    :class="{ 'is-invalid': errors.confirmNewPassword }" />
-                <div class="invalid-feedback">{{ errors.confirmNewPassword }}</div>
+                <q-input name="confirmNewPassword" type="password" class="form-control " v-model="confirmNewPassword"
+                    v-bind="confirmNewPasswordProps" />
             </div>
             <div class="form-group">
                 <button class="button btn-primary" :disabled="isSubmitting">
@@ -82,8 +25,7 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
                     change
                 </button>
             </div>
-            <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
-        </Form>
+        </q-form>
         <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
@@ -94,3 +36,78 @@ async function onSubmit(values: GenericObject, { setErrors }: FormActions<Generi
         </q-dialog>
     </div>
 </template>
+<style scoped>
+@import '../../public/css/login.css';
+@import '../../public/css/main-content-variants.css';
+@import '../../public/css/dialog.css';
+
+.invalid-feedback {
+    color: red;
+}
+</style>
+
+<script setup lang='ts'>
+import { useForm } from 'vee-validate';
+import * as Yup from 'yup';
+import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
+import { passwordError, passwordRegex } from '../constants.ts';
+import commonPasswords from '../common-passwords.txt?raw'
+import { ref, type MaybeRefOrGetter } from 'vue';
+import { useAuthStore } from '../stores/auth.store.ts';
+const showAlert = ref(false)
+const alertMessage = ref('')
+const isSubmitting = ref(false)
+const schema = Yup.object().shape({
+    oldPassword: Yup.string().required('required'),
+    //temporary changed to one min char
+    newPassword: Yup.string()
+        .min(7, 'minimum of 7 characters for password   ')
+        .matches(passwordRegex, passwordError)
+        // ,
+        .notOneOf(commonPasswords.split("\n"), "The password is too common"),
+    confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
+});
+const { defineField, handleSubmit, resetForm } = useForm({
+    validationSchema: schema,
+    initialValues: {
+        terms: false,
+    },
+});
+
+const quasarConfig = (state: any) => ({
+    props: {
+        error: !!state.errors[0],
+        'error-message': state.errors[0],
+    },
+});
+
+
+const [oldPassword, oldPasswordProps] = defineField("oldPassword" as MaybeRefOrGetter, quasarConfig)
+const [newPassword, newPasswordProps] = defineField("newPassword" as MaybeRefOrGetter, quasarConfig)
+const [confirmNewPassword, confirmNewPasswordProps] = defineField("confirmNewPassword" as MaybeRefOrGetter, quasarConfig)
+const onSubmit = handleSubmit(async (values) => {
+    const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
+    let response = null
+    try {
+        response = await fetchWrapper.post(url, {
+            'username': useAuthStore().user.email,
+            'old_password': oldPassword.value,
+            'new_password': newPassword.value,
+
+            'confirm_new_password': confirmNewPassword.value
+        })
+    } catch (error: any) {
+        alertMessage.value = "ERROR: " + error.toString()
+        showAlert.value = true
+    } finally {
+
+        resetForm()
+    }
+    if (response != null) {
+        alertMessage.value = "sucessfully changed password"
+        showAlert.value = true;
+    }
+
+
+})
+</script>
