@@ -18,7 +18,7 @@
                         <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
                     </div>
                     <div class="row" v-if="authStore.user.user_type == 'admin'">
-                        <RouterLink to="/ViewAllUsers" class="nav-item nav-link ">
+                        <RouterLink to="/UserManagement" class="nav-item nav-link ">
                             <i class="fas fa-globe"></i> User Management
                         </RouterLink>
                     </div>
