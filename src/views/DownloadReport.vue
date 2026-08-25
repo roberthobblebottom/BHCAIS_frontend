@@ -117,7 +117,6 @@ const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues"
 // const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
 
 // function clearDates(event: any) {
-// console.log(dateRange.value)
 // dateRange.value = []
 // }
 
@@ -148,11 +147,11 @@ const onSubmit = handleSubmit(async (values) => {
             return Object.values(row).join(',') + "\n"
         }).join("")
         const tableInStringFormat = header + rows
-
+        console.log('tableInStringFormat', tableInStringFormat)
         allCatalogueResultsInStringFormat.push({
             name: result.catalogue_name + "_raw" + searchTerm2
                 + " downloaded on " + new Date() + '.csv',
-            input: Buffer.from('data:text/csv;charset=utf-8,' + encodeURIComponent(tableInStringFormat))
+            input: Buffer.from(tableInStringFormat)
         })
 
     }
