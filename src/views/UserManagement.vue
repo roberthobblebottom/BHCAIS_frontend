@@ -10,7 +10,11 @@
         </div>
         <q-table class="table-div" v-model:rows="rows" :columns="columns" :row-key="rowKey" ref="tableRef"
             :loading="loading" :wrap-cells="true">
-
+            <template v-slot:body-cell-action="props">
+                <q-td :props="props">
+                    <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"></q-btn>
+                </q-td>
+            </template>
         </q-table>
     </div>
 
@@ -72,10 +76,10 @@
 @import '../../public/css/dialog.css';
 </style>
 <script setup lang="ts">
-import { QForm, type QTr } from 'quasar';
-import { onBeforeMount, ref, type MaybeRefOrGetter, type Ref, nextTick } from 'vue';
-import { fetchWrapper } from '../helpers/fetch-wrapper';
-import { useField, useForm, type BaseFieldProps } from 'vee-validate';
+import { QForm, QTr } from 'quasar';
+import { nextTick, onBeforeMount, onBeforeUpdate, onUpdated, ref, type MaybeRefOrGetter, type Ref } from 'vue';
+import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper';
+import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
 import { passwordRegex, passwordError } from '../constants';
@@ -86,14 +90,21 @@ const rows: Ref<QTr[]> = ref([])
 const rowKey = ref('user_id')
 const loading = ref(false)
 
-const userForm: Ref<QForm | null> = ref(null)
 const showFormDialog = ref(false)
 const showAlertDialog = ref(false)
 const isEdit = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
+interface UserInterface {
+    user_id: number
+    email: number
+    password: string
+    confirm_password: string
+    user_type: string
+}
 
+let oldUserValuesBeforeEdit: UserInterface | null = null
 const schema = yup.object().shape({
     email: yup.string().email().required("email  is required"),
     password: yup.string()
@@ -125,55 +136,81 @@ const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, qu
 const [confirmPassword, confirmPasswordProps] = defineField("confirmPassword" as MaybeRefOrGetter, quasarConfig)
 const [userType, userTypeProps] = defineField("userType" as MaybeRefOrGetter, quasarConfig)
 const getData = async () => {
+    console.log('in get data')
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
-    const response = await fetchWrapper.get(url)
+    const header = { "Cached-Content": "no-cache" }
+    const response = await noCacheRequestFunction(url, 'get', header)
 
     const results = response.results
+    console.log('results', results)
     rows.value = results
     const temp: any = []
     for (const h of Object.keys(results[0])) {
         temp.push({
             name: h,
             required: false,
-            label: h,
+            label: h.replaceAll("_", " "),
             align: 'left',
             field: (row: any) => row[h],
             format: (val: any) => val == null ? "" : val,
             sortable: true
         })
     }
-
+    temp.push({
+        name: "action",
+        required: false,
+        label: "action",
+        align: 'left',
+        field: (row: any) => row["action"],
+        format: (val: any) => val == null ? "" : val,
+        sortable: true
+    })
     columns.value = temp
 }
 
-onBeforeMount(getData)
+onBeforeMount(async () => {
+    console.log('onBeforeMount')
+    await getData()
+})
+
 
 function openCreateDialog() {
+    resetForm()
     showFormDialog.value = true
     isEdit.value = false
+}
+
+function openEditDialog(user: any) {
     resetForm()
+    isEdit.value = true
+    console.log('open edit dialog', user)
+    email.value = user.email
+    userType.value = user.user_type
+    oldUserValuesBeforeEdit = user
+    showFormDialog.value = true
 }
 
 
-
-const onCreate = handleSubmit(async (values) => {
+const onCreate = handleSubmit(async () => {
     isEdit.value = false
     showFormDialog.value = false
-    console.log('in onCreate')
 
     const url = `${import.meta.env.VITE_API_URL}/CreateUser/`
     try {
-        const response = await fetchWrapper.post(url, {
+        await fetchWrapper.post(url, {
             email: email.value,
             password: password.value,
             confirm_password: confirmPassword.value,
             user_type: userType.value,
         })
-        console.log('response', response)
 
         showAlertDialog.value = true
         alertDialogMessage.value = "Sucessfully created user"
-        getData()
+
+        const temp: any[] = rows.value
+        temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
+        rows.value = temp
+        resetForm()
 
     } catch (err: any) {
         showAlertDialog.value = true
@@ -181,9 +218,47 @@ const onCreate = handleSubmit(async (values) => {
     }
 
 })
-const onEdit = handleSubmit(async (values) => {
+const onEdit = handleSubmit(async () => {
     isEdit.value = false
     showFormDialog.value = false
     console.log('in onEdit')
+
+    const url = `${import.meta.env.VITE_API_URL}/EditUser/`
+    try {
+        const body = {
+            user_id: oldUserValuesBeforeEdit!.user_id,
+            email: email.value,
+            password: password.value == null ? "" : password.value,
+            confirm_password: confirmPassword.value == null ? "" : confirmPassword.value,
+            user_type: userType.value,
+        }
+        console.log(
+            'body', body
+        )
+        await fetchWrapper.post(url, body)
+
+        showAlertDialog.value = true
+        alertDialogMessage.value = "Sucessfully edited user"
+
+        // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
+        //     return value.$data
+        // }) as UserInterface[]
+        await getData()
+        nextTick()
+
+        console.log('after next tick')
+        //I don't know how to do these:
+        // console.log('temp', temp)
+        // temp = temp.slice(temp.indexOf(oldUserValuesBeforeEdit!), 1)
+        // console.log('temp', temp)
+        // temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
+        // rows.value = temp as QTr[]
+        oldUserValuesBeforeEdit = null
+        resetForm()
+
+    } catch (err: any) {
+        showAlertDialog.value = true
+        alertDialogMessage.value = "Error in Creating User: " + err
+    }
 })
 </script>

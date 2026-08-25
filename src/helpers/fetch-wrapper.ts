@@ -14,20 +14,37 @@ function request(method: string) {
 
         const requestOptions: RequestInit = {
             method,
-            headers: authHeader(url)
+            headers: authHeader(url, {})
         };
 
         if (body) {
             requestOptions.headers = { 'Content-Type': 'application/json' }
             requestOptions.body = JSON.stringify(body);
         }
+        console.log('url', url)
+        console.log('requestOptions', requestOptions)
         return fetch(url, requestOptions).then(handleResponse);
     }
+}
+export const noCacheRequestFunction = (url: string, method: string, header: any = {}, body: any = null) => {
+
+    const requestOptions: RequestInit = {
+        method,
+        headers: authHeader(url, header)
+    };
+
+    if (body) {
+        requestOptions.headers = { 'Content-Type': 'application/json' }
+        requestOptions.body = JSON.stringify(body);
+    }
+    console.log('url', url)
+    console.log('requestOptions', requestOptions)
+    return fetch(url, requestOptions).then(handleResponse);
 }
 export const login = (url: string, body: any) => {
     const requestOptions: RequestInit = {
         method: 'POST',
-        headers: authHeader(url)
+        headers: authHeader(url, {})
     };
     if (body) {
         const formData = new URLSearchParams();
@@ -40,13 +57,16 @@ export const login = (url: string, body: any) => {
     return fetch(url, requestOptions).then(handleResponse);
 }
 
-export const getFiles = (url: string) => {
+export const getFiles = async (url: string) => {
     const requestOptions: RequestInit = {
         method: 'GET',
-        headers: authHeader(url)
+        headers: authHeader(url, {})
     };
+    console.log('Headers', requestOptions.headers
 
-    return fetch(url, requestOptions).then(handleResponseForFiles);
+    )
+    const response = await fetch(url, requestOptions);
+    return handleResponseForFiles(response);
 }
 // export const uploadFiles = (url: string, body: any){ 
 //     const requestOptions:RequestInit = {
@@ -66,16 +86,17 @@ export const getFiles = (url: string) => {
 
 // helper functions
 
-function authHeader(url: string): HeadersInit {
+function authHeader(url: string, header: any): HeadersInit {
     // return auth header with jwt if user is logged in and request is to the api url
     const { user } = useAuthStore();
     const isLoggedIn = !!user?.token;
     const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
     console.log('auth header isloggedin', isLoggedIn)
     if (isLoggedIn && isApiUrl) {
-        return { Authorization: `Bearer ${user.token}` };
+        header['Authorization'] = `Bearer ${user.token}`
+        return header;
     } else {
-        return {};
+        return header;
     }
 }
 

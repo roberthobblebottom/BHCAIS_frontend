@@ -24,6 +24,7 @@ export const useAuthStore = defineStore(
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));
                 localStorage.setItem('user_type', JSON.stringify(user.user_type))
+                console.log('user_id', localStorage.getItem('user_id'))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
 

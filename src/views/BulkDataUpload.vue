@@ -11,12 +11,12 @@
                 </div>
                 <div class="col items-end">
 
-                    <button class="button" @click="downloadTemplatesForTheCatelogs">Download Template</button>
+                    <button class="button" @click.prevent="downloadTemplatesForTheCatelogs">Download Template</button>
                 </div>
             </div>
             <q-uploader class="fu " :multiple="true" persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
-                @failed="onFailedListener" :form-fields="formFields" color="grey-9">
+                @failed="onFailedListener" color="grey-9">
                 <template v-slot:header="scope">
                     <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
                         <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" icon="clear_all"
@@ -98,20 +98,20 @@ import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 import { libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
 import { fetchWrapper, getFiles } from '../helpers/fetch-wrapper';
+import { useAuthStore } from '../stores/auth.store';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
 const fileUploaderRef = ref();
 const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
-const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${localStorage.getItem('user_id')}`);
-const formFields = ref(
-    [{ name: 'user_id', value: localStorage.getItem("user_id")! }]
-)
+const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${useAuthStore().user.user_id}`);
+
 
 async function downloadTemplatesForTheCatelogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatelogs/`;
-
+    console.log('url', url)
     getFiles(url).then((download) => {
+        console.log('inside')
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;
