@@ -77,7 +77,7 @@
 </style>
 <script setup lang="ts">
 import { QForm, QTr } from 'quasar';
-import { nextTick, onBeforeMount, onBeforeUpdate, onUpdated, ref, type MaybeRefOrGetter, type Ref } from 'vue';
+import { nextTick, onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue';
 import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper';
 import { useForm } from 'vee-validate';
 
@@ -136,13 +136,11 @@ const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, qu
 const [confirmPassword, confirmPasswordProps] = defineField("confirmPassword" as MaybeRefOrGetter, quasarConfig)
 const [userType, userTypeProps] = defineField("userType" as MaybeRefOrGetter, quasarConfig)
 const getData = async () => {
-    console.log('in get data')
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
     const header = { "Cached-Content": "no-cache" }
     const response = await noCacheRequestFunction(url, 'get', header)
 
     const results = response.results
-    console.log('results', results)
     rows.value = results
     const temp: any = []
     for (const h of Object.keys(results[0])) {
@@ -169,7 +167,6 @@ const getData = async () => {
 }
 
 onBeforeMount(async () => {
-    console.log('onBeforeMount')
     await getData()
 })
 
@@ -183,7 +180,6 @@ function openCreateDialog() {
 function openEditDialog(user: any) {
     resetForm()
     isEdit.value = true
-    console.log('open edit dialog', user)
     email.value = user.email
     userType.value = user.user_type
     oldUserValuesBeforeEdit = user
@@ -221,7 +217,6 @@ const onCreate = handleSubmit(async () => {
 const onEdit = handleSubmit(async () => {
     isEdit.value = false
     showFormDialog.value = false
-    console.log('in onEdit')
 
     const url = `${import.meta.env.VITE_API_URL}/EditUser/`
     try {
@@ -232,9 +227,7 @@ const onEdit = handleSubmit(async () => {
             confirm_password: confirmPassword.value == null ? "" : confirmPassword.value,
             user_type: userType.value,
         }
-        console.log(
-            'body', body
-        )
+
         await fetchWrapper.post(url, body)
 
         showAlertDialog.value = true
@@ -243,10 +236,8 @@ const onEdit = handleSubmit(async () => {
         // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
         //     return value.$data
         // }) as UserInterface[]
-        await getData()
-        nextTick()
+        await getData() // less efficient than directly putting it into the table but this works.
 
-        console.log('after next tick')
         //I don't know how to do these:
         // console.log('temp', temp)
         // temp = temp.slice(temp.indexOf(oldUserValuesBeforeEdit!), 1)
