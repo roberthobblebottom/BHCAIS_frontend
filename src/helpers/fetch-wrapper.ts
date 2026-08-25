@@ -21,8 +21,6 @@ function request(method: string) {
             requestOptions.headers = { 'Content-Type': 'application/json' }
             requestOptions.body = JSON.stringify(body);
         }
-        console.log('url', url)
-        console.log('requestOptions', requestOptions)
         return fetch(url, requestOptions).then(handleResponse);
     }
 }
@@ -37,8 +35,6 @@ export const noCacheRequestFunction = (url: string, method: string, header: any 
         requestOptions.headers = { 'Content-Type': 'application/json' }
         requestOptions.body = JSON.stringify(body);
     }
-    console.log('url', url)
-    console.log('requestOptions', requestOptions)
     return fetch(url, requestOptions).then(handleResponse);
 }
 export const login = (url: string, body: any) => {
@@ -62,9 +58,7 @@ export const getFiles = async (url: string) => {
         method: 'GET',
         headers: authHeader(url, {})
     };
-    console.log('Headers', requestOptions.headers
 
-    )
     const response = await fetch(url, requestOptions);
     return handleResponseForFiles(response);
 }

@@ -109,9 +109,7 @@ const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${useAuth
 
 async function downloadTemplatesForTheCatelogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatelogs/`;
-    console.log('url', url)
     getFiles(url).then((download) => {
-        console.log('inside')
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;
@@ -160,7 +158,6 @@ const onAddedListener = (files: readonly File[]) => {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
-                    console.log('content', content)
                     const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
 
                     if (isInvalidContent) {
@@ -189,11 +186,13 @@ const onAddedListener = (files: readonly File[]) => {
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     const content = csv.split('\n').slice(2)
-                    if (content.length == 1 || content[0]?.trim() == "" || !content.includes(',')) {
+                    if (content.length == 1 || content[0]?.trim() == "") {
+                        fileUploaderRef.value.removeFile(file)
+                        names_of_files_with_headers_only.push(file.name)
+                    } else if (content[0]!.includes(',')) {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
                     }
-
                     resolve()
                 }
                 reader.readAsText(file)

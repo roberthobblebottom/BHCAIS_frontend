@@ -17,14 +17,12 @@ export const useAuthStore = defineStore(
             try {
                 const user = await login(`${baseUrl}/Login`, { username, password });
                 // update pinia state
-                console.log('user', user)
                 this.user = user;
 
                 // store user details and jwt in local storage to keep user logged in between page refreshes
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));
                 localStorage.setItem('user_type', JSON.stringify(user.user_type))
-                console.log('user_id', localStorage.getItem('user_id'))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
 

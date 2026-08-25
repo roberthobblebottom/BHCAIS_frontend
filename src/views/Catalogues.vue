@@ -72,7 +72,6 @@
             </template>
         </q-table>
         <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v) => {
-            console.log(v)
             return Object.values(v)[0]
         })}} </div>
         <p class="alert"> {{ errorMessage }}</p>
@@ -173,15 +172,16 @@ async function deleteSelected() {
         selectedIds.push(Object.values(x)[0])
 
     const url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
-    const response = await fetchWrapper.post(url,
-        {
-            ids_to_be_deleted: selectedIds,
-            catalogue_name: catalogueName.value
-        })
-    if (!response.ok) {
-        console.error("response not okay \n" + response)
-        return
+    try {
+        await fetchWrapper.post(url,
+            {
+                ids_to_be_deleted: selectedIds,
+                catalogue_name: catalogueName.value
+            })
+    } catch (error: any) {
+        console.error(error)
     }
+
     const newRows = []
     for (const row of rows.value) {
         const x = Object.values({ ...row })[0]
