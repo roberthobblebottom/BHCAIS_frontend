@@ -70,7 +70,7 @@
                 {{ alertDialogMessage }}
                 <div class="delete-confirmation row justify-evenly" v-if="isDeleteConfirmationDialog">
                     <q-btn label="Cancel" color="secondary" v-close-popup />
-                    <q-btn label="Delete" color="primary" />
+                    <q-btn label="Delete" color="primary" @click="onDelete(userIdToBeDeleted)" />
 
                 </div>
                 <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
@@ -110,6 +110,7 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
 const isDeleteConfirmationDialog = ref(false)
+const userIdToBeDeleted = ref(-1)
 interface UserInterface {
     user_id: number
     email: number
@@ -203,6 +204,7 @@ function openConfirmDeleteDialog(user: any) {
     isDeleteConfirmationDialog.value = true
     showAlertDialog.value = true
     alertDialogMessage.value = "are you sure you want to delete this user? " + user.email
+    userIdToBeDeleted.value = user.user_id
 }
 
 
@@ -269,7 +271,29 @@ const onEdit = handleSubmit(async () => {
 
     } catch (err: any) {
         showAlertDialog.value = true
-        alertDialogMessage.value = "Error in Creating User: " + err
+        alertDialogMessage.value = "Error in editing User: " + err
     }
 })
+async function onDelete(user_id: number) {
+    const url = `${import.meta.env.VITE_API_URL}/DeleteUser/`
+    try {
+        const body = {
+            user_id: user_id,
+        }
+
+        await fetchWrapper.post(url, body)
+
+        alertDialogMessage.value = "Sucessfully Deleted user"
+
+        await getData() // less efficient than directly putting it into the table but this works.
+
+    } catch (err: any) {
+        alertDialogMessage.value = "Error in Deleting User: " + err
+    } finally {
+        showAlertDialog.value = true
+        isDeleteConfirmationDialog.value = false
+
+    }
+}
+
 </script>
