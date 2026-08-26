@@ -126,7 +126,7 @@ const onSubmit = handleSubmit(async (values) => {
         search_term: searchTerm.value,
         // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }
-    let url = `${import.meta.env.VITE_API_URL}/downloadFiles/`
+    let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
     const results = response.results
     const allCatalogueResultsInStringFormat = []

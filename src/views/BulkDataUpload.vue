@@ -104,7 +104,7 @@ const dialogMessage = ref("");
 const fileUploaderRef = ref();
 const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
-const url_ = ref(`${import.meta.env.VITE_API_URL}/uploadFiles/?user_id=${useAuthStore().user.user_id}`);
+const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
 
 
 async function downloadTemplatesForTheCatelogs() {

@@ -90,8 +90,8 @@
                 </span>
             </q-card-section>
             <q-card-section class="row ">
-                <q-btn flat label="Cancel" color="primary" v-close-popup />
-                <q-btn flat label="Delete" color="primary" v-close-popup @click="deleteSelected" />
+                <q-btn label="Cancel" color="secondary" v-close-popup />
+                <q-btn label="Delete" color="primary" v-close-popup @click="deleteSelected" />
             </q-card-section>
 
 
@@ -171,7 +171,7 @@ async function deleteSelected() {
     for (const x of selected.value)
         selectedIds.push(Object.values(x)[0])
 
-    const url = `${import.meta.env.VITE_API_URL}/deleteSelectedRows/`
+    const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
     try {
         await fetchWrapper.post(url,
             {
@@ -203,7 +203,7 @@ async function onRequest(props: any) {
     loading.value = true
     // emulate server
     // setTimeout(async () => {
-    let url = `${import.meta.env.VITE_API_URL}/getCatalogue/`
+    let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
         + `?catalogue_name=${catalogueName.value}`
         + `&rows_per_page=${rowsPerPage}`
         + `&current_page_number=${page}`

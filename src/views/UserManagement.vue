@@ -188,17 +188,19 @@ function openCreateDialog() {
     resetForm()
     isDeleteConfirmationDialog.value = false
     showFormDialog.value = true
+
     isEdit.value = false
 }
 
 function openEditDialog(user: any) {
     resetForm()
     isDeleteConfirmationDialog.value = false
+    showFormDialog.value = true
+
     isEdit.value = true
     email.value = user.email
     userType.value = user.user_type
     oldUserValuesBeforeEdit = user
-    showFormDialog.value = true
 }
 function openConfirmDeleteDialog(user: any) {
     isDeleteConfirmationDialog.value = true
@@ -222,7 +224,6 @@ const onCreate = handleSubmit(async () => {
             user_type: userType.value,
         })
 
-        showAlertDialog.value = true
         alertDialogMessage.value = "Sucessfully created user"
 
         const temp: any[] = rows.value
@@ -231,8 +232,10 @@ const onCreate = handleSubmit(async () => {
         resetForm()
 
     } catch (err: any) {
-        showAlertDialog.value = true
         alertDialogMessage.value = "Error in Creating User: " + err
+    }
+    finally {
+        showAlertDialog.value = true
     }
 
 })
@@ -252,7 +255,6 @@ const onEdit = handleSubmit(async () => {
 
         await fetchWrapper.post(url, body)
 
-        showAlertDialog.value = true
         alertDialogMessage.value = "Sucessfully edited user"
 
         // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
@@ -270,8 +272,9 @@ const onEdit = handleSubmit(async () => {
         resetForm()
 
     } catch (err: any) {
-        showAlertDialog.value = true
         alertDialogMessage.value = "Error in editing User: " + err
+    } finally {
+        showAlertDialog.value = true
     }
 })
 async function onDelete(user_id: number) {
@@ -292,7 +295,6 @@ async function onDelete(user_id: number) {
     } finally {
         showAlertDialog.value = true
         isDeleteConfirmationDialog.value = false
-
     }
 }
 
