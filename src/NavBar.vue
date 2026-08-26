@@ -10,7 +10,7 @@
                 </div>
                 <div>
 
-                    <div class="row">
+                    <div class="col">
 
                         <p class="app-name">BHCAIS</p>
 
@@ -19,7 +19,8 @@
                     </div>
                     <div class="row" v-if="authStore.user.user_type == 'admin'">
                         <RouterLink to="/UserManagement" class="nav-item nav-link ">
-                            <i class="fas fa-globe"></i> User Management
+                            <i class="fa-solid fa-users-gear"></i>
+                            User Management
                         </RouterLink>
                     </div>
                     <div class="row">
@@ -58,7 +59,7 @@
                     </div>
                     <div class="row">
                         <RouterLink to="/Login" @click="authStore.logout()" class="nav-item nav-link">
-                            <i class="fas fa-key"></i>
+                            <i class="fa-solid fa-right-from-bracket"></i>
                             logout
                         </RouterLink>
                     </div>
@@ -74,11 +75,6 @@
 
 <style scoped>
 @import '../public/css/navbar.css';
-
-.user-details {
-    font-size: medium;
-    text-align: left !important;
-}
 </style>
 
 <script setup lang="ts">

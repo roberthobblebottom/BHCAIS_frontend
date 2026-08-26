@@ -5,24 +5,22 @@
             <h3>Change Password</h3>
 
             <div class="form-group">
-                <label>Old Password</label>
-                <q-input name="oldPassword" type="password" class="form-control" v-model="oldPassword"
-                    v-bind="oldPasswordProps" />
+                <q-input name="oldPassword" label="Old Password" type="password" class="form-control"
+                    v-model="oldPassword" v-bind="oldPasswordProps" />
             </div>
             <div class="form-group">
-                <label>New Password </label>
-                <q-input name="newPassword" type="password" class="form-control " v-model="newPassword"
-                    v-bind="newPasswordProps" />
+                <q-input name="newPassword" label="New Password" type="password" class="form-control "
+                    v-model="newPassword" v-bind="newPasswordProps" />
             </div>
             <div class="form-group">
-                <label>Reconfirmed New Password </label>
-                <q-input name="confirmNewPassword" type="password" class="form-control " v-model="confirmNewPassword"
-                    v-bind="confirmNewPasswordProps" />
+                <q-input name="confirmNewPassword" label="Confirm New Password" type="password" class="form-control "
+                    v-model="confirmNewPassword" v-bind="confirmNewPasswordProps" />
             </div>
-            <div class="form-group">
+            <div class="justify-center">
+
                 <button class="button btn-primary" :disabled="isSubmitting">
                     <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
-                    change
+                    Change
                 </button>
             </div>
         </q-form>

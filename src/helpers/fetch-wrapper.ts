@@ -24,8 +24,8 @@ function request(method: string) {
         return fetch(url, requestOptions).then(handleResponse);
     }
 }
-export const noCacheRequestFunction = (url: string, method: string, header: any = {}, body: any = null) => {
-
+export const noCacheRequestFunction = (url: string, method: string, body: any = null) => {
+    const header: any = { 'Cached-Content': 'no-cache' }
     const requestOptions: RequestInit = {
         method,
         headers: authHeader(url, header)

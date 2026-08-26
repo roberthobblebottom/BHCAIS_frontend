@@ -21,8 +21,14 @@
 
 .app-name {
   font-size: xx-large !important;
-  margin-left: -10%;
+  text-align: center;
   font-weight: 900;
+}
+
+.user-details {
+  text-align: center !important;
+
+  font-size: medium;
 }
 
 .row {

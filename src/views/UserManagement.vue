@@ -1,18 +1,22 @@
 <template>
 
     <div class="q-pa-md large common">
-        <h1>
+        <h3>
 
-            View Users
-        </h1>
-        <div class="row items-right">
+            User Management
+        </h3>
+        <div class="row justify-end q-mb-md">
             <button class="button" @click="openCreateDialog">Create User</button>
         </div>
         <q-table class="table-div" v-model:rows="rows" :columns="columns" :row-key="rowKey" ref="tableRef"
             :loading="loading" :wrap-cells="true">
             <template v-slot:body-cell-action="props">
                 <q-td :props="props">
-                    <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"></q-btn>
+                    <div class="row justify-around">
+                        <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"></q-btn>
+                        <q-btn color="red" @click="openConfirmDeleteDialog(props.row)" label="Delete"></q-btn>
+                    </div>
+
                 </q-td>
             </template>
         </q-table>
@@ -57,15 +61,19 @@
         </q-card>
     </q-dialog>
     <q-dialog v-model="showAlertDialog">
-
         <q-card class="column items-center 
             q-pb-none text-h6 dialog ">
-
             <q-card-section class="  items-center column q-pb-none">
-                <q-avatar icon="error" color="primary" text-color="white" class="" />
+                <q-avatar v-if="isDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white"
+                    class="" />
+                <q-avatar v-else icon="error" color="primary" text-color="white" class="" />
                 {{ alertDialogMessage }}
+                <div class="delete-confirmation row justify-evenly" v-if="isDeleteConfirmationDialog">
+                    <q-btn label="Cancel" color="secondary" v-close-popup />
+                    <q-btn label="Delete" color="primary" />
 
-                <q-btn label="Ok" color="primary" v-close-popup autofocus />
+                </div>
+                <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
             </q-card-section>
 
         </q-card>
@@ -74,6 +82,11 @@
 </template>
 <style lang="css" scoped>
 @import '../../public/css/dialog.css';
+@import '../../public/css/main-content-variants.css';
+
+.delete-confirmation {
+    width: 100%;
+}
 </style>
 <script setup lang="ts">
 import { QForm, QTr } from 'quasar';
@@ -96,6 +109,7 @@ const isEdit = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
+const isDeleteConfirmationDialog = ref(false)
 interface UserInterface {
     user_id: number
     email: number
@@ -137,8 +151,8 @@ const [confirmPassword, confirmPasswordProps] = defineField("confirmPassword" as
 const [userType, userTypeProps] = defineField("userType" as MaybeRefOrGetter, quasarConfig)
 const getData = async () => {
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
-    const header = { "Cached-Content": "no-cache" }
-    const response = await noCacheRequestFunction(url, 'get', header)
+    // const header = { "Cached-Content": "no-cache" }
+    const response = await noCacheRequestFunction(url, 'get')
 
     const results = response.results
     rows.value = results
@@ -166,25 +180,31 @@ const getData = async () => {
     columns.value = temp
 }
 
-onBeforeMount(async () => {
-    await getData()
-})
+onBeforeMount(async () => await getData())
 
 
 function openCreateDialog() {
     resetForm()
+    isDeleteConfirmationDialog.value = false
     showFormDialog.value = true
     isEdit.value = false
 }
 
 function openEditDialog(user: any) {
     resetForm()
+    isDeleteConfirmationDialog.value = false
     isEdit.value = true
     email.value = user.email
     userType.value = user.user_type
     oldUserValuesBeforeEdit = user
     showFormDialog.value = true
 }
+function openConfirmDeleteDialog(user: any) {
+    isDeleteConfirmationDialog.value = true
+    showAlertDialog.value = true
+    alertDialogMessage.value = "are you sure you want to delete this user? " + user.email
+}
+
 
 
 const onCreate = handleSubmit(async () => {
