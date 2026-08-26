@@ -82,10 +82,7 @@
             <q-card-section class="  items-center column q-pb-none">
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
                 <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
-                    {{selected.map((v) => {
-
-                        return Object.values(v)[0]
-                    }).join(',')}}
+                    {{selected.map((v) => Object.values(v)[0]).join(',')}}
                     from {{ catalogueName }} table?
                 </span>
             </q-card-section>

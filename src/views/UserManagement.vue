@@ -90,7 +90,7 @@
 </style>
 <script setup lang="ts">
 import { QForm, QTr } from 'quasar';
-import { nextTick, onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue';
+import { onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue';
 import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper';
 import { useForm } from 'vee-validate';
 
@@ -125,7 +125,6 @@ const schema = yup.object().shape({
     password: yup.string()
         .min(7, 'minimum of 7 characters for password   ')
         .matches(passwordRegex, passwordError)
-        // ,
         .notOneOf(commonPasswords.split("\n"), "The password is too common"),
     confirmPassword: yup.string().oneOf([yup.ref('password'), ""], "Passwords must match."),
     userType: yup.string().oneOf(['normal', 'admin']).required("User typer is required")

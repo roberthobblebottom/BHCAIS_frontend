@@ -189,7 +189,7 @@ const onAddedListener = (files: readonly File[]) => {
                     if (content.length == 1 || content[0]?.trim() == "") {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
-                    } else if (content[0]!.includes(',')) {
+                    } else if (!content[0]!.includes(',')) {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
                     }
