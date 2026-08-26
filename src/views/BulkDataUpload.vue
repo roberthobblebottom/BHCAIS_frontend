@@ -1,18 +1,10 @@
 <template>
     <div class="medium common">
-        <form @submit="submit">
-            <div class="flex justify-between">
-                <div class="col-3">
-                    <h3>Bulk Data Upload</h3>
-
-                    <p>Entries with existing data will be overwritten. <br>
-                        Only csv and single sheet xlsx are accepted.</p>
-
-                </div>
-                <div class="col items-end">
-
-                    <button class="button" @click.prevent="downloadTemplatesForTheCatelogs">Download Template</button>
-                </div>
+        <form>
+            <div class="">
+                <h3>Bulk Data Upload</h3>
+                <p>Entries with existing data will be overwritten. <br>
+                    Only csv and single sheet xlsx are accepted.</p>
             </div>
             <q-uploader class="fu " :multiple="true" persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
@@ -51,7 +43,8 @@
                     </div>
                 </template>
             </q-uploader>
-            <!-- <button type="submit">Upload</button> -->
+
+            <button class="button" @click.prevent="downloadTemplatesForTheCatelogs">Download Template</button>
         </form>
     </div>
     <div>
@@ -76,20 +69,10 @@
 @import '../../public/css/dialog.css';
 @import '../../public/css/main-content-variants.css';
 
-.instructions {
-    margin-bottom: 5%;
-}
-
-h1 {
-    text-align: center;
-}
-
 .fu {
+    margin-top: 2%;
+    margin-bottom: 2%;
     width: 100% !important;
-}
-
-label {
-    text-transform: unset !important;
 }
 </style>
 <script setup lang='ts'>
@@ -97,7 +80,7 @@ import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 import { libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
-import { fetchWrapper, getFiles } from '../helpers/fetch-wrapper';
+import { getFiles } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
@@ -242,7 +225,5 @@ const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; })
 
     fileUploaderRef.value.reset()
 }
-const submit = () => {
-    // event.preventDefault()
-}
+
 </script>

@@ -50,7 +50,7 @@ a,
   position: relative;
   right: anchor(left);
   top: anchor(top);
-  margin-left: 10vw;
+  margin-left: 15vw;
   margin-top: 10px;
   border-radius: 15px;
   display: flex;

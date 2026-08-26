@@ -9,11 +9,8 @@
                     <img src="/images/Group-1.svg" alt="LKCNHM Logo" />
                 </div>
                 <div>
-
                     <div class="col">
-
                         <p class="app-name">BHCAIS</p>
-
                         <p class="user-details">User: {{ authStore.user.email }}</p>
                         <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
                     </div>
@@ -24,7 +21,6 @@
                         </RouterLink>
                     </div>
                     <div class="row">
-
                         <RouterLink to="/QuickStart" class="nav-item nav-link ">
                             <i class="fas fa-globe"></i> Home
                         </RouterLink>
@@ -78,7 +74,6 @@
 </style>
 
 <script setup lang="ts">
-
 import { RouterLink, RouterView } from 'vue-router';
 import { useAuthStore } from './stores/auth.store.ts';
 const authStore = useAuthStore()
