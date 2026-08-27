@@ -3,40 +3,57 @@
 @import '../../public/css/dialog.css';
 
 .download-report-form {
-    display: grid;
-    row-gap: 5% !important;
+    width: 100%;
 }
 
-.row {
-    display: flex;
-    justify-content: space-evenly;
-}
 
-.d1 {
-    width: 30% !important;
-    border-radius: 15px !important;
-    font-size: medium !important;
-}
-
+/* 
 .dateSelector {
     width: 80% !important;
     font-size: x-large;
+} */
+
+
+
+.inner {
+    margin-top: 2vh;
+    background-color: rgb(253, 253, 253);
+    padding: 1%;
+
+}
+
+
+.common {
+
+    resize: horizontal;
+    overflow: auto;
+    max-width: 200vw !important;
+}
+
+.download-button {
+
+    margin-top: 2vh;
 }
 </style>
 <template>
 
-    <div class="q-pa-md medium common ">
+    <div class="medium common flex  flex-start" :style="{ height: divHeight }">
         <q-form class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
             <q-select v-model="selectCatelogues" v-bind="selectCataloguesProps" @clear="onCatelogueSelectClear"
                 @add="onCatelogueSelectAdd" @remove="onCatelogueSelectRemove" class="select" :options="catelogueOptions"
-                label="Select catalogue(s). Click on the same catalogue to unselect" multiple clearable></q-select>
-            <!-- <q-input v-model="searchTerm1" label="Search Term (Optional)" /> -->
-            <div class="column">
-                <p>Search Terms (Optional):</p>
-                <div class="row" v-for="x of searchTerms">
+                label="Select catalogue(s). " multiple clearable
+                hint="Click on the same catalogue to unselect"></q-select>
 
-                    <q-select v-model=x[0] class="select" :options="catalogueFields" label="Select catalogue field"
+            <div class="col inner" :style="{ height: divHeight2 }">
+                <div class="row ">
+                    <p class="col-8" :style="{ color: 'grey' }">Search Terms (Optional):</p>
+                    <Button class="col-2 " @click.prevent="clearAllSearchTerm">clear </Button>
+                    <Button class="col-2 " @click.prevent="addSearchTerm">Add </Button>
+                </div>
+                <div class="row " v-for="x of searchTerms">
+
+                    <q-select v-model=x[0] class="select col" :options="catalogueFields" label="Select catalogue field"
                         @filter="filterFn" multiple clearable style="width: 250px" use-input input-debounce="0">
                         <template v-slot:no-option>
                             <q-item>
@@ -44,17 +61,12 @@
                             </q-item>
                         </template>
                     </q-select>
-
-                    <q-input v-model=x[1] label="Search Term" />
+                    <q-input v-model=x[1] class="col" :style="{ 'margin-left': '5px' }" label="Search Term" />
 
                 </div>
-            </div>
-            <div class="row flex justify-evenly">
-
-                <Button class="col" @click.prevent="clearAllSearchTerm">clear search terms</Button>
-                <Button class="col" @click.prevent="addSearchTerm">Add search term</Button>
 
             </div>
+
             <div class="row">
                 <!-- <q-date class="dateSelector" title="select dates (Optional)"
                     subtitle="click on two dates on the calendar to select the start and end date. " v-model="dateRange"
@@ -66,7 +78,7 @@
                     </template>
 </q-date> -->
             </div>
-            <button class="button" type="submit" @click="onSubmit">
+            <button class="download-button " type="submit" @click="onSubmit">
                 Download</button>
 
         </q-form>
@@ -95,8 +107,7 @@
 <script setup lang="ts">
 
 //partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
-import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
-
+import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
@@ -112,6 +123,8 @@ const searchTerms = ref([["", ""]])
 const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
 const showAllCataloguesHaveNoResultsMessage = ref(false)
+const divHeight = ref("")
+const divHeight2 = ref("")
 const schema = yup.object().shape({
     selectCatalogues: yup.array().of(yup.string()).required("selectCatalogues is required"),
     // dateRange: yup.array().of(
@@ -211,39 +224,50 @@ function filterFn(val: string, update: any) {
 function addSearchTerm() {
     searchTerms.value.push(["", ""])
 
+    const heightSearchTermPanel: number = searchTerms.value.length * 5 + 5
+
+    const overallHeight = heightSearchTermPanel + 45
+
+    divHeight.value = (overallHeight * 0.99).toString() + "vh"
+    divHeight2.value = heightSearchTermPanel.toString() + "vh"
 }
 function clearAllSearchTerm() {
     searchTerms.value = [["", ""]]
+
+    divHeight.value = "50vh"
+    divHeight2.value = '10vh'
 }
 
 
 const onSubmit = handleSubmit(async (values) => {
-    console.log("SELECTED CATELOGUES", selectCatelogues.value)
     const searchTermToBeSent: any = {}
-    for (const aSearchTerm of searchTerms.value) {
-        if (aSearchTerm[0] == '' || aSearchTerm[1] == '')
-            continue
-
-        const cat_fields = aSearchTerm[0]!.toString().split(",")
-        for (const field of cat_fields)
-            searchTermToBeSent[field] = aSearchTerm[1]
+    for (const cat of selectCatelogues.value) {
+        searchTermToBeSent[cat] = {}
+        for (const aSearchTerm of searchTerms.value) {
+            if (aSearchTerm[0] == null || aSearchTerm[1] == null)
+                continue
+            const cat_fields = aSearchTerm[0]!.toString().split(",")
+            for (const field of cat_fields) {
+                const fieldWithNoCat = field.replace(cat, "").trim()
+                if (field.includes(cat) && fieldWithNoCat != "" && aSearchTerm[1].trim() != "")
+                    searchTermToBeSent[cat][fieldWithNoCat] = aSearchTerm[1]
+            }
+        }
+        if (Object.keys(searchTermToBeSent[cat]).length == 0)
+            delete searchTermToBeSent[cat]
     }
-
     const queryData = {
         selected_catalogues: [...selectCatelogues.value],
         search_terms: { ...searchTermToBeSent },
         // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }
     console.log('queryData', queryData)
-    return
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
 
-    return
     const results = response.results
 
     const allCatalogueResultsInStringFormat = []
-    const searchTerm2 = queryData.search_term == "" ? "" : " search term: " + queryData.search_term
     // const dateRangeArray = queryData.date_range != null ? Object.values(queryData.date_range) : []
     // const dateRangeString: string = dateRangeArray.length != 0 ? "from " + dateRangeArray[0] + " to " + dateRangeArray[1] : ""
 
@@ -260,10 +284,12 @@ const onSubmit = handleSubmit(async (values) => {
             return Object.values(row).join(',') + "\n"
         }).join("")
         const tableInStringFormat = header + rows
-        console.log('tableInStringFormat', tableInStringFormat)
+        const search_term_stringified = queryData.search_terms[result.catalogue_name] != null
+            ? "search term: " + JSON.stringify(queryData.search_terms[result.catalogue_name]).replaceAll("\"", "")
+            : ""
         allCatalogueResultsInStringFormat.push({
-            name: result.catalogue_name + "_raw" + searchTerm2
-                + " downloaded on " + new Date() + '.csv',
+            name: result.catalogue_name + "_raw " + search_term_stringified
+                + " Downloaded on: " + new Date() + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
 
@@ -273,17 +299,18 @@ const onSubmit = handleSubmit(async (values) => {
         showAllCataloguesHaveNoResultsMessage.value = true
         return
     }
-    const blob = await downloadZip(allCatalogueResultsInStringFormat as unknown as InputWithoutMeta[]).blob()
+    const blob = await downloadZip(allCatalogueResultsInStringFormat as unknown as InputWithoutMeta[])
+        .blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
-    link.download = "BHCAIS" + searchTerm2
+    link.download = "BHCAIS " + queryData.selected_catalogues
         + " downloaded on " + new Date().toLocaleDateString("en-UK") + '.zip'
     link.click()
     link.remove()
 
-    if (cataloguesWithNoResults.value.length > 0) {
+    if (cataloguesWithNoResults.value.length > 0)
         showCataloguesWithNoResultsAlertDialog.value = true
-    }
+
 
 });
 
