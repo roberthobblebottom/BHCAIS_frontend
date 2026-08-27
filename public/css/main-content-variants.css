@@ -17,6 +17,7 @@
 .medium {
     max-width: 50vw;
     min-height: 20vh;
+    height: 50vh;
 }
 
 .small {

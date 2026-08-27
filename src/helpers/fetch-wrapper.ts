@@ -25,12 +25,13 @@ function request(method: string) {
     }
 }
 export const noCacheRequestFunction = (url: string, method: string, body: any = null) => {
-    const header: any = { 'Cached-Content': 'no-cache' }
+    const header: any = { 'Cache-Control': 'no-cache' }
     const requestOptions: RequestInit = {
         method,
         headers: authHeader(url, header)
-    };
 
+
+    };
     if (body) {
         requestOptions.headers = { 'Content-Type': 'application/json' }
         requestOptions.body = JSON.stringify(body);

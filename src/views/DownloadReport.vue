@@ -25,12 +25,36 @@
 </style>
 <template>
 
-    <div class="q-pa-md small common ">
+    <div class="q-pa-md medium common ">
         <q-form class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
-            <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" class="select" :options="options"
-                label="Select catalogue(s). Click on the same catalogue to unselect" multiple></q-select>
-            <q-input v-model="searchTerm" label="Search Term (Optional)" />
+            <q-select v-model="selectCatelogues" v-bind="selectCataloguesProps" @clear="onCatelogueSelectClear"
+                @add="onCatelogueSelectAdd" @remove="onCatelogueSelectRemove" class="select" :options="catelogueOptions"
+                label="Select catalogue(s). Click on the same catalogue to unselect" multiple clearable></q-select>
+            <!-- <q-input v-model="searchTerm1" label="Search Term (Optional)" /> -->
+            <div class="column">
+                <p>Search Terms (Optional):</p>
+                <div class="row" v-for="x of searchTerms">
+
+                    <q-select v-model=x[0] class="select" :options="catalogueFields" label="Select catalogue field"
+                        @filter="filterFn" multiple clearable style="width: 250px" use-input input-debounce="0">
+                        <template v-slot:no-option>
+                            <q-item>
+                                <q-item-section class="text-grey"> No results </q-item-section>
+                            </q-item>
+                        </template>
+                    </q-select>
+
+                    <q-input v-model=x[1] label="Search Term" />
+
+                </div>
+            </div>
+            <div class="row flex justify-evenly">
+
+                <Button class="col" @click.prevent="clearAllSearchTerm">clear search terms</Button>
+                <Button class="col" @click.prevent="addSearchTerm">Add search term</Button>
+
+            </div>
             <div class="row">
                 <!-- <q-date class="dateSelector" title="select dates (Optional)"
                     subtitle="click on two dates on the calendar to select the start and end date. " v-model="dateRange"
@@ -70,8 +94,8 @@
 
 <script setup lang="ts">
 
-//credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
-import { ref, type MaybeRefOrGetter, type Ref } from 'vue'
+//partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
+import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 
 import { useForm } from 'vee-validate';
 
@@ -79,12 +103,12 @@ import * as yup from 'yup';
 import { fetchWrapper } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
-
-const searchTerm = ref('')
-const options = ref([
-    "print", "oral_history", "negative", "library_and_archive", "slide"
+import { getHeaderDict } from '../constants';
+const catelogueOptions = ref([
+    "print", "oral_history", "negative", "slide", "library_and_archive"
 ])
-
+const catalogueFields: Ref<string[]> = ref(["Select All"])
+const searchTerms = ref([["", ""]])
 const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
 const showAllCataloguesHaveNoResultsMessage = ref(false)
@@ -113,22 +137,111 @@ const quasarConfig = (state: any) => ({
 
 
 
-const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
+const [selectCatelogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
+selectCatelogues.value = []
 // const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
 
 // function clearDates(event: any) {
 // dateRange.value = []
 // }
 
+function onCatelogueSelectAdd(details: { index: number; value: string; }) {
+    const currentlySelected: string[] = selectCatelogues.value!
+    currentlySelected.push(details.value)
+    settingNewCatalogueFieldsSelect(currentlySelected)
+}
+function onCatelogueSelectRemove(details: { index: number; value: string; }) {
+    const currentlySelected: string[] = selectCatelogues.value!
+    currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
+    settingNewCatalogueFieldsSelect(currentlySelected)
+
+    for (const aSearchTerm of searchTerms.value) {
+        const cats = toRaw(aSearchTerm[0]!) // not sure why this returns string[] instead of string
+        const newCats = []
+        if (cats.length == 0)
+            continue
+        for (const cat of cats!) {
+            if (!cat.includes(details.value))
+                newCats.push(cat)
+        }
+        aSearchTerm[0] = newCats.join(",")
+    }
+}
+function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
+    //setting new catalog fields
+    catalogueFields.value = ["Select All"]
+    for (const x of currentlySelected) {
+
+        let key = x as keyof typeof getHeaderDict;
+        const newFields = []
+        for (const x of getHeaderDict[key])
+            newFields.push(key + " " + x)
+
+        catalogueFields.value = catalogueFields.value.concat(newFields)
+    }
+
+
+}
+function onCatelogueSelectClear() {
+    clearAllSearchTerm()
+    catalogueFields.value = ["Select All"]
+}
+function filterFn(val: string, update: any) {
+    //NOT WORKING
+    if (val === '') {
+        update(() => {
+            const new_fields = []
+            for (const x of catalogueFields.value) {
+                if (x.includes(val)) {
+                    new_fields.push(x)
+                }
+            }
+            console.log(new_fields)
+            catalogueFields.value = new_fields
+
+            // here you have access to "ref" which
+            // is the Vue reference of the QSelect
+        })
+        return
+    }
+
+
+}
+
+function addSearchTerm() {
+    searchTerms.value.push(["", ""])
+
+}
+function clearAllSearchTerm() {
+    searchTerms.value = [["", ""]]
+}
+
+
 const onSubmit = handleSubmit(async (values) => {
+    console.log("SELECTED CATELOGUES", selectCatelogues.value)
+    const searchTermToBeSent: any = {}
+    for (const aSearchTerm of searchTerms.value) {
+        if (aSearchTerm[0] == '' || aSearchTerm[1] == '')
+            continue
+
+        const cat_fields = aSearchTerm[0]!.toString().split(",")
+        for (const field of cat_fields)
+            searchTermToBeSent[field] = aSearchTerm[1]
+    }
+
     const queryData = {
-        selected_catalogues: [...selectCatalogues.value],
-        search_term: searchTerm.value,
+        selected_catalogues: [...selectCatelogues.value],
+        search_terms: { ...searchTermToBeSent },
         // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }
+    console.log('queryData', queryData)
+    return
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
+
+    return
     const results = response.results
+
     const allCatalogueResultsInStringFormat = []
     const searchTerm2 = queryData.search_term == "" ? "" : " search term: " + queryData.search_term
     // const dateRangeArray = queryData.date_range != null ? Object.values(queryData.date_range) : []
