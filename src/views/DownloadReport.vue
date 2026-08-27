@@ -53,8 +53,9 @@
                 </div>
                 <div class="row " v-for="x of searchTerms">
 
-                    <q-select v-model=x[0] class="select col" :options="catalogueFields" label="Select catalogue field"
-                        @filter="filterFn" multiple clearable style="width: 250px" use-input input-debounce="0">
+                    <q-select v-model=x[0] class="select col" :options="filteredCatelogueFields"
+                        label="Select catalogue field" @filter="filterFn" multiple clearable style="width: 250px"
+                        use-input input-debounce="0">
                         <template v-slot:no-option>
                             <q-item>
                                 <q-item-section class="text-grey"> No results </q-item-section>
@@ -107,7 +108,7 @@
 <script setup lang="ts">
 
 //partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
-import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
+import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
@@ -118,7 +119,8 @@ import { getHeaderDict } from '../constants';
 const catelogueOptions = ref([
     "print", "oral_history", "negative", "slide", "library_and_archive"
 ])
-const catalogueFields: Ref<string[]> = ref(["Select All"])
+const allCatelogueFields: Ref<string[]> = ref(["Select All"])
+const filteredCatelogueFields: Ref<string[]> = ref(["Select All"])
 const searchTerms = ref([["", ""]])
 const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
@@ -182,7 +184,8 @@ function onCatelogueSelectRemove(details: { index: number; value: string; }) {
 }
 function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
     //setting new catalog fields
-    catalogueFields.value = ["Select All"]
+    allCatelogueFields.value = ["Select All"]
+    filteredCatelogueFields.value = ["Select All"]
     for (const x of currentlySelected) {
 
         let key = x as keyof typeof getHeaderDict;
@@ -190,32 +193,41 @@ function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
         for (const x of getHeaderDict[key])
             newFields.push(key + " " + x)
 
-        catalogueFields.value = catalogueFields.value.concat(newFields)
+        allCatelogueFields.value = allCatelogueFields.value.concat(newFields)
+        filteredCatelogueFields.value = filteredCatelogueFields.value.concat(newFields)
     }
-
+    console.log("all", allCatelogueFields.value)
+    console.log('filted', filteredCatelogueFields.value)
 
 }
 function onCatelogueSelectClear() {
     clearAllSearchTerm()
-    catalogueFields.value = ["Select All"]
+    allCatelogueFields.value = ["Select All"]
 }
-function filterFn(val: string, update: any) {
+function filterFn(filterTerm: string, update: any) {
     //NOT WORKING
-    if (val === '') {
+    if (filterTerm.length > 2) {
         update(() => {
             const new_fields = []
-            for (const x of catalogueFields.value) {
-                if (x.includes(val)) {
-                    new_fields.push(x)
+            for (const catelogueField of allCatelogueFields.value) {
+                // console.log(catelogueField, filterTerm)
+                if (catelogueField.includes(filterTerm)) {
+                    new_fields.push(catelogueField)
                 }
             }
-            console.log(new_fields)
-            catalogueFields.value = new_fields
+            filteredCatelogueFields.value = new_fields
+            nextTick()
+            console.log(filterTerm)
+            console.log('filtered', filteredCatelogueFields.value)
 
             // here you have access to "ref" which
             // is the Vue reference of the QSelect
         })
-        return
+    } else {
+        update(() => {
+
+            filteredCatelogueFields.value = allCatelogueFields.value
+        })
     }
 
 
