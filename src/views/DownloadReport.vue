@@ -1,43 +1,5 @@
-<style scoped>
-@import '../../public/css/main-content-variants.css';
-@import '../../public/css/dialog.css';
-
-.download-report-form {
-    width: 100%;
-}
-
-
-/* 
-.dateSelector {
-    width: 80% !important;
-    font-size: x-large;
-} */
-
-
-
-.inner {
-    margin-top: 2vh;
-    background-color: rgb(253, 253, 253);
-    padding: 1%;
-
-}
-
-
-.common {
-
-    resize: horizontal;
-    overflow: auto;
-    max-width: 200vw !important;
-}
-
-.download-button {
-
-    margin-top: 2vh;
-}
-</style>
 <template>
-
-    <div class="medium common flex  flex-start" :style="{ height: divHeight }">
+    <div class="large common flex  flex-start" :style="{ height: overallDivHeight }">
         <q-form class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
             <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" @clear="onCatalogueSelectClear"
@@ -45,14 +7,15 @@
                 label="Select catalogue(s). " multiple clearable
                 hint="Click on the same catalogue to unselect"></q-select>
 
-            <div class="col inner" :style="{ height: divHeight2 }">
-                <div class="row ">
-                    <p class="col-8" :style="{ color: 'grey' }">Search Terms (Optional):</p>
-                    <Button class="col-2 " @click.prevent="clearAllSearchTerm">clear </Button>
-                    <Button class="col-2 " @click.prevent="addSearchTerm">Add </Button>
+            <div class="col inner" :style="{ height: searchTermPanelHeight }">
+                <div class="row justifiy-between items-end">
+                    <label class="col-7 search-terms-label">Search Terms
+                        (Optional):</label>
+                    <Button class="col " @click.prevent="clearAllSearchTerm"><i class="fa-solid fa-circle-xmark"></i>
+                        Clear </Button>
+                    <Button class="col " @click.prevent="addSearchTerm"><i class="fas fa-add"></i> Add </Button>
                 </div>
                 <div class="row " v-for="x of searchTerms">
-
                     <q-select v-model=x[0] class="select col" :options="filteredCatalogueFields"
                         label="Select catalogue field" @filter="filterFn" multiple clearable style="width: 250px"
                         use-input input-debounce="0">
@@ -61,54 +24,72 @@
                                 <q-item-section class="text-grey"> No results </q-item-section>
                             </q-item>
                         </template>
+                        <q-tooltip v-if="x[0]"> {{ (x[0])?.toString() }} </q-tooltip>
                     </q-select>
                     <q-input v-model=x[1] class="col" :style="{ 'margin-left': '5px' }" label="Search Term" />
-
                 </div>
-
             </div>
-
-            <div class="row">
-                <!-- <q-date class="dateSelector" title="select dates (Optional)"
-                    subtitle="click on two dates on the calendar to select the start and end date. " v-model="dateRange"
-                    range multiple>
-                    <template #default>
-                        <label v-if='dateRangeProps["error"]'> You can only select one range of dates; you
-                            cannnot select one or more dates or ranges {{ dateRangeProps["error-message"] }}</label>
-                        <button class="button" @click.prevent="clearDates">clear dates</button>
-                    </template>
-</q-date> -->
-            </div>
-            <button class="download-button " type="submit" @click="onSubmit">
+            <button class="download-button " type="submit" @click="onSubmit"><i class="fas fa-file-arrow-down"></i>
                 Download</button>
-
         </q-form>
-        <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
 
+        <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
             <q-card class="column items-center 
             q-pb-none text-h6 dialog ">
-
                 <q-card-section class="  items-center column q-pb-none">
                     <q-avatar icon="error" color="primary" text-color="white" class="" />
-                    {{ showAllCataloguesHaveNoResultsMessage ?
-                        "All catalogues do not have results."
+                    {{ showNoResultMessage
+                        ? "All catalogues do not have results."
                         : "There are no results from these catalogues: "
-                        + cataloguesWithNoResults.join(",") + ". They will not be included in the zip file." }}
+                        + cataloguesWithNoResults.join(",")
+                        + ". They will not be included in the zip file." }}
 
                     <q-btn label="Ok" color="primary" v-close-popup autofocus />
                 </q-card-section>
-
             </q-card>
-
         </q-dialog>
     </div>
 </template>
+<style scoped>
+@import '../../public/css/main-content-variants.css';
+@import '../../public/css/dialog.css';
 
+.download-report-form {
+    width: 100%;
+}
+
+.inner {
+    margin-top: 2vh;
+    background-color: rgb(253, 253, 253);
+}
+
+
+.common {
+    resize: horizontal;
+    overflow: auto;
+    max-width: 200vw !important;
+}
+
+.download-button {
+    margin-top: 2vh;
+    width: 26%;
+    float: right;
+}
+
+.large {
+    min-height: 20vh;
+}
+
+.search-terms-label {
+    color: grey !important;
+    font-size: 16px;
+}
+</style>
 
 <script setup lang="ts">
 
 //partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
-import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
@@ -121,20 +102,21 @@ const catalogueOptions = ref([
 ])
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
-const searchTerms = ref([["", ""]])
+const searchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
+
+//for catalogues with no results:
 const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
-const showAllCataloguesHaveNoResultsMessage = ref(false)
-const divHeight = ref("")
-const divHeight2 = ref("")
+const showNoResultMessage = ref(false)
+
+//styling
+const overallDivHeight = ref("")
+const searchTermPanelHeight = ref("")
+
+//field validation
 const schema = yup.object().shape({
     selectCatalogues: yup.array().of(yup.string()).required("selectCatalogues is required"),
-    // dateRange: yup.array().of(
-    //     yup.object().shape({
-    //         from: yup.date(),
-    //         to: yup.date()
-    //     })
-    // ).nullable().max(1, "you can only have one range of dates")
+
 });
 const { defineField, handleSubmit } = useForm({
     validationSchema: schema,
@@ -142,34 +124,24 @@ const { defineField, handleSubmit } = useForm({
         terms: false,
     },
 });
-
 const quasarConfig = (state: any) => ({
     props: {
         error: !!state.errors[0],
         'error-message': state.errors[0],
     },
 });
-
-
-
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
 selectCatalogues.value = []
-// const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
-
-// function clearDates(event: any) {
-// dateRange.value = []
-// }
 
 function onCatalogueSelectAdd(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.push(details.value)
-    settingNewCatalogueFieldsSelect(currentlySelected)
+    setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
 }
 function onCatalogueSelectRemove(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
-    settingNewCatalogueFieldsSelect(currentlySelected)
-
+    setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
     for (const aSearchTerm of searchTerms.value) {
         const cats = toRaw(aSearchTerm[0]!) // not sure why this returns string[] instead of string
         const newCats = []
@@ -182,87 +154,72 @@ function onCatalogueSelectRemove(details: { index: number; value: string; }) {
         aSearchTerm[0] = newCats.join(",")
     }
 }
-function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
+function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
     //setting new catalog fields
     allCatalogueFields.value = ["Select All"]
     filteredCatalogueFields.value = ["Select All"]
     for (const x of currentlySelected) {
-
-        let key = x as keyof typeof getHeaderDict;
+        let key = x as keyof typeof getHeaderDict; // for using string as keys for the object
         const newFields = []
         for (const x of getHeaderDict[key])
             newFields.push(key + " " + x)
-
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
-        filteredCatalogueFields.value = filteredCatalogueFields.value.concat(newFields)
+        filteredCatalogueFields.value = allCatalogueFields.value
     }
-    console.log("all", allCatalogueFields.value)
-    console.log('filted', filteredCatalogueFields.value)
-
 }
 function onCatalogueSelectClear() {
     clearAllSearchTerm()
     allCatalogueFields.value = ["Select All"]
 }
 function filterFn(filterTerm: string, update: any) {
-    //NOT WORKING
-    if (filterTerm.length > 2) {
+    if (filterTerm.length > 2)
         update(() => {
             const new_fields = []
-            for (const catalogueField of allCatalogueFields.value) {
-                // console.log(catalogueField, filterTerm)
-                if (catalogueField.includes(filterTerm)) {
+            for (const catalogueField of allCatalogueFields.value)
+                if (catalogueField.includes(filterTerm))
                     new_fields.push(catalogueField)
-                }
-            }
+
             filteredCatalogueFields.value = new_fields
-            nextTick()
-            console.log(filterTerm)
-            console.log('filtered', filteredCatalogueFields.value)
-
-            // here you have access to "ref" which
-            // is the Vue reference of the QSelect
         })
-    } else {
-        update(() => {
-
+    else
+        update(() =>
             filteredCatalogueFields.value = allCatalogueFields.value
-        })
-    }
-
+        )
 
 }
 
 function addSearchTerm() {
     searchTerms.value.push(["", ""])
 
-    const heightSearchTermPanel: number = searchTerms.value.length * 5 + 5
+    //5 is for the space for the headers and add/clear button
+    const heightSearchTermPanel: number = searchTerms.value.length * 3.5 + 5
+    //20 for the remaining height of the main content in .large div
+    const overallHeight = heightSearchTermPanel + 20
 
-    const overallHeight = heightSearchTermPanel + 45
-
-    divHeight.value = (overallHeight * 0.99).toString() + "vh"
-    divHeight2.value = heightSearchTermPanel.toString() + "vh"
+    overallDivHeight.value = overallHeight.toString() + "vh"
+    searchTermPanelHeight.value = heightSearchTermPanel.toString() + "vh"
 }
 function clearAllSearchTerm() {
     searchTerms.value = [["", ""]]
-
-    divHeight.value = "50vh"
-    divHeight2.value = '10vh'
+    overallDivHeight.value = "27vh"
+    searchTermPanelHeight.value = '7vh'
 }
 
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (_values) => {
     const searchTermToBeSent: any = {}
     for (const cat of selectCatalogues.value) {
         searchTermToBeSent[cat] = {}
-        for (const aSearchTerm of searchTerms.value) {
-            if (aSearchTerm[0] == null || aSearchTerm[1] == null)
+        for (const catalogueFieldAndSearchTermPair of searchTerms.value) {
+            if (catalogueFieldAndSearchTermPair[0] == null
+                || catalogueFieldAndSearchTermPair[1] == null)
                 continue
-            const cat_fields = aSearchTerm[0]!.toString().split(",")
+            const cat_fields = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
             for (const field of cat_fields) {
                 const fieldWithNoCat = field.replace(cat, "").trim()
-                if (field.includes(cat) && fieldWithNoCat != "" && aSearchTerm[1].trim() != "")
-                    searchTermToBeSent[cat][fieldWithNoCat] = aSearchTerm[1]
+                if (field.includes(cat) && fieldWithNoCat != ""
+                    && catalogueFieldAndSearchTermPair[1].trim() != "")
+                    searchTermToBeSent[cat][fieldWithNoCat] = catalogueFieldAndSearchTermPair[1]
             }
         }
         if (Object.keys(searchTermToBeSent[cat]).length == 0)
@@ -271,47 +228,42 @@ const onSubmit = handleSubmit(async (values) => {
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermToBeSent },
-        // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }
     console.log('queryData', queryData)
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
-
     const results = response.results
 
-    const allCatalogueResultsInStringFormat = []
-    // const dateRangeArray = queryData.date_range != null ? Object.values(queryData.date_range) : []
-    // const dateRangeString: string = dateRangeArray.length != 0 ? "from " + dateRangeArray[0] + " to " + dateRangeArray[1] : ""
-
+    const allCatalogueResultsInCSVs = []
     cataloguesWithNoResults.value = []
-    showAllCataloguesHaveNoResultsMessage.value = false
-    for (const result of results) {
-        const resultData = result.data
+    showNoResultMessage.value = false
+    for (const catalog of results) {
+        const resultData = catalog.data
         if (resultData.length == 0) {
-            cataloguesWithNoResults.value.push(result.catalogue_name)
+            cataloguesWithNoResults.value.push(catalog.catalogue_name)
             continue
         }
         const header = Object.keys(resultData[0]).join(',') + "\n"
-        const rows = resultData.map((row: Object) => {
-            return Object.values(row).join(',') + "\n"
-        }).join("")
+        const rows = resultData.map((row: Object) => Object.values(row).join(',') + "\n"
+        ).join("")
         const tableInStringFormat = header + rows
-        const search_term_stringified = queryData.search_terms[result.catalogue_name] != null
-            ? "search term: " + JSON.stringify(queryData.search_terms[result.catalogue_name]).replaceAll("\"", "")
+        const search_term_stringified = queryData.search_terms[catalog.catalogue_name] != null
+            ? "search term: " + JSON.stringify(queryData.search_terms[catalog.catalogue_name])
+                .replaceAll("\"", "")
             : ""
-        allCatalogueResultsInStringFormat.push({
-            name: result.catalogue_name + "_raw " + search_term_stringified
+        allCatalogueResultsInCSVs.push({
+            name: catalog.catalogue_name + "_raw " + search_term_stringified
                 + " Downloaded on: " + new Date() + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
 
     }
-    if (allCatalogueResultsInStringFormat.length == 0) {
+    if (allCatalogueResultsInCSVs.length == 0) {
         showCataloguesWithNoResultsAlertDialog.value = true
-        showAllCataloguesHaveNoResultsMessage.value = true
+        showNoResultMessage.value = true
         return
     }
-    const blob = await downloadZip(allCatalogueResultsInStringFormat as unknown as InputWithoutMeta[])
+    const blob = await downloadZip(allCatalogueResultsInCSVs as unknown as InputWithoutMeta[])
         .blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)

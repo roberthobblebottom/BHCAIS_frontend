@@ -42,15 +42,14 @@
         <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
         <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
             :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
-            :visible-columns="visibleColumns" :filter="filter" :loading="loading" selection="multiple"
-            v-model:selected="selected" @selection="onSelection" :wrap-cells="true">
+            :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
+            v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
             <template v-slot:top="props">
-                <div class="table-header-div">
-                    <q-btn-dropdown label="hide columns">
-                        <div class="q-pa-md">
-
+                <div class="table-header-div flex justify-between">
+                    <q-btn-dropdown class="rounded-borders" label="hide columns">
+                        <div class="q-pa-md rounded-borders">
                             <p>These toggles are for hiding individual rows</p>
-                            <div class="check" v-if="$q.screen.gt.xs">
+                            <div class="check flex content-start" v-if="$q.screen.gt.xs">
                                 <div v-for="v in columns">
                                     <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
                                 </div>
@@ -58,20 +57,21 @@
                             <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
                                 :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
                                 option-value="name" style="min-width: 150px" />
-
                         </div>
                     </q-btn-dropdown>
-                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                    <q-input borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
                     </q-input>
-                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true">Delete
+                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true"><i
+                            class="fa-solid fa-circle-xmark"></i>
+                        Delete
                         Selected</button>
                 </div>
             </template>
         </q-table>
-        <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selected.map((v) => {
+        <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
             return Object.values(v)[0]
         })}} </div>
         <p class="alert"> {{ errorMessage }}</p>
@@ -82,7 +82,7 @@
             <q-card-section class="  items-center column q-pb-none">
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
                 <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
-                    {{selected.map((v) => Object.values(v)[0]).join(',')}}
+                    {{selectedRowsToBeDeleted.map((v) => Object.values(v)[0]).join(',')}}
                     from {{ catalogueName }} table?
                 </span>
             </q-card-section>
@@ -90,34 +90,30 @@
                 <q-btn label="Cancel" color="secondary" v-close-popup />
                 <q-btn label="Delete" color="primary" v-close-popup @click="deleteSelected" />
             </q-card-section>
-
-
         </q-card>
-
     </q-dialog>
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-
-
 .dropdown {
     font-size: x-large;
-    width: 100%
+    width: 100%;
+    border-radius: 15px;
 }
-
-
 
 .alert {
     color: red;
 }
 
+.table-div {
+    border-radius: 15px !important;
+}
+
+.check {}
+
 .table-header-div {
-    width: 50%;
-    display: flex;
-    justify-content: space-evenly;
-    align-content: center;
-    flex-direction: row;
+    width: 100%;
 }
 </style>
 <script setup lang="ts">
@@ -131,11 +127,11 @@ const visibleColumns: Ref<string[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")
-const loading = ref(false)
-const filter = ref('')
+const isLoadingTable = ref(false)
+const searchTerm = ref('')
 const tableRef: ShallowRef<QTable | null> = useTemplateRef<QTable>("tableRef")
 const rowKey = ref('')
-const selected = ref([])
+const selectedRowsToBeDeleted = ref([])
 const showDeleteSelectedButton = ref(false)
 const pagination = ref({
     sortBy: 'desc',
@@ -155,7 +151,7 @@ function onSelection(details: any) {
     // if selected length < 1 and details.added = false (this is sellection adding or removing) 
     // then it is removing the only selected for a empty selected 
     // so the delete button should not be shown.
-    if (selected.value.length > 1
+    if (selectedRowsToBeDeleted.value.length > 1
         || (details.added == true && details.rows.length > 0)
     )
         showDeleteSelectedButton.value = true
@@ -165,7 +161,7 @@ function onSelection(details: any) {
 
 async function deleteSelected() {
     const selectedIds: any[] = []
-    for (const x of selected.value)
+    for (const x of selectedRowsToBeDeleted.value)
         selectedIds.push(Object.values(x)[0])
 
     const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
@@ -186,9 +182,7 @@ async function deleteSelected() {
             newRows.push(row)
     }
     rows.value = newRows
-
-    selected.value = []
-
+    selectedRowsToBeDeleted.value = []
     await nextTick()
     tableRef.value!.requestServerInteraction()
 }
@@ -197,9 +191,7 @@ async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
 
-    loading.value = true
-    // emulate server
-    // setTimeout(async () => {
+    isLoadingTable.value = true
     let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
         + `?catalogue_name=${catalogueName.value}`
         + `&rows_per_page=${rowsPerPage}`
@@ -219,7 +211,7 @@ async function onRequest(props: any) {
 
     if (results.length == 0) {
         errorMessage.value = "This is no results for " + catalogueName.value + " and search term " + filterStr
-        loading.value = false
+        isLoadingTable.value = false
         showTable.value = false
         return
     } else
@@ -245,19 +237,13 @@ async function onRequest(props: any) {
     rows.value = results
     visibleColumns.value = visibleColumnsTemp
     showTable.value = true
-    loading.value = false
+    isLoadingTable.value = false
     await nextTick() // nextTick is much fast than setTimeout(,1500)
-    // }, 1500)
 }
-
-
-
-
-
 async function onItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     showTable.value = true;
-    await nextTick()
+    await nextTick() // required for updating catalogue Name
     tableRef.value!.requestServerInteraction()
 }
 </script>

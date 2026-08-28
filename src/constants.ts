@@ -2,9 +2,9 @@ const printHeaders = [
     "Continuous S/N no.",
     "UID",
     "Album no.",
-    "Object Condition [QC1]",
-    "Album Information [OLD]",
-    "Album Information [New]",
+    "Object Condition (QC1)",
+    "Album Information (OLD)",
+    "Album Information (New)",
     "Photograph Information",
     "Main Category",
     "Collector's Name",
@@ -23,24 +23,24 @@ const printHeaders = [
     "Date catalogued",
     "Access status",
     "Remarks",
-    "Negative [Y/N]",
+    "Negative (Y/N)",
     "Batch no.",
     "Sign-Out Date",
     "Sign-In Date",
     "Date of QC",
     "Checked by",
-    "Object Condition [QC2]"
+    "Object Condition (QC2)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 const oralHistoryHeaders = [
     "S/N",
     "Name of Interviewee",
-    "Name of Interviewee [2]",
-    "Recording Date [DD/MM/YYYY]",
+    "Name of Interviewee (2)",
+    "Recording Date (DD/MM/YYYY)",
     "Track Number",
     "Total Tracks",
     "Running Time",
     "File name",
-    "Format [Original File]",
+    "Format (Original File)",
     "Access Conditions",
     "Access Remarks",
     "Transcription Status",
@@ -61,7 +61,7 @@ const negativeHeaders = [
     "S/N no.",
     "UID",
     "Ziplock bag no.",
-    "Object Condition [QC1]",
+    "Object Condition (QC1)",
     "Ziplock Bag Information",
     "Negative Information",
     "Main Category",
@@ -81,22 +81,22 @@ const negativeHeaders = [
     "Date catalogued",
     "Access status",
     "Remarks",
-    "Prints [Y/N]",
+    "Prints (Y/N)",
     "Batch no.",
     "Sign-Out Date",
     "Sign-In Date",
     "Date of QC",
     "Checked by",
-    "Object Condition [QC2]"
+    "Object Condition (QC2)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
 const slideHeaders = [
     "S/N no.",
     "UID",
     "Box no.",
-    "Object Condition [QC1]",
-    "Box Information [OLD]",
-    "Box Information [New]",
+    "Object Condition (QC1)",
+    "Box Information (OLD)",
+    "Box Information (New)",
     "Divider 1",
     "Divider 2",
     "Divider 3",
@@ -123,8 +123,8 @@ const slideHeaders = [
     "Sign-In Date",
     "Date of QC",
     "Checked by",
-    "Object Condition [QC2]",
-    "Data Tier [2 or 3]"
+    "Object Condition (QC2)",
+    "Data Tier (2 or 3)"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
 
 const libraryAndArchiveHeader = [
@@ -133,7 +133,7 @@ const libraryAndArchiveHeader = [
     "Subcategory",
     "Catalog Number",
     "Object Status",
-    "Location [in Museum]",
+    "Location (in Museum)",
     "Material Type",
     "Subject",
     "Shelving Location",

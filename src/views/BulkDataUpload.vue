@@ -44,7 +44,9 @@
                 </template>
             </q-uploader>
 
-            <button class="button" @click.prevent="downloadTemplatesForTheCatalogs">Download Template</button>
+            <button class="button" @click.prevent="downloadTemplatesForTheCatalogs"><i
+                    class="fas fa-file-arrow-down"></i> Download
+                Template</button>
         </form>
     </div>
     <div>
@@ -52,10 +54,8 @@
             ref="dialogRef">
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
-
                 <q-avatar :icon="dialogHeader == 'Sucessful' ? 'error' : 'done'" color="primary" text-color="white"
                     class="" />
-
                 <h3>{{ dialogHeader }}</h3>
                 <p>{{ dialogMessage }}
                 </p>
@@ -132,6 +132,8 @@ const onAddedListener = (files: readonly File[]) => {
                     const headers: Object = tempHeadersValues[0]!
                     const content: any[] = tempHeadersValues[1]!
                     const headersString: string = Object.values(headers).map((col: string) => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
+                    console.log('headersString', headersString)
+                    console.log('printheaders', printHeaders)
                     if (headersString != printHeaders
                         && headersString != negativeHeaders
                         && headersString != slideHeaders

@@ -20,7 +20,7 @@
 
                 <button class="button btn-primary" :disabled="isSubmitting">
                     <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
-                    Change
+                    <i class="fa-solid fa-pen-to-square"></i> Change
                 </button>
             </div>
         </q-form>
