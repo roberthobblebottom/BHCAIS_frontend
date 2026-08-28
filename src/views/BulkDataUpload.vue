@@ -120,7 +120,6 @@ const onAddedListener = (files: readonly File[]) => {
 
                     // Read the file as an array buffer
                     const data = new Uint8Array(e.target?.result as ArrayBuffer);
-
                     const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 });
                     const sheetName = workbook.SheetNames[0]!;
                     const worksheet: any = workbook.Sheets[sheetName];
@@ -144,20 +143,16 @@ const onAddedListener = (files: readonly File[]) => {
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
-
                     if (isInvalidContent) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_headers_only.push(file.name)
-
                     }
                     resolve()
-
                 }
                 reader.readAsArrayBuffer(file)
             }
             else if (file.name.includes('.csv')) {
                 reader.onload = (e: ProgressEvent<FileReader>) => {
-
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
@@ -183,7 +178,6 @@ const onAddedListener = (files: readonly File[]) => {
                 reader.readAsText(file)
             }
         })
-
     })
 
 
@@ -201,7 +195,6 @@ const onAddedListener = (files: readonly File[]) => {
             dialogMessage.value = errorMessage + "All of these file(s) will not be selected."
             dialogEnable.value = true
         }
-
     })
 
 }
@@ -212,14 +205,12 @@ const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; 
     dialogEnable.value = true
 
     fileUploaderRef.value.reset()
-
 }
 
 const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
     // this listener calls out even when there is not Failure of upload so i have to check:
     if (info.xhr.status == 0)
         return
-
     dialogHeader.value = "Error: Upload Failed"
     dialogMessage.value = JSON.parse(info.xhr.response).detail
     dialogPersistentIsEnabled.value = true
