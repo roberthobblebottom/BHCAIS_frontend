@@ -40,8 +40,8 @@
     <div class="medium common flex  flex-start" :style="{ height: divHeight }">
         <q-form class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
-            <q-select v-model="selectCatelogues" v-bind="selectCataloguesProps" @clear="onCatelogueSelectClear"
-                @add="onCatelogueSelectAdd" @remove="onCatelogueSelectRemove" class="select" :options="catelogueOptions"
+            <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" @clear="onCatalogueSelectClear"
+                @add="onCatalogueSelectAdd" @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
                 label="Select catalogue(s). " multiple clearable
                 hint="Click on the same catalogue to unselect"></q-select>
 
@@ -53,7 +53,7 @@
                 </div>
                 <div class="row " v-for="x of searchTerms">
 
-                    <q-select v-model=x[0] class="select col" :options="filteredCatelogueFields"
+                    <q-select v-model=x[0] class="select col" :options="filteredCatalogueFields"
                         label="Select catalogue field" @filter="filterFn" multiple clearable style="width: 250px"
                         use-input input-debounce="0">
                         <template v-slot:no-option>
@@ -116,11 +116,11 @@ import { fetchWrapper } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { getHeaderDict } from '../constants';
-const catelogueOptions = ref([
+const catalogueOptions = ref([
     "print", "oral_history", "negative", "slide", "library_and_archive"
 ])
-const allCatelogueFields: Ref<string[]> = ref(["Select All"])
-const filteredCatelogueFields: Ref<string[]> = ref(["Select All"])
+const allCatalogueFields: Ref<string[]> = ref(["Select All"])
+const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
 const searchTerms = ref([["", ""]])
 const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
@@ -152,21 +152,21 @@ const quasarConfig = (state: any) => ({
 
 
 
-const [selectCatelogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
-selectCatelogues.value = []
+const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
+selectCatalogues.value = []
 // const [dateRange, dateRangeProps] = defineField("dateRange" as MaybeRefOrGetter, quasarConfig)
 
 // function clearDates(event: any) {
 // dateRange.value = []
 // }
 
-function onCatelogueSelectAdd(details: { index: number; value: string; }) {
-    const currentlySelected: string[] = selectCatelogues.value!
+function onCatalogueSelectAdd(details: { index: number; value: string; }) {
+    const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.push(details.value)
     settingNewCatalogueFieldsSelect(currentlySelected)
 }
-function onCatelogueSelectRemove(details: { index: number; value: string; }) {
-    const currentlySelected: string[] = selectCatelogues.value!
+function onCatalogueSelectRemove(details: { index: number; value: string; }) {
+    const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
     settingNewCatalogueFieldsSelect(currentlySelected)
 
@@ -184,8 +184,8 @@ function onCatelogueSelectRemove(details: { index: number; value: string; }) {
 }
 function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
     //setting new catalog fields
-    allCatelogueFields.value = ["Select All"]
-    filteredCatelogueFields.value = ["Select All"]
+    allCatalogueFields.value = ["Select All"]
+    filteredCatalogueFields.value = ["Select All"]
     for (const x of currentlySelected) {
 
         let key = x as keyof typeof getHeaderDict;
@@ -193,32 +193,32 @@ function settingNewCatalogueFieldsSelect(currentlySelected: string[]) {
         for (const x of getHeaderDict[key])
             newFields.push(key + " " + x)
 
-        allCatelogueFields.value = allCatelogueFields.value.concat(newFields)
-        filteredCatelogueFields.value = filteredCatelogueFields.value.concat(newFields)
+        allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
+        filteredCatalogueFields.value = filteredCatalogueFields.value.concat(newFields)
     }
-    console.log("all", allCatelogueFields.value)
-    console.log('filted', filteredCatelogueFields.value)
+    console.log("all", allCatalogueFields.value)
+    console.log('filted', filteredCatalogueFields.value)
 
 }
-function onCatelogueSelectClear() {
+function onCatalogueSelectClear() {
     clearAllSearchTerm()
-    allCatelogueFields.value = ["Select All"]
+    allCatalogueFields.value = ["Select All"]
 }
 function filterFn(filterTerm: string, update: any) {
     //NOT WORKING
     if (filterTerm.length > 2) {
         update(() => {
             const new_fields = []
-            for (const catelogueField of allCatelogueFields.value) {
-                // console.log(catelogueField, filterTerm)
-                if (catelogueField.includes(filterTerm)) {
-                    new_fields.push(catelogueField)
+            for (const catalogueField of allCatalogueFields.value) {
+                // console.log(catalogueField, filterTerm)
+                if (catalogueField.includes(filterTerm)) {
+                    new_fields.push(catalogueField)
                 }
             }
-            filteredCatelogueFields.value = new_fields
+            filteredCatalogueFields.value = new_fields
             nextTick()
             console.log(filterTerm)
-            console.log('filtered', filteredCatelogueFields.value)
+            console.log('filtered', filteredCatalogueFields.value)
 
             // here you have access to "ref" which
             // is the Vue reference of the QSelect
@@ -226,7 +226,7 @@ function filterFn(filterTerm: string, update: any) {
     } else {
         update(() => {
 
-            filteredCatelogueFields.value = allCatelogueFields.value
+            filteredCatalogueFields.value = allCatalogueFields.value
         })
     }
 
@@ -253,7 +253,7 @@ function clearAllSearchTerm() {
 
 const onSubmit = handleSubmit(async (values) => {
     const searchTermToBeSent: any = {}
-    for (const cat of selectCatelogues.value) {
+    for (const cat of selectCatalogues.value) {
         searchTermToBeSent[cat] = {}
         for (const aSearchTerm of searchTerms.value) {
             if (aSearchTerm[0] == null || aSearchTerm[1] == null)
@@ -269,7 +269,7 @@ const onSubmit = handleSubmit(async (values) => {
             delete searchTermToBeSent[cat]
     }
     const queryData = {
-        selected_catalogues: [...selectCatelogues.value],
+        selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermToBeSent },
         // date_range: dateRange.value != null ? Object.values(dateRange.value[0]) : []
     }

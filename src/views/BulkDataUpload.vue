@@ -44,7 +44,7 @@
                 </template>
             </q-uploader>
 
-            <button class="button" @click.prevent="downloadTemplatesForTheCatelogs">Download Template</button>
+            <button class="button" @click.prevent="downloadTemplatesForTheCatalogs">Download Template</button>
         </form>
     </div>
     <div>
@@ -90,13 +90,13 @@ const dialogPersistentIsEnabled = ref(false)
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
 
 
-async function downloadTemplatesForTheCatelogs() {
-    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatelogs/`;
+async function downloadTemplatesForTheCatalogs() {
+    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/`;
     getFiles(url).then((download) => {
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;
-        a.download = "templates for the catelogs";
+        a.download = "templates for the catalogs";
         document.body.appendChild(a); // append the element to the dom
         a.click();
         a.remove(); // afterwards, remove the element 
