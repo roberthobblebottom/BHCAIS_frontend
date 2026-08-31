@@ -16,9 +16,10 @@
                     <Button class="col " @click.prevent="addSearchTerm"><i class="fas fa-add"></i> Add </Button>
                 </div>
                 <div class="row " v-for="x of searchTerms">
+                    <!--- Note: No more multiple selection. there are problems manpilation with this value in 3 times nested reference. also it is hard to see if you have selected multiple catalogues in one search fields--->
                     <q-select v-model=x[0] class="select col" :options="filteredCatalogueFields"
-                        label="Select catalogue field" @filter="filterFn" multiple clearable style="width: 250px"
-                        use-input input-debounce="0">
+                        label="Select catalogue field" @filter="filterFn" clearable style="width: 250px" use-input
+                        input-debounce="0">
                         <template v-slot:no-option>
                             <q-item>
                                 <q-item-section class="text-grey"> No results </q-item-section>
@@ -96,10 +97,8 @@ import * as yup from 'yup';
 import { fetchWrapper } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
-import { getHeaderDict } from '../constants';
-const catalogueOptions = ref([
-    "print", "oral_history", "negative", "slide", "library_and_archive"
-])
+import { catalogueNames, getHeaderDict } from '../constants';
+const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
 const searchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
@@ -142,16 +141,15 @@ function onCatalogueSelectRemove(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
     setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
-    for (const aSearchTerm of searchTerms.value) {
-        const cats = toRaw(aSearchTerm[0]!) // not sure why this returns string[] instead of string
-        const newCats = []
+    buggy:
+    for (let aSearchTerm of searchTerms.value) {
+        const cats = toRaw(aSearchTerm[0]!)
         if (cats.length == 0)
             continue
-        for (const cat of cats!) {
-            if (!cat.includes(details.value))
-                newCats.push(cat)
-        }
-        aSearchTerm[0] = newCats.join(",")
+        if (cats.includes(details.value))
+            searchTerms.value.splice(searchTerms.value.indexOf(aSearchTerm), 1)
+        if (searchTerms.value.length == 0)
+            searchTerms.value = [["", ""]]
     }
 }
 function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
@@ -161,15 +159,17 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
     for (const x of currentlySelected) {
         let key = x as keyof typeof getHeaderDict; // for using string as keys for the object
         const newFields = []
-        for (const x of getHeaderDict[key])
-            newFields.push(key + " " + x)
+        for (const x1 of getHeaderDict[key])
+            newFields.push(key + " " + x1)
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
         filteredCatalogueFields.value = allCatalogueFields.value
     }
+
 }
 function onCatalogueSelectClear() {
     clearAllSearchTerm()
     allCatalogueFields.value = ["Select All"]
+    selectCatalogues.value = []
 }
 function filterFn(filterTerm: string, update: any) {
     if (filterTerm.length > 2)
@@ -217,8 +217,9 @@ const onSubmit = handleSubmit(async (_values) => {
             const cat_fields = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
             for (const field of cat_fields) {
                 const fieldWithNoCat = field.replace(cat, "").trim()
+                const x = catalogueFieldAndSearchTermPair[1]
                 if (field.includes(cat) && fieldWithNoCat != ""
-                    && catalogueFieldAndSearchTermPair[1].trim() != "")
+                    && (catalogueFieldAndSearchTermPair[1] as String).trim() != "")
                     searchTermToBeSent[cat][fieldWithNoCat] = catalogueFieldAndSearchTermPair[1]
             }
         }
@@ -229,7 +230,6 @@ const onSubmit = handleSubmit(async (_values) => {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermToBeSent },
     }
-    console.log('queryData', queryData)
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const response = await fetchWrapper.post(url, queryData)
     const results = response.results
@@ -246,17 +246,19 @@ const onSubmit = handleSubmit(async (_values) => {
         const header = Object.keys(resultData[0]).join(',') + "\n"
         const rows = resultData.map((row: Object) => Object.values(row).join(',') + "\n"
         ).join("")
+
         const tableInStringFormat = header + rows
-        const search_term_stringified = queryData.search_terms[catalog.catalogue_name] != null
-            ? "search term: " + JSON.stringify(queryData.search_terms[catalog.catalogue_name])
-                .replaceAll("\"", "")
+        const searchTermStringified = queryData.search_terms[catalog.catalogue_name] != null
+            ? "search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
+                .replaceAll("\"", "").replaceAll("{", "").replaceAll("}", "").replace(":", " eq ")
             : ""
+
         allCatalogueResultsInCSVs.push({
-            name: catalog.catalogue_name + "_raw " + search_term_stringified
-                + " Downloaded on: " + new Date() + '.csv',
+            //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
+            name: catalog.catalogue_name + "_raw " + searchTermStringified + '.csv',
+            // name: catalog.catalogue_name + "_raw " + " Downloaded on: " + new Date().toLocaleDateString("en-UK").replaceAll("/", "") + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
-
     }
     if (allCatalogueResultsInCSVs.length == 0) {
         showCataloguesWithNoResultsAlertDialog.value = true
@@ -267,8 +269,7 @@ const onSubmit = handleSubmit(async (_values) => {
         .blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
-    link.download = "BHCAIS " + queryData.selected_catalogues
-        + " downloaded on " + new Date().toLocaleDateString("en-UK") + '.zip'
+    link.download = "BHCAIS " + queryData.selected_catalogues + '.zip'
     link.click()
     link.remove()
 

@@ -445,11 +445,18 @@ const getHeaderDict = {
     "negative": negativeSqlStringColumns,
     "slide": slideSqlStringColumns,
     "library_and_archive": libraryAndArchivesSqlStringColumns,
-    "legacy_andMiscellaneous_items_report": legacyAndMiscellaneousItemsReportSqlStringColumns
+    "legacy_and_miscellaneous_items_report": legacyAndMiscellaneousItemsReportSqlStringColumns
 }
 ////////////////////////password regex //////////////////////////
 const passwordRegex = /^[?=.*[a-z]][?=.*[0-9]]\S{7,}$/
 const passwordError = "Passwords must at least have 7 charactors, one lower case and one upper case"
+const catalogueNames = [
+    "print",
+    "oral_history",
+    "negative",
+    "slide",
+    "library_and_archive",
+    "legacy_and_miscellaneous_items_report",
+]
 
-
-export { getHeaderDict, passwordRegex, passwordError, libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders, legacyAndMiscellaneousItemsReportHeader }
+export { catalogueNames, getHeaderDict, passwordRegex, passwordError, libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders, legacyAndMiscellaneousItemsReportHeader }
