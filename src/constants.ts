@@ -167,9 +167,57 @@ const libraryAndArchiveHeader = [
     "Scan file media",
     "Transcription file media"
 ].map(col => col.trim().toLocaleLowerCase()).toString()
+const legacyAndMiscellaneousItemsReportHeader = [
+    "S/N",
+    "Category",
+    "Catalog Number",
+    "Subcategory",
+    "Object Status",
+    "Name",
+    "Asset Number",
+    "Type Status",
+    "Individual Count",
+    "Preservation",
+    "Preservation - Description of components",
+    "Location (in Museum)",
+    "Sex",
+    "Treatment",
+    "Use - Ethnographical significance",
+    "Material",
+    "Condition",
+    "Dimensions",
+    "Higher Classification",
+    "Family",
+    "Genus",
+    "Subgenus",
+    "Species",
+    "Subspecies",
+    "Scientific Name Author",
+    "Scientific Name Author Year",
+    "Common Name",
+    "Country/ Ocean",
+    "Locality",
+    "Acquisition",
+    "Collected By",
+    "Verbatim Date",
+    "From Day",
+    "From Month",
+    "From Year",
+    "To Day",
+    "To Month",
+    "To Year",
+    "Relative Humidity [for storage/display]",
+    "Temperature (°C)",
+    "Lux [light levels]",
+    "Remarks",
+    "Title",
+    "Web URL",
+    "NAS Link"
+].map(col => col.trim().toLocaleLowerCase()).toString()
 
-const passwordRegex = /^[?=.*[a-z]][?=.*[0-9]]\S{7,}$/
-const passwordError = "Passwords must at least have 7 charactors, one lower case and one upper case"
+
+
+//////////////////SQL STRINGS/////////////////////////////////
 const printSqlStringColumns = [
     "continuous_sn_no",
     "uid",
@@ -339,11 +387,69 @@ const negativeSqlStringColumns = [
     "checked_by",
     "object_condition_qc2",
 ]
+const legacyAndMiscellaneousItemsReportSqlStringColumns = [
+    "sn",
+    "category",
+    "catalog_number",
+    "subcategory",
+    "object_status",
+    "name",
+    "asset_number",
+    "type_status",
+    "individual_count",
+    "preservation",
+
+
+
+    "preservation_description_of_components",
+    "location_in_museum",
+    "sex",
+    "treatment",
+    "use_ethnographical_significance",
+    "material",
+    "condition",
+    "dimensions",
+    "higher_classification",
+    "family",
+    "genus",
+
+    "subgenus",
+    "species",
+    "subspecies",
+    "scientific_name_author",
+    "scientific_name_author_year",
+    "common_name",
+    "country_ocean",
+    "locality",
+    "acquisition",
+    "collected_by",
+    "verbatim_date",
+    "from_day",
+    "from_month",
+    "from_year",
+    "to_day",
+    "to_month",
+    "to_year",
+    "relative_humidity_for_storage_display",
+    "temperature_celcius",
+    "lux_light_levels",
+    "remarks",
+    "title",
+    "web_url",
+    "nas_link",
+
+]
 const getHeaderDict = {
     "print": printSqlStringColumns,
     "oral_history": oralHistoriesSqlStringColumns,
     "negative": negativeSqlStringColumns,
     "slide": slideSqlStringColumns,
     "library_and_archive": libraryAndArchivesSqlStringColumns,
+    "legacy_andMiscellaneous_items_report": legacyAndMiscellaneousItemsReportSqlStringColumns
 }
-export { getHeaderDict, passwordRegex, passwordError, libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders }
+////////////////////////password regex //////////////////////////
+const passwordRegex = /^[?=.*[a-z]][?=.*[0-9]]\S{7,}$/
+const passwordError = "Passwords must at least have 7 charactors, one lower case and one upper case"
+
+
+export { getHeaderDict, passwordRegex, passwordError, libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders, legacyAndMiscellaneousItemsReportHeader }

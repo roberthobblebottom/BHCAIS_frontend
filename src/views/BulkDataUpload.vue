@@ -79,7 +79,7 @@
 import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
-import { libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
+import { legacyAndMiscellaneousItemsReportHeader, libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
 import { getFiles } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
 const dialogHeader = ref("")
@@ -138,6 +138,7 @@ const onAddedListener = (files: readonly File[]) => {
                         && headersString != slideHeaders
                         && headersString != libraryAndArchiveHeader
                         && headersString != oralHistoryHeaders
+                        && headersString != legacyAndMiscellaneousItemsReportHeader
                     ) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)
@@ -161,6 +162,7 @@ const onAddedListener = (files: readonly File[]) => {
                         && headersString != slideHeaders
                         && headersString != libraryAndArchiveHeader
                         && headersString != oralHistoryHeaders
+                        && headersString != legacyAndMiscellaneousItemsReportHeader
                     ) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)

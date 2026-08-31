@@ -37,6 +37,12 @@
 
                     </q-item-section>
                 </q-item>
+                <q-item clickable v-close-popup @click="onItemClick('legacy_and_miscellaneous_items_report')">
+                    <q-item-section>
+                        <q-item-label>Legacy and Misc Items Report</q-item-label>
+
+                    </q-item-section>
+                </q-item>
             </q-list>
         </q-btn-dropdown>
         <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
@@ -110,7 +116,6 @@
     border-radius: 15px !important;
 }
 
-.check {}
 
 .table-header-div {
     width: 100%;
