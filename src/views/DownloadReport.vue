@@ -93,10 +93,11 @@ import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
-import { fetchWrapper } from '../helpers/fetch-wrapper';
+import { fetchWrapper, stream } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { catalogueNames, getHeaderDict } from '../constants';
+
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
@@ -140,7 +141,6 @@ function onCatalogueSelectRemove(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
     setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
-    buggy:
     for (let aSearchTerm of searchTerms.value) {
         const cats = toRaw(aSearchTerm[0]!)
         if (cats.length == 0)
@@ -177,13 +177,10 @@ function filterFn(filterTerm: string, update: any) {
             for (const catalogueField of allCatalogueFields.value)
                 if (catalogueField.includes(filterTerm))
                     new_fields.push(catalogueField)
-
             filteredCatalogueFields.value = new_fields
         })
     else
-        update(() =>
-            filteredCatalogueFields.value = allCatalogueFields.value
-        )
+        update(() => filteredCatalogueFields.value = allCatalogueFields.value)
 
 }
 
@@ -194,7 +191,6 @@ function addSearchTerm() {
     const heightSearchTermPanel: number = searchTerms.value.length * 3.5 + 5
     //20 for the remaining height of the main content in .large div
     const overallHeight = heightSearchTermPanel + 20
-
     overallDivHeight.value = overallHeight.toString() + "vh"
     searchTermPanelHeight.value = heightSearchTermPanel.toString() + "vh"
 }
@@ -213,13 +209,12 @@ const onSubmit = handleSubmit(async (_values) => {
             if (catalogueFieldAndSearchTermPair[0] == null
                 || catalogueFieldAndSearchTermPair[1] == null)
                 continue
-            const cat_fields = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
-            for (const field of cat_fields) {
-                const fieldWithNoCat = field.replace(cat, "").trim()
-                const x = catalogueFieldAndSearchTermPair[1]
-                if (field.includes(cat) && fieldWithNoCat != ""
+            const fieldsWithCatPrefix = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
+            for (const fieldWithCatPrefix of fieldsWithCatPrefix) {
+                const field = fieldWithCatPrefix.replace(cat, "").trim()
+                if (fieldWithCatPrefix.includes(cat) && field != ""
                     && (catalogueFieldAndSearchTermPair[1] as String).trim() != "")
-                    searchTermToBeSent[cat][fieldWithNoCat] = catalogueFieldAndSearchTermPair[1]
+                    searchTermToBeSent[cat][field] = catalogueFieldAndSearchTermPair[1]
             }
         }
         if (Object.keys(searchTermToBeSent[cat]).length == 0)
@@ -230,23 +225,58 @@ const onSubmit = handleSubmit(async (_values) => {
         search_terms: { ...searchTermToBeSent },
     }
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
-    const response = await fetchWrapper.post(url, queryData)
-    const results = response.results
-
+    const response = await stream(url, queryData)
+    // const results = response.results
     const allCatalogueResultsInCSVs = []
     cataloguesWithNoResults.value = []
     showNoResultMessage.value = false
+    let reader = null
+    try {
+        reader = response.body!.getReader()
+    }
+    catch (err) { console.error(err) }
+    let isReadDone = false;
+    const textDecoder = new TextDecoder()
+    let text = ""
+
+    while (!isReadDone) {
+        let { value, done } = await reader!.read();
+        isReadDone = done
+        if (isReadDone)
+            break
+        text += textDecoder.decode(value)
+        // const text = textDecoder.decode(value)
+    }
+    const results: any = []
+    for (const x of text.split("catalogue_name").slice(1)) {
+        const returnedCat = x.slice(1, x.indexOf("{"))//"{" is the start of the rows so I don't need that stuff for catalogue name
+        //slice the first and the last characters. "{" and "}"
+        const rows = x.slice(x.indexOf("{")).slice(0, x.length - 1).split("},{")
+        const newRows = []
+        for (let x of rows) {
+            x = x.at(0) == "{" ? x + "}" : "{" + x + "}"
+            x = x.replace("},}", "}")
+            newRows.push(JSON.parse(x))
+        }
+        const o: any = {
+            catalogue_name: returnedCat,
+            data: newRows
+        }
+        results.push(o)
+    }
     for (const catalog of results) {
         const resultData = catalog.data
+
         if (resultData.length == 0) {
             cataloguesWithNoResults.value.push(catalog.catalogue_name)
             continue
         }
+
         const header = Object.keys(resultData[0]).join(',') + "\n"
         const rows = resultData.map((row: Object) => Object.values(row).join(',') + "\n"
         ).join("")
-
         const tableInStringFormat = header + rows
+
         const searchTermStringified = queryData.search_terms[catalog.catalogue_name] != null
             ? "search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
                 .replaceAll("\"", "").replaceAll("{", "").replaceAll("}", "").replace(":", " eq ")
@@ -259,12 +289,15 @@ const onSubmit = handleSubmit(async (_values) => {
             input: Buffer.from(tableInStringFormat)
         })
     }
+
     if (allCatalogueResultsInCSVs.length == 0) {
         showCataloguesWithNoResultsAlertDialog.value = true
         showNoResultMessage.value = true
         return
     }
-    const blob = await downloadZip(allCatalogueResultsInCSVs as unknown as InputWithoutMeta[])
+
+    const blob = await downloadZip(
+        allCatalogueResultsInCSVs as unknown as InputWithoutMeta[])
         .blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
@@ -274,8 +307,6 @@ const onSubmit = handleSubmit(async (_values) => {
 
     if (cataloguesWithNoResults.value.length > 0)
         showCataloguesWithNoResultsAlertDialog.value = true
-
-
 });
 
 </script>

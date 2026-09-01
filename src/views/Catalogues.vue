@@ -8,39 +8,33 @@
                     <q-item-section>
                         <q-item-label>Prints</q-item-label>
                     </q-item-section>
-
                 </q-item>
 
                 <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
                     <q-item-section>
                         <q-item-label>Oral Histories</q-item-label>
-
                     </q-item-section>
                 </q-item>
 
                 <q-item clickable v-close-popup @click='onItemClick("slide")'>
                     <q-item-section>
                         <q-item-label>Slides</q-item-label>
-
                     </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="onItemClick('negative')">
                     <q-item-section>
                         <q-item-label>Negatives</q-item-label>
-
                     </q-item-section>
 
                 </q-item>
                 <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
                     <q-item-section>
                         <q-item-label>Library and Archives</q-item-label>
-
                     </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="onItemClick('legacy_and_miscellaneous_items_report')">
                     <q-item-section>
                         <q-item-label>Legacy and Misc Items Report</q-item-label>
-
                     </q-item-section>
                 </q-item>
             </q-list>
@@ -116,7 +110,6 @@
     border-radius: 15px !important;
 }
 
-
 .table-header-div {
     width: 100%;
 }
@@ -128,7 +121,6 @@ import { QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
-
 const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")
@@ -148,14 +140,8 @@ const pagination = ref({
 const catalogueName = ref("")
 const confirm = ref(false)
 defineExpose({ tableRef })
-
-
-
 function onSelection(details: any) {
     // before selected reference is updated
-    // if selected length < 1 and details.added = false (this is sellection adding or removing) 
-    // then it is removing the only selected for a empty selected 
-    // so the delete button should not be shown.
     if (selectedRowsToBeDeleted.value.length > 1
         || (details.added == true && details.rows.length > 0)
     )

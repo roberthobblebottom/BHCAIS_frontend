@@ -24,6 +24,20 @@ function request(method: string) {
         return fetch(url, requestOptions).then(handleResponse);
     }
 }
+export const stream = (url: string, body: any = null) => {
+
+    const requestOptions: RequestInit = {
+        method: "POST",
+        headers: authHeader(url, {})
+    };
+
+    if (body) {
+        requestOptions.headers = { 'Content-Type': 'application/json' }
+        requestOptions.body = JSON.stringify(body);
+    }
+    console.log(requestOptions)
+    return fetch(url, requestOptions);
+}
 export const noCacheRequestFunction = (url: string, method: string, body: any = null) => {
     const header: any = { 'Cache-Control': 'no-cache' }
     const requestOptions: RequestInit = {
@@ -98,7 +112,7 @@ function authHeader(url: string, header: any): HeadersInit {
 function handleResponse(response: Response) {
     return response.text().then(text => {
         console.log('response', response)
-        const data = text && JSON.parse(text);
+        const data = text;
         if (!response.ok) {
             const { user, logout } = useAuthStore();
             if ([401, 403].includes(response.status) && user) {
