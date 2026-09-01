@@ -82,7 +82,7 @@ import * as xlsx from 'xlsx'
 import { ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 import { legacyAndMiscellaneousItemsReportHeader, libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
-import { getFiles } from '../helpers/fetch-wrapper';
+import { getTemplates } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
@@ -94,7 +94,7 @@ const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuth
 
 async function downloadTemplatesForTheCatalogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/`;
-    getFiles(url).then((download) => {
+    getTemplates(url).then((download) => {
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;

@@ -65,8 +65,7 @@
 
 
 .common {
-    resize: horizontal;
-    overflow: auto;
+
     max-width: 200vw !important;
 }
 
@@ -93,7 +92,7 @@ import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
-import { fetchWrapper, stream } from '../helpers/fetch-wrapper';
+import { fetchWrapper, streamFilesDownload } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { catalogueNames, getHeaderDict } from '../constants';
@@ -225,13 +224,12 @@ const onSubmit = handleSubmit(async (_values) => {
         search_terms: { ...searchTermToBeSent },
     }
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
-    const response = await stream(url, queryData)
-    // const results = response.results
     const allCatalogueResultsInCSVs = []
     cataloguesWithNoResults.value = []
     showNoResultMessage.value = false
     let reader = null
     try {
+        const response = await streamFilesDownload(url, queryData)
         reader = response.body!.getReader()
     }
     catch (err) { console.error(err) }
@@ -245,28 +243,39 @@ const onSubmit = handleSubmit(async (_values) => {
         if (isReadDone)
             break
         text += textDecoder.decode(value)
-        // const text = textDecoder.decode(value)
     }
     const results: any = []
-    for (const x of text.split("catalogue_name").slice(1)) {
-        const returnedCat = x.slice(1, x.indexOf("{"))//"{" is the start of the rows so I don't need that stuff for catalogue name
-        //slice the first and the last characters. "{" and "}"
-        const rows = x.slice(x.indexOf("{")).slice(0, x.length - 1).split("},{")
-        const newRows = []
-        for (let x of rows) {
-            x = x.at(0) == "{" ? x + "}" : "{" + x + "}"
-            x = x.replace("},}", "}")
-            newRows.push(JSON.parse(x))
+    const noResultString = "no results"
+    for (const subText of text.split("catalogue_name").slice(1)) {
+        const returnedCat = !subText.includes(noResultString)
+            ? subText.slice(1, subText.indexOf("{"))
+            : subText.replace("=", "").replace("no results", "")
+        //"{" is the start of the rows so I don't need that stuff for catalogue name
+
+        if (subText.includes(noResultString)) {
+            results.push({
+                catalogue_name: returnedCat,
+                data: []
+            })
+            continue
         }
-        const o: any = {
+
+        //slice the first and the last characters. "{" and "}"
+        const rows = subText.slice(subText.indexOf("{")).slice(0, subText.length - 1).split("},{")
+        const newRows = []
+        for (let row of rows) {
+            row = row.at(0) == "{" ? row + "}" : "{" + row + "}"
+            row = row.replace("},}", "}")
+            newRows.push(JSON.parse(row))
+        }
+        results.push({
             catalogue_name: returnedCat,
             data: newRows
-        }
-        results.push(o)
+        })
     }
     for (const catalog of results) {
         const resultData = catalog.data
-
+        console.log('resultData', resultData)
         if (resultData.length == 0) {
             cataloguesWithNoResults.value.push(catalog.catalogue_name)
             continue
@@ -297,8 +306,8 @@ const onSubmit = handleSubmit(async (_values) => {
     }
 
     const blob = await downloadZip(
-        allCatalogueResultsInCSVs as unknown as InputWithoutMeta[])
-        .blob()
+        allCatalogueResultsInCSVs as unknown as InputWithoutMeta[]
+    ).blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
     link.download = "BHCAIS " + queryData.selected_catalogues + '.zip'

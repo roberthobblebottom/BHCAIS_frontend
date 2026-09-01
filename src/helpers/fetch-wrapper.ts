@@ -24,8 +24,7 @@ function request(method: string) {
         return fetch(url, requestOptions).then(handleResponse);
     }
 }
-export const stream = (url: string, body: any = null) => {
-
+export const streamFilesDownload = (url: string, body: any = null) => {
     const requestOptions: RequestInit = {
         method: "POST",
         headers: authHeader(url, {})
@@ -68,7 +67,7 @@ export const login = (url: string, body: any) => {
     return fetch(url, requestOptions).then(handleResponse);
 }
 
-export const getFiles = async (url: string) => {
+export const getTemplates = async (url: string) => {
     const requestOptions: RequestInit = {
         method: 'GET',
         headers: authHeader(url, {})
@@ -109,10 +108,10 @@ function authHeader(url: string, header: any): HeadersInit {
     }
 }
 
-function handleResponse(response: Response) {
+function handleResponse(response: Response, isJSON: boolean = true) {
     return response.text().then(text => {
         console.log('response', response)
-        const data = text;
+        const data = isJSON ? text && JSON.parse(text) : text;
         if (!response.ok) {
             const { user, logout } = useAuthStore();
             if ([401, 403].includes(response.status) && user) {

@@ -191,6 +191,7 @@ async function onRequest(props: any) {
         + `&sort_by=${sortBy}`
         + `&descending=${descending}`
     const response = await fetchWrapper.get(url)
+    console.log('response', response)
     const results = response.results
     const rowCounts = response.row_counts
 
