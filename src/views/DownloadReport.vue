@@ -15,7 +15,7 @@
                         Clear </Button>
                     <Button class="col q-ml-md" @click.prevent="addSearchTerm"><i class="fas fa-add"></i> Add </Button>
                 </div>
-                <div class="row " v-for="x of searchTerms">
+                <div class="row " v-for="x of selectedSearchTerms">
                     <!--- Note: No more multiple selection. there are problems manpilation with this value in 3 times nested reference. also it is hard to see if you have selected multiple catalogues in one search fields--->
                     <q-select v-model=x[0] class="select col" :options="filteredCatalogueFields"
                         label="Select catalogue field" @filter="filterFn" clearable style="width: 250px" use-input
@@ -92,7 +92,7 @@ import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
-import { fetchWrapper, streamFilesDownload } from '../helpers/fetch-wrapper';
+import { streamFilesDownload } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { catalogueNames, getHeaderDict } from '../constants';
@@ -100,7 +100,7 @@ import { catalogueNames, getHeaderDict } from '../constants';
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
-const searchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
+const selectedSearchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
 
 //for catalogues with no results:
 const cataloguesWithNoResults: Ref<string[]> = ref([])
@@ -114,7 +114,6 @@ const searchTermPanelHeight = ref("")
 //field validation
 const schema = yup.object().shape({
     selectCatalogues: yup.array().of(yup.string()).required("selectCatalogues is required"),
-
 });
 const { defineField, handleSubmit } = useForm({
     validationSchema: schema,
@@ -140,14 +139,14 @@ function onCatalogueSelectRemove(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
     setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
-    for (let aSearchTerm of searchTerms.value) {
+    for (let aSearchTerm of selectedSearchTerms.value) {
         const cats = toRaw(aSearchTerm[0]!)
         if (cats.length == 0)
             continue
         if (cats.includes(details.value))
-            searchTerms.value.splice(searchTerms.value.indexOf(aSearchTerm), 1)
-        if (searchTerms.value.length == 0)
-            searchTerms.value = [["", ""]]
+            selectedSearchTerms.value.splice(selectedSearchTerms.value.indexOf(aSearchTerm), 1)
+        if (selectedSearchTerms.value.length == 0)
+            selectedSearchTerms.value = [["", ""]]
     }
 }
 function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
@@ -184,17 +183,17 @@ function filterFn(filterTerm: string, update: any) {
 }
 
 function addSearchTerm() {
-    searchTerms.value.push(["", ""])
+    selectedSearchTerms.value.push(["", ""])
 
     //5 is for the space for the headers and add/clear button
-    const heightSearchTermPanel: number = searchTerms.value.length * 3.5 + 5
+    const heightSearchTermPanel: number = selectedSearchTerms.value.length * 3.5 + 5
     //20 for the remaining height of the main content in .large div
     const overallHeight = heightSearchTermPanel + 20
     overallDivHeight.value = overallHeight.toString() + "vh"
     searchTermPanelHeight.value = heightSearchTermPanel.toString() + "vh"
 }
 function clearAllSearchTerm() {
-    searchTerms.value = [["", ""]]
+    selectedSearchTerms.value = [["", ""]]
     overallDivHeight.value = "27vh"
     searchTermPanelHeight.value = '7vh'
 }
@@ -204,7 +203,7 @@ const onSubmit = handleSubmit(async (_values) => {
     const searchTermToBeSent: any = {}
     for (const cat of selectCatalogues.value) {
         searchTermToBeSent[cat] = {}
-        for (const catalogueFieldAndSearchTermPair of searchTerms.value) {
+        for (const catalogueFieldAndSearchTermPair of selectedSearchTerms.value) {
             if (catalogueFieldAndSearchTermPair[0] == null
                 || catalogueFieldAndSearchTermPair[1] == null)
                 continue
@@ -250,7 +249,6 @@ const onSubmit = handleSubmit(async (_values) => {
         const returnedCat = !subText.includes(noResultString)
             ? subText.slice(1, subText.indexOf("{"))
             : subText.replace("=", "").replace("no results", "")
-        //"{" is the start of the rows so I don't need that stuff for catalogue name
 
         if (subText.includes(noResultString)) {
             results.push({
