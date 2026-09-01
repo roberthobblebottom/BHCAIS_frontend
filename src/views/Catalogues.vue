@@ -65,15 +65,16 @@
                                 option-value="name" style="min-width: 150px" />
                         </div>
                     </q-btn-dropdown>
+                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true"><i
+                            class="fa-solid fa-circle-xmark"></i>
+                        Delete
+                        Selected</button>
                     <q-input borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
                     </q-input>
-                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true"><i
-                            class="fa-solid fa-circle-xmark"></i>
-                        Delete
-                        Selected</button>
+
                 </div>
             </template>
         </q-table>
@@ -83,18 +84,17 @@
         <p class="alert"> {{ errorMessage }}</p>
     </div>
     <q-dialog v-model="confirm" persistent>
-        <q-card class="column items-center 
-            q-pb-none text-h6 dialog">
-            <q-card-section class="  items-center column q-pb-none">
+        <q-card class=" dialog ">
+            <q-card-section>
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
-                <span class="q-ml-sm">Are you sure you want to delete the selected rows ids:
-                    {{selectedRowsToBeDeleted.map((v) => Object.values(v)[0]).join(',')}}
-                    from {{ catalogueName }} table?
-                </span>
             </q-card-section>
-            <q-card-section class="row ">
+            <span>Are you sure you want to delete the selected rows ids:
+                {{selectedRowsToBeDeleted.map((v) => Object.values(v)[0]).join(',')}}
+                from {{ catalogueName }} table?
+            </span>
+            <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
-                <q-btn label="Delete" color="primary" v-close-popup @click="deleteSelected" />
+                <q-btn class="q-ml-md" label="Delete" color="primary" v-close-popup @click="deleteSelected" />
             </q-card-section>
         </q-card>
     </q-dialog>

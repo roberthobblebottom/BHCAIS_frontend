@@ -52,16 +52,18 @@
     <div>
         <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
             ref="dialogRef">
-            <q-card-section class="column items-center 
-            q-pb-none text-h6 dialog ">
-                <q-avatar :icon="dialogHeader == 'Sucessful' ? 'error' : 'done'" color="primary" text-color="white"
-                    class="" />
+            <q-card class="dialog">
+
+                <q-card-section>
+                    <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
+                        class="" />
+                </q-card-section>
                 <h3>{{ dialogHeader }}</h3>
                 <p>{{ dialogMessage }}
                 </p>
                 <q-btn label="Ok" color="primary" v-close-popup autofocus />
-            </q-card-section>
 
+            </q-card>
         </q-dialog>
     </div>
 </template>

@@ -13,7 +13,7 @@
                         (Optional):</label>
                     <Button class="col " @click.prevent="clearAllSearchTerm"><i class="fa-solid fa-circle-xmark"></i>
                         Clear </Button>
-                    <Button class="col " @click.prevent="addSearchTerm"><i class="fas fa-add"></i> Add </Button>
+                    <Button class="col q-ml-md" @click.prevent="addSearchTerm"><i class="fas fa-add"></i> Add </Button>
                 </div>
                 <div class="row " v-for="x of searchTerms">
                     <!--- Note: No more multiple selection. there are problems manpilation with this value in 3 times nested reference. also it is hard to see if you have selected multiple catalogues in one search fields--->
@@ -35,18 +35,17 @@
         </q-form>
 
         <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
-            <q-card class="column items-center 
-            q-pb-none text-h6 dialog ">
-                <q-card-section class="  items-center column q-pb-none">
-                    <q-avatar icon="error" color="primary" text-color="white" class="" />
-                    {{ showNoResultMessage
-                        ? "All catalogues do not have results."
-                        : "There are no results from these catalogues: "
-                        + cataloguesWithNoResults.join(",")
-                        + ". They will not be included in the zip file." }}
-
-                    <q-btn label="Ok" color="primary" v-close-popup autofocus />
+            <q-card class="dialog">
+                <q-card-section>
+                    <q-avatar class="" icon="error" color="primary" text-color="white" />
                 </q-card-section>
+                <label> {{ showNoResultMessage
+                    ? "All catalogues do not have results."
+                    : "There are no results from these catalogues: \n"
+                    + cataloguesWithNoResults.join(",")
+                    + "\n They will not be included in the zip file." }}</label>
+
+                <q-btn label="Ok" color="primary" v-close-popup autofocus />
             </q-card>
         </q-dialog>
     </div>

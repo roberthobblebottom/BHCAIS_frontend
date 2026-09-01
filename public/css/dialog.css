@@ -1,7 +1,6 @@
 .dialog {
     background-color: white !Important;
-    /* padding: 5%; */
-    /* margin: 10%; */
+
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     white-space: pre-wrap;
     position-anchor: --siderbar;
@@ -9,8 +8,13 @@
     right: anchor(left);
     margin-left: 300px;
     margin-top: 100px;
-    min-height: 200px;
+    min-height: 250px;
     min-width: 500px;
-    border-radius: 15px;
-    padding: 5%
+    border-radius: 30px;
+    padding: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 15px !important;
 }
