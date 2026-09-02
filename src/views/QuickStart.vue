@@ -51,7 +51,8 @@ storeToRefs(authStore);
                 The system will automatically check if the headers are correct and they are not empty or headers only
                 files
                 Click on the <img alt="Upload Files" src="../../public/images/upload-files.png" /> to upload the files
-                given.
+                given. You also can download catalogues templates by clicking <img
+                    src="../../public/images/download-templates.png">
             </p>
             <p>
                 To View Files, click on
@@ -109,10 +110,7 @@ storeToRefs(authStore);
     overflow: scroll;
 }
 
-img {
-    padding: 0%;
-    margin: 0%;
-}
+img {}
 
 p {
     border-bottom: 1px dotted grey;
