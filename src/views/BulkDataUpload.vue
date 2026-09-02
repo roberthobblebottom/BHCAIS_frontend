@@ -28,13 +28,13 @@
                         </div>
                         <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense
                             flat>
-                            Pick Files
+                            Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
                         <q-btn class="q-ml-md" v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round
                             dense flat>
 
-                            Upload Files
+                            Upload File(s)
                         </q-btn>
 
                         <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat>
@@ -46,7 +46,7 @@
 
             <button class="button" @click.prevent="downloadTemplatesForTheCatalogs"><i
                     class="fas fa-file-arrow-down"></i> Download
-                Template</button>
+                Templates</button>
         </form>
     </div>
     <div>

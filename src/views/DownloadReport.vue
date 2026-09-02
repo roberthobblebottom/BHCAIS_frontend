@@ -207,7 +207,9 @@ const onSubmit = handleSubmit(async (_values) => {
             if (catalogueFieldAndSearchTermPair[0] == null
                 || catalogueFieldAndSearchTermPair[1] == null)
                 continue
-            const fieldsWithCatPrefix = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
+            const fieldsWithCatPrefix = catalogueFieldAndSearchTermPair[0]!
+                .toString()
+                .split(",")
             for (const fieldWithCatPrefix of fieldsWithCatPrefix) {
                 const field = fieldWithCatPrefix.replace(cat, "").trim()
                 if (fieldWithCatPrefix.includes(cat) && field != ""
@@ -259,10 +261,13 @@ const onSubmit = handleSubmit(async (_values) => {
         }
 
         //slice the first and the last characters. "{" and "}"
-        const rows = subText.slice(subText.indexOf("{")).slice(0, subText.length - 1).split("},{")
+        const rows = subText.slice(subText.indexOf("{"))
+            .slice(0, subText.length - 1).split("},{")
         const newRows = []
         for (let row of rows) {
-            row = row.at(0) == "{" ? row + "}" : "{" + row + "}"
+            row = row.at(0) == "{"
+                ? row + "}"
+                : "{" + row + "}"
             row = row.replace("},}", "}")
             newRows.push(JSON.parse(row))
         }
@@ -284,10 +289,12 @@ const onSubmit = handleSubmit(async (_values) => {
         ).join("")
         const tableInStringFormat = header + rows
 
-        const searchTermStringified = queryData.search_terms[catalog.catalogue_name] != null
-            ? "search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
-                .replaceAll("\"", "").replaceAll("{", "").replaceAll("}", "").replace(":", " eq ")
-            : ""
+        const searchTermStringified =
+            queryData.search_terms[catalog.catalogue_name] != null
+                ? "search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
+                    .replaceAll("\"", "").replaceAll("{", "")
+                    .replaceAll("}", "").replace(":", " eq ")
+                : ""
 
         allCatalogueResultsInCSVs.push({
             //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
