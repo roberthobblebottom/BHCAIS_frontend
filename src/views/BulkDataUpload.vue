@@ -6,7 +6,7 @@
                 <p>Entries with existing data will be overwritten. <br>
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
-            <q-uploader class="fu " :multiple="true" persistent accept=".csv,.xlsx" @added="onAddedListener"
+            <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
                 @failed="onFailedListener" color="grey-9">
                 <template v-slot:header="scope">
@@ -31,8 +31,8 @@
                             Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
-                        <q-btn class="q-ml-md" v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round
-                            dense flat>
+                        <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
+                            icon="cloud_upload" @click="scope.upload" round dense flat>
 
                             Upload File(s)
                         </q-btn>
@@ -79,16 +79,18 @@
 </style>
 <script setup lang='ts'>
 import * as xlsx from 'xlsx'
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 import { legacyAndMiscellaneousItemsReportHeader, libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
 import { getTemplates } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
+import { mdiConsoleLine } from '@quasar/extras/mdi-v7';
 const dialogHeader = ref("")
 const dialogMessage = ref("");
 const fileUploaderRef = ref();
 const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
+const fu = ref()
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
 
 
@@ -142,12 +144,12 @@ const onAddedListener = (files: readonly File[]) => {
                         && headersString != oralHistoryHeaders
                         && headersString != legacyAndMiscellaneousItemsReportHeader
                     ) {
-                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
+                        fileUploaderRef.value.removeFile(file)
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
                     if (isInvalidContent) {
-                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
+                        fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
                     }
                     resolve()
@@ -170,7 +172,9 @@ const onAddedListener = (files: readonly File[]) => {
                         names_of_files_with_incorrect_headers.push(file.name)
                     }
                     const content = csv.split('\n').slice(2)
-                    if (content.length == 1 || content[0]?.trim() == "") {
+                    console.log(content.length)
+                    console.log(content[0])
+                    if (content.length == 1 || content[0]?.trim() == "" || content[0] == null) {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_headers_only.push(file.name)
                     } else if (!content[0]!.includes(',')) {
@@ -198,6 +202,8 @@ const onAddedListener = (files: readonly File[]) => {
             dialogHeader.value = "Error"
             dialogMessage.value = errorMessage + "All of these file(s) will not be selected."
             dialogEnable.value = true
+            if (fileUploaderRef.value.files.length() == 0)
+                fileUploaderRef.value.reset()
         }
     })
 

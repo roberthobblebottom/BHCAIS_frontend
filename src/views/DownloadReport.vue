@@ -1,6 +1,6 @@
 <template>
     <div class="large common flex  flex-start" :style="{ height: overallDivHeight }">
-        <q-form class="download-report-form" @submit.prevent="onSubmit">
+        <q-form validation-observer class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
             <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" @clear="onCatalogueSelectClear"
                 @add="onCatalogueSelectAdd" @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
@@ -30,7 +30,7 @@
                     <q-input v-model=x[1] class="col" :style="{ 'margin-left': '5px' }" label="Search Term" />
                 </div>
             </div>
-            <button class="download-button " type="submit" @click="onSubmit"><i class="fas fa-file-arrow-down"></i>
+            <button class="download-button " @click="onSubmit"><i class="fas fa-file-arrow-down"></i>
                 Download</button>
         </q-form>
 
@@ -113,12 +113,12 @@ const searchTermPanelHeight = ref("")
 
 //field validation
 const schema = yup.object().shape({
-    selectCatalogues: yup.array().of(yup.string()).required("selectCatalogues is required"),
+    selectCatalogues: yup.array().of(yup.string().oneOf(catalogueNames, 'Invalid Catalogue')).required("selectCatalogues is required"),
 });
 const { defineField, handleSubmit } = useForm({
     validationSchema: schema,
     initialValues: {
-        terms: false,
+        selectCatalogues: [],
     },
 });
 const quasarConfig = (state: any) => ({
@@ -128,7 +128,7 @@ const quasarConfig = (state: any) => ({
     },
 });
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
-selectCatalogues.value = []
+// selectCatalogues.value = []
 
 function onCatalogueSelectAdd(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
@@ -201,6 +201,7 @@ function clearAllSearchTerm() {
 
 const onSubmit = handleSubmit(async (_values) => {
     const searchTermToBeSent: any = {}
+    console.log(selectCatalogues)
     for (const cat of selectCatalogues.value) {
         searchTermToBeSent[cat] = {}
         for (const catalogueFieldAndSearchTermPair of selectedSearchTerms.value) {
