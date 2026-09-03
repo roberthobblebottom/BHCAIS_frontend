@@ -25,7 +25,7 @@
                                 <q-item-section class="text-grey"> No results </q-item-section>
                             </q-item>
                         </template>
-                        <q-tooltip v-if="x[0]"> {{ (x[0])?.toString() }} </q-tooltip>
+                        <!-- <q-tooltip v-if="x[0]"> {{ (x[0])?.toString() }} </q-tooltip> -->
                     </q-select>
                     <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term" />
                 </div>

@@ -3,12 +3,13 @@
         <form>
             <div class="">
                 <h3>Bulk Data Upload</h3>
-                <p>Entries with existing data will be overwritten. <br>
+                <p>Entries with existing data (As identified by each catalogry's first column, where the name is usually
+                    with SN in it.) will be overwritten. <br>
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
-                @failed="onFailedListener" color="grey-9">
+                @failed="onFailedListener" color="grey-9" batch>
                 <template v-slot:header="scope">
                     <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
                         <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" icon="clear_all"
@@ -81,7 +82,15 @@
 import * as xlsx from 'xlsx'
 import { nextTick, ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
-import { legacyAndMiscellaneousItemsReportHeader, libraryAndArchiveHeader, negativeHeaders, oralHistoryHeaders, printHeaders, slideHeaders } from '../constants';
+import {
+    printSqlStringColumns,
+    oralHistoriesSqlStringColumns,
+    negativeSqlStringColumns,
+    slideSqlStringColumns,
+    libraryAndArchivesSqlStringColumns,
+    legacyAndMiscellaneousItemsReportSqlStringColumns,
+
+} from '../constants';
 import { getTemplates } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
 import { mdiConsoleLine } from '@quasar/extras/mdi-v7';
@@ -111,6 +120,9 @@ const onAddedListener = (files: readonly File[]) => {
     const names_of_files_with_headers_only: string[] = []
     const names_of_files_with_zero_bytes: string[] = []
     const names_of_files_with_incorrect_headers: string[] = []
+    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
+    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
+    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
     const x = files.map((file: any) => {
         return new Promise<void>((resolve) => {
             if (file.size == 0) {
@@ -135,14 +147,12 @@ const onAddedListener = (files: readonly File[]) => {
                     const headers: Object = tempHeadersValues[0]!
                     const content: any[] = tempHeadersValues[1]!
                     const headersString: string = Object.values(headers).map((col: string) => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-                    console.log('headersString', headersString)
-                    console.log('printheaders', printHeaders)
-                    if (headersString != printHeaders
-                        && headersString != negativeHeaders
-                        && headersString != slideHeaders
-                        && headersString != libraryAndArchiveHeader
-                        && headersString != oralHistoryHeaders
-                        && headersString != legacyAndMiscellaneousItemsReportHeader
+                    if (headersString != printSqlStringColumns.join(",")
+                        && headersString != negativeSqlStringColumns.join(",")
+                        && headersString != slideSqlStringColumns.join(",")
+                        && headersString != libraryAndArchivesSqlStringColumns.join(",")
+                        && headersString != oralHistoriesSqlStringColumns.join(',')
+                        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
                     ) {
                         fileUploaderRef.value.removeFile(file)
                         names_of_files_with_incorrect_headers.push(file.name)
@@ -161,12 +171,12 @@ const onAddedListener = (files: readonly File[]) => {
                     const csv = e.target?.result as string
                     let headersString = csv.split('\n')[0]?.split(",")
                         .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-                    if (headersString != printHeaders
-                        && headersString != negativeHeaders
-                        && headersString != slideHeaders
-                        && headersString != libraryAndArchiveHeader
-                        && headersString != oralHistoryHeaders
-                        && headersString != legacyAndMiscellaneousItemsReportHeader
+                    if (headersString != printSqlStringColumns.join(",")
+                        && headersString != negativeSqlStringColumns.join(",")
+                        && headersString != slideSqlStringColumns.join(",")
+                        && headersString != libraryAndArchivesSqlStringColumns.join(",")
+                        && headersString != oralHistoriesSqlStringColumns.join(',')
+                        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
                     ) {
                         fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
                         names_of_files_with_incorrect_headers.push(file.name)

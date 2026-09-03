@@ -52,16 +52,15 @@ a,
 .main-content {
   /* background-color: white !important; */
   position-anchor: --siderbar;
-  float: right;
-  position: fixed;
+  float: left;
+  position: relative;
   top: anchor(top);
-  margin-left: 10%;
-  margin-top: 10px;
+  margin-left: max(10%, 250px);
+  margin-top: 5%;
   border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5%;
 }
 
 .loginDetails {
