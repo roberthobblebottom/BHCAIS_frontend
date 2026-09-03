@@ -2,11 +2,11 @@
     <div class="large common flex  flex-start" :style="{ height: overallDivHeight }">
         <q-form validation-observer class="download-report-form" @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
-            <q-select v-model="selectCatalogues" v-bind="selectCataloguesProps" @clear="onCatalogueSelectClear"
-                @add="onCatalogueSelectAdd" @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
-                label="Select catalogue(s). " multiple clearable
-                hint="Click on the same catalogue to unselect"></q-select>
-
+            <q-select v-model="selectCatalogues" @clear="onCatalogueSelectClear" @add="onCatalogueSelectAdd"
+                @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
+                label="Select catalogue(s). " multiple clearable hint="Click on the same catalogue to unselect"
+                :error-message="errorMessage" :error="errorMessage != ''"></q-select>
+            <!-- <label :style="{ 'color': 'red' }" v-if="selectCataloguesProps.error"> {{ selectCataloguesProps }}</label> -->
             <div class="col inner" :style="{ height: searchTermPanelHeight }">
                 <div class="row justifiy-between items-end">
                     <label class="col-7 search-terms-label">Search Terms
@@ -27,7 +27,7 @@
                         </template>
                         <q-tooltip v-if="x[0]"> {{ (x[0])?.toString() }} </q-tooltip>
                     </q-select>
-                    <q-input v-model=x[1] class="col" :style="{ 'margin-left': '5px' }" label="Search Term" />
+                    <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term" />
                 </div>
             </div>
             <button class="download-button " @click="onSubmit"><i class="fas fa-file-arrow-down"></i>
@@ -88,7 +88,7 @@
 <script setup lang="ts">
 
 //partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
-import { ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
+import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate';
 
 import * as yup from 'yup';
@@ -101,6 +101,7 @@ const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
 const selectedSearchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
+const errorMessage = ref("")
 
 //for catalogues with no results:
 const cataloguesWithNoResults: Ref<string[]> = ref([])
@@ -201,7 +202,15 @@ function clearAllSearchTerm() {
 
 const onSubmit = handleSubmit(async (_values) => {
     const searchTermToBeSent: any = {}
-    console.log(selectCatalogues)
+    console.log(selectCatalogues.value.length)
+    if (selectCatalogues.value.length == 0) {
+        selectCataloguesProps.value['error'] = true
+        selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
+        errorMessage.value = "Please Select a catalogue."
+        console.log(selectCataloguesProps.value['error-message'])
+        nextTick()
+        return
+    }
     for (const cat of selectCatalogues.value) {
         searchTermToBeSent[cat] = {}
         for (const catalogueFieldAndSearchTermPair of selectedSearchTerms.value) {

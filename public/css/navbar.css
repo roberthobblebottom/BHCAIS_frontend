@@ -44,13 +44,18 @@ a,
   width: 100%;
 }
 
+#app {
+  display: flex;
+  justify-content: space-between;
+}
+
 .main-content {
   /* background-color: white !important; */
   position-anchor: --siderbar;
-  position: relative;
-  right: anchor(left);
+  float: right;
+  position: fixed;
   top: anchor(top);
-  margin-left: 15vw;
+  margin-left: 10%;
   margin-top: 10px;
   border-radius: 15px;
   display: flex;
