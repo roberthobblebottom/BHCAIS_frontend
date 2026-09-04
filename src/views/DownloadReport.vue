@@ -295,8 +295,9 @@ const onSubmit = handleSubmit(async (_values) => {
         }
 
         const header = Object.keys(resultData[0]).join(',') + "\n"
-        const rows = resultData.map((row: Object) => Object.values(row).join(',') + "\n"
+        const rows = resultData.map((row: Object) => Object.values(row).map((e: string) => e != null ? "'" + e.replaceAll(";", 'SEMICOLON').replaceAll("\,", "COMMA") + "'" : e).join(",") + "\n"
         ).join("")
+        console.log(rows)
         const tableInStringFormat = header + rows
 
         const searchTermStringified =

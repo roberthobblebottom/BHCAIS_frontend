@@ -28,12 +28,12 @@
                                 {{ scope.uploadProgressLabel }}</div>
                         </div>
                         <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense
-                            flat>
+                            flat :disable="isUploaderDisabled">
                             Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
                         <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
-                            icon="cloud_upload" @click="scope.upload" round dense flat>
+                            :disable="isUploaderDisabled" icon="cloud_upload" @click="scope.upload" round dense flat>
 
                             Upload File(s)
                         </q-btn>
@@ -43,6 +43,7 @@
                         </q-btn>
                     </div>
                 </template>
+
             </q-uploader>
 
             <button class="button" @click.prevent="downloadTemplatesForTheCatalogs"><i
@@ -60,8 +61,23 @@
                         class="" />
                 </q-card-section>
                 <h3>{{ dialogHeader }}</h3>
-                <p>{{ dialogMessage }}
-                </p>
+                <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
+                <p>{{ dialogHeader.toLocaleLowerCase() == 'error'
+                    && names_of_files_with_headers_only.length != 0 ?
+                    "Files with headers only: " +
+                    names_of_files_with_headers_only.join(",")
+                    : '' }}</p>
+                <p>{{ dialogHeader.toLocaleLowerCase() == 'error'
+                    && names_of_files_with_incorrect_headers.length != 0 ?
+                    "Files with incorrect header: " +
+                    names_of_files_with_incorrect_headers.join(",")
+                    : '' }}</p>
+                <p> {{ dialogHeader.toLocaleLowerCase() == 'error'
+                    && names_of_files_with_zero_bytes.length != 0
+                    ? "Empty files: " +
+                    names_of_files_with_zero_bytes.join(",")
+                    : ''
+                    }}</p>
                 <q-btn label="Ok" color="primary" v-close-popup autofocus />
 
             </q-card>
@@ -76,31 +92,28 @@
     margin-top: 2%;
     margin-bottom: 2%;
     width: 100% !important;
+    height: 100%;
 }
 </style>
 <script setup lang='ts'>
-import * as xlsx from 'xlsx'
-import { nextTick, ref } from 'vue';
+import { ref, type Ref, nextTick } from 'vue';
 import { QUploader, QDialog } from 'quasar';
-import {
-    printSqlStringColumns,
-    oralHistoriesSqlStringColumns,
-    negativeSqlStringColumns,
-    slideSqlStringColumns,
-    libraryAndArchivesSqlStringColumns,
-    legacyAndMiscellaneousItemsReportSqlStringColumns,
 
-} from '../constants';
 import { getTemplates } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
-import { mdiConsoleLine } from '@quasar/extras/mdi-v7';
+
 const dialogHeader = ref("")
 const dialogMessage = ref("");
-const fileUploaderRef = ref();
 const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
-const fu = ref()
+const fileUploaderRef = ref()
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
+const isUploaderDisabled = ref(false)
+let names_of_files_with_headers_only: Ref<string[]> = ref([])
+const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
+let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
+
+
 
 
 async function downloadTemplatesForTheCatalogs() {
@@ -117,105 +130,72 @@ async function downloadTemplatesForTheCatalogs() {
 }
 
 const onAddedListener = (files: readonly File[]) => {
-    const names_of_files_with_headers_only: string[] = []
-    const names_of_files_with_zero_bytes: string[] = []
-    const names_of_files_with_incorrect_headers: string[] = []
-    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
-    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
-    // THESE ARE SLOW FOR SOME REASON TODO////////////////////////////////////////////////////
-    const x = files.map((file: any) => {
+    isUploaderDisabled.value = true
+    let workersFinishedWork = []
+    names_of_files_with_headers_only.value = []
+    names_of_files_with_incorrect_headers.value = []
+    names_of_files_with_zero_bytes.value = []
+    console.log('on added listener')
+    const x = files.map((file: File) => {
         return new Promise<void>((resolve) => {
+
             if (file.size == 0) {
-                names_of_files_with_zero_bytes.push(file.name)
-                fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
-                resolve()
+                names_of_files_with_zero_bytes.value.push(file.name)
+                fileUploaderRef.value.removeFile(file)
+                return
             }
-            const reader = new FileReader()
-            if (file.name.includes('.xlsx')) {
-                reader.onload = (e: ProgressEvent<FileReader>) => {
+            const worker = new Worker(new URL('../helpers/fileCheckerWorker.ts', import.meta.url), {
+                type: 'module'
+            });
+            worker.onmessage = (event) => {
+                workersFinishedWork.push("tally")
+                console.log(workersFinishedWork)
+                if (event.data.name_of_file_with_headers_only != '') {
+                    names_of_files_with_headers_only.value.push(event.data.name_of_file_with_headers_only)
+                    // isUploaderDisabled.value = false
+                    // nextTick()
+                    fileUploaderRef.value.removeFile(file)
 
-                    // Read the file as an array buffer
-                    const data = new Uint8Array(e.target?.result as ArrayBuffer);
-                    const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 });
-                    const sheetName = workbook.SheetNames[0]!;
-                    const worksheet: any = workbook.Sheets[sheetName];
-
-                    // Extract headers (first row)
-                    let tempHeadersValues: any[] = xlsx.utils.sheet_to_json(worksheet, {
-                        header: 1
-                    })
-                    const headers: Object = tempHeadersValues[0]!
-                    const content: any[] = tempHeadersValues[1]!
-                    const headersString: string = Object.values(headers).map((col: string) => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-                    if (headersString != printSqlStringColumns.join(",")
-                        && headersString != negativeSqlStringColumns.join(",")
-                        && headersString != slideSqlStringColumns.join(",")
-                        && headersString != libraryAndArchivesSqlStringColumns.join(",")
-                        && headersString != oralHistoriesSqlStringColumns.join(',')
-                        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
-                    ) {
-                        fileUploaderRef.value.removeFile(file)
-                        names_of_files_with_incorrect_headers.push(file.name)
-                    }
-                    const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
-                    if (isInvalidContent) {
-                        fileUploaderRef.value.removeFile(file)
-                        names_of_files_with_headers_only.push(file.name)
-                    }
-                    resolve()
+                    // nextTick()
+                    // isUploaderDisabled.value = true
+                    // nextTick()
                 }
-                reader.readAsArrayBuffer(file)
+                if (event.data.name_of_file_with_incorrect_headers != '') {
+                    names_of_files_with_incorrect_headers.value.push(event.data.name_of_file_with_incorrect_headers)
+                    // isUploaderDisabled.value = false
+                    // nextTick()
+                    fileUploaderRef.value.removeFile(file)
+
+                    // nextTick()
+                    // isUploaderDisabled.value = true
+                    // nextTick()
+                }
+                if (workersFinishedWork.length == files.length) {
+                    isUploaderDisabled.value = false
+                }
+                if ((names_of_files_with_headers_only.value.length > 0
+                    || names_of_files_with_incorrect_headers.value.length > 0
+                    || names_of_files_with_zero_bytes.value.length > 0)
+                    && workersFinishedWork.length == files.length) {
+                    dialogHeader.value = "Error"
+                    dialogEnable.value = true
+
+                }
+
+
             }
-            else if (file.name.includes('.csv')) {
-                reader.onload = (e: ProgressEvent<FileReader>) => {
-                    const csv = e.target?.result as string
-                    let headersString = csv.split('\n')[0]?.split(",")
-                        .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-                    if (headersString != printSqlStringColumns.join(",")
-                        && headersString != negativeSqlStringColumns.join(",")
-                        && headersString != slideSqlStringColumns.join(",")
-                        && headersString != libraryAndArchivesSqlStringColumns.join(",")
-                        && headersString != oralHistoriesSqlStringColumns.join(',')
-                        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
-                    ) {
-                        fileUploaderRef.value.files.splice(fileUploaderRef.value.files.indexOf(file), 1)
-                        names_of_files_with_incorrect_headers.push(file.name)
-                    }
-                    const content = csv.split('\n').slice(2)
-                    console.log(content.length)
-                    console.log(content[0])
-                    if (content.length == 1 || content[0]?.trim() == "" || content[0] == null) {
-                        fileUploaderRef.value.removeFile(file)
-                        names_of_files_with_headers_only.push(file.name)
-                    } else if (!content[0]!.includes(',')) {
-                        fileUploaderRef.value.removeFile(file)
-                        names_of_files_with_headers_only.push(file.name)
-                    }
-                    resolve()
-                }
-                reader.readAsText(file)
+
+            worker.postMessage({
+                file: file,
+            })
+
+            worker.onerror = (error) => {
+                console.error('Worker error:', error);
+                worker.terminate();
             }
         })
     })
-
-
-    Promise.all(x).then(() => {
-        let errorMessage = ''
-        console.log('error message', errorMessage)
-        if (names_of_files_with_headers_only.length > 0)
-            errorMessage += "These file(s) only have headers: \n" + names_of_files_with_headers_only.join("\n") + "\n\n"
-        if (names_of_files_with_zero_bytes.length > 0)
-            errorMessage += "These file(s) is empty: \n" + names_of_files_with_zero_bytes.join("\n") + "\n\n"
-        if (names_of_files_with_incorrect_headers.length > 0)
-            errorMessage += "These file(s) have incorrect (or missing) headers: \n" + names_of_files_with_incorrect_headers.join("\n") + "\n\n"
-        if (errorMessage != "") {
-            dialogHeader.value = "Error"
-            dialogMessage.value = errorMessage + "All of these file(s) will not be selected."
-            dialogEnable.value = true
-            if (fileUploaderRef.value.files.length() == 0)
-                fileUploaderRef.value.reset()
-        }
-    })
+    //Promise all then is very slow so I don't use it.
 
 }
 const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {

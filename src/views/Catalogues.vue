@@ -138,6 +138,7 @@ const pagination = ref({
     rowsNumber: 10
 })
 const catalogueName = ref("")
+const currentPrimaryKey = ref("")
 const confirm = ref(false)
 defineExpose({ tableRef })
 function onSelection(details: any) {
@@ -160,7 +161,8 @@ async function deleteSelected() {
         await fetchWrapper.post(url,
             {
                 ids_to_be_deleted: selectedIds,
-                catalogue_name: catalogueName.value
+                catalogue_name: catalogueName.value,
+                current_primary_key: currentPrimaryKey.value
             })
     } catch (error: any) {
         console.error(error)
@@ -223,7 +225,7 @@ async function onRequest(props: any) {
         })
         visibleColumnsTemp.push(h)
     }
-
+    currentPrimaryKey.value = temp[0].name
     columns.value = temp
     rowKey.value = columns.value[0].name
     rows.value = results
