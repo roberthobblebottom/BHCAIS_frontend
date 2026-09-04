@@ -22,8 +22,7 @@
                         </q-btn>
                         <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
                         <div class="col ">
-                            <div class="q-uploader__title">Drag and drop file(s) or click Pick Files(s)
-                                here</div>
+                            <div class="q-uploader__title">{{ uploaderHeaderMessage }}</div>
                             <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} /
                                 {{ scope.uploadProgressLabel }}</div>
                         </div>
@@ -109,6 +108,7 @@ const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
 const isUploaderDisabled = ref(false)
+const uploaderHeaderMessage = ref('')
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
@@ -131,6 +131,7 @@ async function downloadTemplatesForTheCatalogs() {
 
 const onAddedListener = (files: readonly File[]) => {
     isUploaderDisabled.value = true
+    uploaderHeaderMessage.value = 'Checking files validity...'
     let workersFinishedWork = []
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
@@ -172,6 +173,7 @@ const onAddedListener = (files: readonly File[]) => {
                 }
                 if (workersFinishedWork.length == files.length) {
                     isUploaderDisabled.value = false
+                    uploaderHeaderMessage.value = 'Drag and drop file(s) or click Pick Files(s) here'
                 }
                 if ((names_of_files_with_headers_only.value.length > 0
                     || names_of_files_with_incorrect_headers.value.length > 0

@@ -213,6 +213,7 @@ async function onRequest(props: any) {
 
     const temp: any = []
     const visibleColumnsTemp: any = []
+    let i = 0
     for (const h of Object.keys(results[0])) {
         temp.push({
             name: h,
@@ -224,6 +225,8 @@ async function onRequest(props: any) {
             sortable: true
         })
         visibleColumnsTemp.push(h)
+        i++;
+        console.log(temp)
     }
     currentPrimaryKey.value = temp[0].name
     columns.value = temp

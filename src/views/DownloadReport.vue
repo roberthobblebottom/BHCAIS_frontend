@@ -295,7 +295,12 @@ const onSubmit = handleSubmit(async (_values) => {
         }
 
         const header = Object.keys(resultData[0]).join(',') + "\n"
-        const rows = resultData.map((row: Object) => Object.values(row).map((e: string) => e != null ? "'" + e.replaceAll(";", 'SEMICOLON').replaceAll("\,", "COMMA") + "'" : e).join(",") + "\n"
+        const rows = resultData.map((row: Object) => Object.values(row).map(
+            (e: string) => e != null ? "'" + e
+                .replaceAll(";", '__SEMICOLON__')
+                .replaceAll(",", "__COMMA__")
+                .replaceAll("\'", "__SINGLEQUOTE__")
+                .replaceAll("\n", "__NEW_LINE__") + "'" : e).join(",") + "\n"
         ).join("")
         console.log(rows)
         const tableInStringFormat = header + rows

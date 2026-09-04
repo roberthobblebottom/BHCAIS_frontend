@@ -56,6 +56,7 @@ self.onmessage = (event: MessageEvent) => {
             if (isInvalidContent) {
                 // fileUploaderRef.value.removeFile(file)
                 _send_message_back(file.name, '')
+                return
             }
             _send_message_back('', '')
         }
@@ -89,6 +90,7 @@ self.onmessage = (event: MessageEvent) => {
                 _send_message_back(file.name, '')
             } else if (!content[0]!.includes(',')) {
                 _send_message_back(file.name, '')
+                return
                 // fileUploaderRef.value.removeFile(file)
                 // names_of_files_with_headers_only.push(file.name)
             }
