@@ -45,9 +45,10 @@
 
             </q-uploader>
 
-            <button class="button" @click.prevent="downloadTemplatesForTheCatalogs"><i
-                    class="fas fa-file-arrow-down"></i> Download
-                Templates</button>
+            <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs"><i
+                    class="fas fa-file-arrow-down"></i>
+                Download
+                Templates</q-btn>
         </form>
     </div>
     <div>
