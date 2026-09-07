@@ -30,8 +30,10 @@
                     <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term" />
                 </div>
             </div>
-            <button class="download-button " @click="onSubmit"><i class="fas fa-file-arrow-down"></i>
-                Download</button>
+            <button :disable='!isDownloading' class="download-button " @click="onSubmit"><i
+                    :class="isDownloading ? 'fa-solid fa-spinner fa-spin-pulse' : 'fas fa-file-arrow-down'"></i>
+                {{ isDownloading ? 'currently downlowding...' : 'Download'
+                }}</button>
         </q-form>
 
         <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
@@ -102,6 +104,7 @@ const allCatalogueFields: Ref<string[]> = ref(["Select All"])
 const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
 const selectedSearchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
 const errorMessage = ref("")
+const isDownloading = ref(false)
 
 //for catalogues with no results:
 const cataloguesWithNoResults: Ref<string[]> = ref([])
@@ -201,6 +204,7 @@ function clearAllSearchTerm() {
 
 
 const onSubmit = handleSubmit(async (_values) => {
+    isDownloading.value = true
     const searchTermToBeSent: any = {}
     console.log(selectCatalogues.value.length)
     if (selectCatalogues.value.length == 0) {
@@ -325,6 +329,7 @@ const onSubmit = handleSubmit(async (_values) => {
         showNoResultMessage.value = true
         return
     }
+    isDownloading.value = false
 
     const blob = await downloadZip(
         allCatalogueResultsInCSVs as unknown as InputWithoutMeta[]
