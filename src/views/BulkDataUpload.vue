@@ -10,6 +10,7 @@
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
                 @failed="onFailedListener" color="grey-9" batch>
+
                 <template v-slot:header="scope">
                     <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
                         <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" icon="clear_all"
@@ -34,7 +35,6 @@
                         <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
                             :disable="isCheckingFilesValidity" icon="cloud_upload" @click="scope.upload" round dense
                             flat>
-
                             Upload File(s)
                         </q-btn>
 
@@ -49,22 +49,22 @@
                 </template>
             </q-uploader>
 
-            <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs"><i
-                    class="fas fa-file-arrow-down"></i>
-                Download
-                Templates</q-btn>
+            <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs">
+                <i class="fas fa-file-arrow-down"></i>
+                Download Templates</q-btn>
         </form>
     </div>
     <div>
         <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
             ref="dialogRef">
             <q-card class="dialog">
-
                 <q-card-section>
                     <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
                         class="" />
                 </q-card-section>
+
                 <h3>{{ dialogHeader }}</h3>
+
                 <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
                 <p>{{ dialogHeader.toLocaleLowerCase() == 'error'
                     && names_of_files_with_headers_only.length != 0 ?
@@ -81,12 +81,13 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
                 <p>
                     {{ dialogHeader.toLocaleLowerCase() == 'error'
                         ? "These files will be removed"
                         : '' }}
                 </p>
+
                 <q-btn label="Ok" color="primary" v-close-popup autofocus />
 
             </q-card>
@@ -118,7 +119,6 @@ const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
 const isCheckingFilesValidity = ref(false)
-const uploaderHeaderMessage = ref('')
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
