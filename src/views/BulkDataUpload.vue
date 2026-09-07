@@ -13,8 +13,8 @@
 
                 <template v-slot:header="scope">
                     <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
-                        <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" icon="clear_all"
-                            @click="scope.removeQueuedFiles" round dense flat>
+                        <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" :disable="isCheckingFilesValidity"
+                            icon="clear_all" @click="scope.removeQueuedFiles" round dense flat>
                             Clear All
                         </q-btn>
                         <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles"
@@ -45,7 +45,8 @@
                 </template>
 
                 <template v-if="isCheckingFilesValidity" v-slot:list="scope">
-                    Checking headers validity
+                    <i class="fa-solid fa-spinner fa-spin-pulse"></i> Checking headers validity
+
                 </template>
             </q-uploader>
 
