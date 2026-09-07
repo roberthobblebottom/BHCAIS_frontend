@@ -1,4 +1,3 @@
-import { mdiConsoleLine } from '@quasar/extras/mdi-v7';
 import {
     printSqlStringColumns,
     oralHistoriesSqlStringColumns,
@@ -15,11 +14,22 @@ function _send_message_back(name_of_file_with_headers_only: string, name_of_file
         name_of_file_with_incorrect_headers: name_of_file_with_incorrect_header
     })
 }
+function isHeadersCorrect(headersString: string, fileName: string) {
+    if (headersString != printSqlStringColumns.join(",")
+        && headersString != negativeSqlStringColumns.join(",")
+        && headersString != slideSqlStringColumns.join(",")
+        && headersString != libraryAndArchivesSqlStringColumns.join(",")
+        && headersString != oralHistoriesSqlStringColumns.join(',')
+        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
+    ) {
+        _send_message_back("", fileName)
+        return false
+    }
+    return true
+}
 self.onmessage = (event: MessageEvent) => {
     const file = event.data.file;
-    // const CHUNK_END_BYTES = event.data.CHUNK_END_BYTES;
-    // const names_of_files_with_headers_only = event.data.names_of_files_with_headers_only
-    // const names_of_files_with_incorrect_headers = event.data.names_of_files_with_incorrect_headers
+
     console.log('file name', file.name)
     const reader = new FileReader()
     if (file.name.includes('.xlsx')) {
@@ -38,27 +48,14 @@ self.onmessage = (event: MessageEvent) => {
             const headersString: string = Object.values(headers).map(
                 (col: string) => col.trim().toLocaleLowerCase())
                 .toString().replace(",,", ",")
-            // console.log(headersString)
-            // console.log(slideSqlStringColumns.join(","))
-            if (headersString != printSqlStringColumns.join(",")
-                && headersString != negativeSqlStringColumns.join(",")
-                && headersString != slideSqlStringColumns.join(",")
-                && headersString != libraryAndArchivesSqlStringColumns.join(",")
-                && headersString != oralHistoriesSqlStringColumns.join(',')
-                && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
-            ) {
-                // fileUploaderRef.value.removeFile(file)
-                // names_of_files_with_incorrect_headers.push(file.name)
-                _send_message_back("", file.name)
+            if (!isHeadersCorrect(headersString, file.name))
                 return
-            }
             const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
             if (isInvalidContent) {
                 // fileUploaderRef.value.removeFile(file)
                 _send_message_back(file.name, '')
-                return
-            }
-            _send_message_back('', '')
+            } else
+                _send_message_back('', '')
         }
         reader.readAsArrayBuffer(file)
     }
@@ -67,37 +64,17 @@ self.onmessage = (event: MessageEvent) => {
             const csv = e.target?.result as string
             let headersString = csv.split('\n')[0]?.split(",")
                 .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
-            // console.log(headersString)
-            // console.log(slideSqlStringColumns.join(","))
-            // console.log()
-            if (headersString != printSqlStringColumns.join(",")
-                && headersString != negativeSqlStringColumns.join(",")
-                && headersString != slideSqlStringColumns.join(",")
-                && headersString != libraryAndArchivesSqlStringColumns.join(",")
-                && headersString != oralHistoriesSqlStringColumns.join(',')
-                && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
-            ) {
-                // fileUploaderRef.value.removeFile(file)
-                // names_of_files_with_incorrect_headers.push(file.name)
 
-                _send_message_back('', file.name)
+            if (!isHeadersCorrect(headersString!, file.name))
                 return
-            }
             const content = csv.split('\n').slice(2)
             if (content.length == 1 || content[0]?.trim() == "" || content[0] == null) {
-                // fileUploaderRef.value.removeFile(file)
-                // names_of_files_with_headers_only.push(file.name)
                 _send_message_back(file.name, '')
             } else if (!content[0]!.includes(',')) {
                 _send_message_back(file.name, '')
-                return
-                // fileUploaderRef.value.removeFile(file)
-                // names_of_files_with_headers_only.push(file.name)
-            }
-            _send_message_back('', '')
+            } else
+                _send_message_back('', '')
         }
         reader.readAsText(file)
-
     }
-    // Read the file as an array buffer
 }

@@ -18,7 +18,7 @@ storeToRefs(authStore);
         </v-row>
         <v-row class="quick-start">
 
-            <p>
+            <p class="section">
                 BHCAIS(beh - kaEYEs) is a intermediate system to store information from Excel or CSV files
                 before being transformed and stored in BIG, LKCNHM's Institutional truth layer system.
 
@@ -29,7 +29,7 @@ storeToRefs(authStore);
                 You may change the password on the <img src="../../public/images/change-password.png"
                     alt="Change Password" /> link on the sidebar.
             </p>
-            <p v-if="authStore.user.user_type == 'admin'">
+            <p class="section" v-if="authStore.user.user_type == 'admin'">
                 As admins you may Manage users by clicking on <img alt="User
                 Management" src="../../public/images/user-management.png"></img> on the sidebar.
                 It will bring you to the page that shows all users and all of their details.
@@ -42,7 +42,7 @@ storeToRefs(authStore);
                 individual row.
 
             </p>
-            <p>
+            <p class="section">
                 To upload data, Click on the <img alt="Bulk Data Upload"
                     src="../../public/images/bulk-data-upload.png" />on the sidebar
                 Choose which file to upload by using the <img alt="file picker"
@@ -68,7 +68,8 @@ storeToRefs(authStore);
 
             </p>
             <img src="../../public/images/selected-to-be-deleted.png">
-            <p>
+            <div class="section"></div>
+            <p class="section">
                 You may download the catalogues by clicking on <img src="../../public/images/download-reports.png"
                     alt="Download Report(s)" /> on the sidebar.
                 Select one or more catalogues that you want to download through the drop down selector <img
@@ -91,28 +92,22 @@ storeToRefs(authStore);
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-.main-content {
-    /* overflow: hidden; */
-}
 
-.common {
-    height: 80vh;
-}
+
 
 .large {
-    height: 100vh
+    height: 100%
 }
 
 .quick-start {
     display: grid;
     row-gap: 4%;
     height: 70vh;
-    overflow: scroll;
+    overflow: auto;
 }
 
-img {}
 
-p {
+.section {
     border-bottom: 1px dotted grey;
 }
 </style>

@@ -22,17 +22,18 @@
                         </q-btn>
                         <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
                         <div class="col ">
-                            <div class="q-uploader__title">{{ uploaderHeaderMessage }}</div>
+                            <div class="q-uploader__title">Click or Drag and Drop files here.</div>
                             <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} /
                                 {{ scope.uploadProgressLabel }}</div>
                         </div>
                         <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense
-                            flat :disable="isUploaderDisabled">
+                            flat :disable="isCheckingFilesValidity">
                             Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
                         <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
-                            :disable="isUploaderDisabled" icon="cloud_upload" @click="scope.upload" round dense flat>
+                            :disable="isCheckingFilesValidity" icon="cloud_upload" @click="scope.upload" round dense
+                            flat>
 
                             Upload File(s)
                         </q-btn>
@@ -43,6 +44,9 @@
                     </div>
                 </template>
 
+                <template v-if="isCheckingFilesValidity" v-slot:list="scope">
+                    Checking headers validity
+                </template>
             </q-uploader>
 
             <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs"><i
@@ -77,7 +81,12 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
+                <p>
+                    {{ dialogHeader.toLocaleLowerCase() == 'error'
+                        ? "These files will be removed"
+                        : '' }}
+                </p>
                 <q-btn label="Ok" color="primary" v-close-popup autofocus />
 
             </q-card>
@@ -96,7 +105,7 @@
 }
 </style>
 <script setup lang='ts'>
-import { ref, type Ref, nextTick } from 'vue';
+import { ref, type Ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 
 import { getTemplates } from '../helpers/fetch-wrapper';
@@ -108,12 +117,11 @@ const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
 const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
-const isUploaderDisabled = ref(false)
+const isCheckingFilesValidity = ref(false)
 const uploaderHeaderMessage = ref('')
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
-
 
 
 
@@ -131,50 +139,36 @@ async function downloadTemplatesForTheCatalogs() {
 }
 
 const onAddedListener = (files: readonly File[]) => {
-    isUploaderDisabled.value = true
-    uploaderHeaderMessage.value = 'Checking files validity...'
+    isCheckingFilesValidity.value = true
     let workersFinishedWork = []
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
     names_of_files_with_zero_bytes.value = []
     console.log('on added listener')
     const x = files.map((file: File) => {
-        return new Promise<void>((resolve) => {
-
+        return new Promise<void>((_resolve) => {
             if (file.size == 0) {
                 names_of_files_with_zero_bytes.value.push(file.name)
                 fileUploaderRef.value.removeFile(file)
+                workersFinishedWork.push(file.name)
                 return
             }
             const worker = new Worker(new URL('../helpers/fileCheckerWorker.ts', import.meta.url), {
                 type: 'module'
             });
             worker.onmessage = (event) => {
-                workersFinishedWork.push("tally")
-                console.log(workersFinishedWork)
+                workersFinishedWork.push(file.name)
+                console.log(workersFinishedWork, files.length)
                 if (event.data.name_of_file_with_headers_only != '') {
                     names_of_files_with_headers_only.value.push(event.data.name_of_file_with_headers_only)
-                    // isUploaderDisabled.value = false
-                    // nextTick()
                     fileUploaderRef.value.removeFile(file)
-
-                    // nextTick()
-                    // isUploaderDisabled.value = true
-                    // nextTick()
                 }
                 if (event.data.name_of_file_with_incorrect_headers != '') {
                     names_of_files_with_incorrect_headers.value.push(event.data.name_of_file_with_incorrect_headers)
-                    // isUploaderDisabled.value = false
-                    // nextTick()
                     fileUploaderRef.value.removeFile(file)
-
-                    // nextTick()
-                    // isUploaderDisabled.value = true
-                    // nextTick()
                 }
                 if (workersFinishedWork.length == files.length) {
-                    isUploaderDisabled.value = false
-                    uploaderHeaderMessage.value = 'Drag and drop file(s) or click Pick Files(s) here'
+                    isCheckingFilesValidity.value = false
                 }
                 if ((names_of_files_with_headers_only.value.length > 0
                     || names_of_files_with_incorrect_headers.value.length > 0
@@ -182,15 +176,10 @@ const onAddedListener = (files: readonly File[]) => {
                     && workersFinishedWork.length == files.length) {
                     dialogHeader.value = "Error"
                     dialogEnable.value = true
-
                 }
-
-
             }
 
-            worker.postMessage({
-                file: file,
-            })
+            worker.postMessage({ file: file })
 
             worker.onerror = (error) => {
                 console.error('Worker error:', error);
