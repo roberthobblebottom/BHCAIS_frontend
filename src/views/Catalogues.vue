@@ -45,31 +45,33 @@
                 :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
                 :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
                 v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
-                <template v-slot:top="props" class="column">
-                    <q-btn-dropdown class="rounded-borders " label="hide columns">
-                        <div class="q-pa-md rounded-borders">
-                            <p>These toggles are for hiding individual rows</p>
-                            <div class="check flex content-start" v-if="$q.screen.gt.xs">
-                                <div v-for="v in columns">
-                                    <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                <template v-slot:top="props">
+                    <div class="row flex justify-between table-header">
+                        <q-btn-dropdown class="rounded-borders  " label="hide columns">
+                            <div class="q-pa-md rounded-borders">
+                                <p>These toggles are for hiding individual rows</p>
+                                <div class="check flex content-start" v-if="$q.screen.gt.xs">
+                                    <div v-for="v in columns">
+                                        <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                    </div>
                                 </div>
+                                <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                    :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                    option-value="name" style="min-width: 150px" />
                             </div>
-                            <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                option-value="name" style="min-width: 150px" />
-                        </div>
-                    </q-btn-dropdown>
+                        </q-btn-dropdown>
+                        <button class="button" v-if="showDeleteSelectedButton"
+                            @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
+                            Delete
+                            Selected</button>
 
-                    <q-input class="q-ml-lg" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                    <button class="button q-ml-lg" v-if="showDeleteSelectedButton"
-                        @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
-                        Delete
-                        Selected</button>
 
+                        <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
+                    </div>
                 </template>
             </q-table>
             <div v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
@@ -132,13 +134,16 @@
 
 }
 
-
 .alert {
     color: red;
 }
 
 .table-div {
     border-radius: 15px !important;
+}
+
+.table-header {
+    width: 100%
 }
 </style>
 

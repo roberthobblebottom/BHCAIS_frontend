@@ -55,7 +55,7 @@ a,
   float: left;
   position: relative;
   top: anchor(top);
-  margin-left: max(5vw, 20vw);
+  margin-left: max(5vw, 13vw);
   margin-top: 5%;
   border-radius: 15px;
   display: flex;
