@@ -1,6 +1,6 @@
 <template>
-    <div class="q-pa-md large common  column">
-        <div class="col">
+    <div class="q-pa-md large common  ">
+        <div class="outer">
             <h3>View Catalogues </h3>
             <q-btn-dropdown color="primary" class="dropdown"
                 :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
@@ -60,25 +60,25 @@
                         </div>
                     </q-btn-dropdown>
 
-                    <q-input class="q-ml-md" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
+                    <q-input class="q-ml-lg" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
                     </q-input>
-                    <button class="button q-ml-md" v-if="showDeleteSelectedButton"
+                    <button class="button q-ml-lg" v-if="showDeleteSelectedButton"
                         @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
                         Delete
                         Selected</button>
 
                 </template>
             </q-table>
-            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
+            <div v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
                 return Object.values(v)[0]
             })}} </div>
             <p class="alert"> {{ errorMessage }}</p>
         </div>
         <div class="col-1" v-if="authStore.user.user_type == 'admin'">
-            <q-btn @click="purgeAll"> <i class="fa-solid fa-error"></i>
+            <q-btn color="primary" @click="purgeAll"> <i class="fa-solid fa-error"></i>
                 PURGE ALL DATA
             </q-btn>
         </div>
@@ -118,12 +118,20 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
+.large {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: auto
+}
+
 .dropdown {
     font-size: x-large;
     width: 100%;
-    border-radius:
-        15px;
+    border-radius: 15px;
+
 }
+
 
 .alert {
     color: red;
@@ -132,13 +140,6 @@
 .table-div {
     border-radius: 15px !important;
 }
-
-/* .table-header-div {
-    width:
-        100%;
-} */
-
-.large {}
 </style>
 
 <script setup lang="ts">
