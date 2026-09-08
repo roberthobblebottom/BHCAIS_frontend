@@ -68,6 +68,10 @@ storeToRefs(authStore);
 
             </p>
             <img src="../../public/images/selected-to-be-deleted.png">
+            <p v-if="authStore.user.user_type == 'admin'">Admins could purge all data from the catalogues tables by
+                clicking on <img src="../../public/images/purge all data.png" />.
+                <b>Remember to go to <img src="../../public/images/download-reports.png" /> and backup all data.</b>
+            </p>
             <div class="section"></div>
             <p class="section">
                 You may download the catalogues by clicking on <img src="../../public/images/download-reports.png"
