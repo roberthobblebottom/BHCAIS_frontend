@@ -34,7 +34,6 @@ export const streamFilesDownload = (url: string, body: any = null) => {
         requestOptions.headers = { 'Content-Type': 'application/json' }
         requestOptions.body = JSON.stringify(body);
     }
-    console.log(requestOptions)
     return fetch(url, requestOptions);
 }
 export const noCacheRequestFunction = (url: string, method: string, body: any = null) => {
@@ -99,7 +98,6 @@ function authHeader(url: string, header: any): HeadersInit {
     const { user } = useAuthStore();
     const isLoggedIn = !!user?.token;
     const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
-    console.log('auth header isloggedin', isLoggedIn)
     if (isLoggedIn && isApiUrl) {
         header['Authorization'] = `Bearer ${user.token}`
         return header;
@@ -110,7 +108,6 @@ function authHeader(url: string, header: any): HeadersInit {
 
 function handleResponse(response: Response, isJSON: boolean = true) {
     return response.text().then(text => {
-        console.log('response', response)
         const data = isJSON ? text && JSON.parse(text) : text;
         if (!response.ok) {
             const { user, logout } = useAuthStore();
