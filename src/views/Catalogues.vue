@@ -191,7 +191,8 @@ async function deleteSelected() {
             {
                 ids_to_be_deleted: selectedIds,
                 catalogue_name: catalogueName.value,
-                current_primary_key: currentPrimaryKey.value
+                current_primary_key: currentPrimaryKey.value,
+                token: authStore.user.token
             })
     } catch (error: any) {
         console.error(error)
@@ -212,7 +213,7 @@ async function deleteSelected() {
 async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
-
+    console.log(authStore.user.token)
     isLoadingTable.value = true
     let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
         + `?catalogue_name=${catalogueName.value}`
@@ -221,6 +222,7 @@ async function onRequest(props: any) {
         + `&filter_str=${filterStr}`
         + `&sort_by=${sortBy}`
         + `&descending=${descending}`
+        + "&current_user=${authStore.user.token}"
     const response = await fetchWrapper.get(url)
     console.log('response', response)
     const results = response.results

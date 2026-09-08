@@ -8,7 +8,7 @@
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
-                ref="fileUploaderRef" :url="url_" field-name="files" method="POST" @uploaded="onUploadedListener"
+                ref="fileUploaderRef" :url="uploadUrl" field-name="files" method="POST" @uploaded="onUploadedListener"
                 @failed="onFailedListener" color="grey-9" batch>
 
                 <template v-slot:header="scope">
@@ -118,16 +118,16 @@ const dialogMessage = ref("");
 const dialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
-const url_ = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${useAuthStore().user.user_id}`);
+let authStore = useAuthStore()
+const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}&token=${authStore.user.token}`);
 const isCheckingFilesValidity = ref(false)
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
 
 
-
 async function downloadTemplatesForTheCatalogs() {
-    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/`;
+    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token;
     getTemplates(url).then((download) => {
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');

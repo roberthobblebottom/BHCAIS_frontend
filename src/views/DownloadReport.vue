@@ -98,6 +98,7 @@ import { streamFilesDownload } from '../helpers/fetch-wrapper';
 import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { catalogueNames, getHeaderDict } from '../constants';
+import { useAuthStore } from '../stores/auth.store';
 
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
@@ -237,6 +238,7 @@ const onSubmit = handleSubmit(async (_values) => {
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermToBeSent },
+        token: useAuthStore().user.token
     }
     let url = `${import.meta.env.VITE_API_URL}/DownloadFiles/`
     const allCatalogueResultsInCSVs = []
