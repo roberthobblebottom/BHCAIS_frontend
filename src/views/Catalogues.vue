@@ -278,7 +278,7 @@ function purgeAll() {
     showConfirmDeleteAllDialog.value = true;
 }
 async function deleteAllCatalogueData() {
-    let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/`
+    let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
     await fetchWrapper.post(url)
     selectedRowsToBeDeleted.value = []
     await nextTick()

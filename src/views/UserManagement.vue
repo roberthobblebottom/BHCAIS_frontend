@@ -98,6 +98,7 @@ import * as yup from 'yup';
 import { passwordRegex, passwordError } from '../constants';
 
 import commonPasswords from '../common-passwords.txt?raw'
+import { useAuthStore } from '../stores/auth.store';
 const columns: Ref<any[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
 const rowKey = ref('user_id')
@@ -111,6 +112,7 @@ const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
 const isDeleteConfirmationDialog = ref(false)
 const userIdToBeDeleted = ref(-1)
+const authStore = useAuthStore()
 interface UserInterface {
     user_id: number
     email: number
@@ -221,6 +223,7 @@ const onCreate = handleSubmit(async () => {
             password: password.value,
             confirm_password: confirmPassword.value,
             user_type: userType.value,
+            token: authStore.user.token
         })
 
         alertDialogMessage.value = "Sucessfully created user"
@@ -250,6 +253,7 @@ const onEdit = handleSubmit(async () => {
             password: password.value == null ? "" : password.value,
             confirm_password: confirmPassword.value == null ? "" : confirmPassword.value,
             user_type: userType.value,
+            token: authStore.user.token
         }
 
         await fetchWrapper.post(url, body)
@@ -281,6 +285,7 @@ async function onDelete(user_id: number) {
     try {
         const body = {
             user_id: user_id,
+            token: authStore.user.token
         }
 
         await fetchWrapper.post(url, body)

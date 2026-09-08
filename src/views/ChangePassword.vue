@@ -27,7 +27,7 @@
         <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
-                <h3>{{ alertMessage }}</h3>
+                {{ alertMessage }}
                 <q-btn label="Ok" color="primary" v-close-popup />
             </q-card-section>
 
@@ -92,7 +92,8 @@ const onSubmit = handleSubmit(async (values) => {
             'old_password': oldPassword.value,
             'new_password': newPassword.value,
 
-            'confirm_new_password': confirmNewPassword.value
+            'confirm_new_password': confirmNewPassword.value,
+            'token': useAuthStore().user.token
         })
     } catch (error: any) {
         alertMessage.value = "ERROR: " + error.toString()
