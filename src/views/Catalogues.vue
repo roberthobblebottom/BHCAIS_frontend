@@ -1,83 +1,91 @@
 <template>
-    <div class="q-pa-md large common">
-        <h3>View Catalogues </h3>
-        <q-btn-dropdown color="primary" class="dropdown"
-            :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
-            <q-list>
-                <q-item clickable v-close-popup @click='onItemClick("print")'>
-                    <q-item-section>
-                        <q-item-label>Prints</q-item-label>
-                    </q-item-section>
-                </q-item>
+    <div class="q-pa-md large common  column">
+        <div class="col">
+            <h3>View Catalogues </h3>
+            <q-btn-dropdown color="primary" class="dropdown"
+                :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
+                <q-list>
+                    <q-item clickable v-close-popup @click='onItemClick("print")'>
+                        <q-item-section>
+                            <q-item-label>Prints</q-item-label>
+                        </q-item-section>
+                    </q-item>
 
-                <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
-                    <q-item-section>
-                        <q-item-label>Oral Histories</q-item-label>
-                    </q-item-section>
-                </q-item>
+                    <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
+                        <q-item-section>
+                            <q-item-label>Oral Histories</q-item-label>
+                        </q-item-section>
+                    </q-item>
 
-                <q-item clickable v-close-popup @click='onItemClick("slide")'>
-                    <q-item-section>
-                        <q-item-label>Slides</q-item-label>
-                    </q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup @click="onItemClick('negative')">
-                    <q-item-section>
-                        <q-item-label>Negatives</q-item-label>
-                    </q-item-section>
+                    <q-item clickable v-close-popup @click='onItemClick("slide")'>
+                        <q-item-section>
+                            <q-item-label>Slides</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup @click="onItemClick('negative')">
+                        <q-item-section>
+                            <q-item-label>Negatives</q-item-label>
+                        </q-item-section>
 
-                </q-item>
-                <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
-                    <q-item-section>
-                        <q-item-label>Library and Archives</q-item-label>
-                    </q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup @click="onItemClick('legacy_and_miscellaneous_items_report')">
-                    <q-item-section>
-                        <q-item-label>Legacy and Misc Items Report</q-item-label>
-                    </q-item-section>
-                </q-item>
-            </q-list>
-        </q-btn-dropdown>
-        <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-        <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
-            :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
-            :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
-            v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
-            <template v-slot:top="props">
-                <div class="table-header-div flex justify-between">
-                    <q-btn-dropdown class="rounded-borders" label="hide columns">
-                        <div class="q-pa-md rounded-borders">
-                            <p>These toggles are for hiding individual rows</p>
-                            <div class="check flex content-start" v-if="$q.screen.gt.xs">
-                                <div v-for="v in columns">
-                                    <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                    </q-item>
+                    <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
+                        <q-item-section>
+                            <q-item-label>Library and Archives</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup @click="onItemClick('legacy_and_miscellaneous_items_report')">
+                        <q-item-section>
+                            <q-item-label>Legacy and Misc Items Report</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+            </q-btn-dropdown>
+            <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
+            <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
+                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
+                :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
+                v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
+                <template v-slot:top="props">
+                    <div class="table-header-div flex justify-between">
+                        <q-btn-dropdown class="rounded-borders" label="hide columns">
+                            <div class="q-pa-md rounded-borders">
+                                <p>These toggles are for hiding individual rows</p>
+                                <div class="check flex content-start" v-if="$q.screen.gt.xs">
+                                    <div v-for="v in columns">
+                                        <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                    </div>
                                 </div>
+                                <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                    :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                    option-value="name" style="min-width: 150px" />
                             </div>
-                            <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                option-value="name" style="min-width: 150px" />
-                        </div>
-                    </q-btn-dropdown>
-                    <button class="button" v-if="showDeleteSelectedButton" @click="confirm = true"><i
-                            class="fa-solid fa-circle-xmark"></i>
-                        Delete
-                        Selected</button>
-                    <q-input borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
+                        </q-btn-dropdown>
+                        <button class="button" v-if="showDeleteSelectedButton"
+                            @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
+                            Delete
+                            Selected</button>
+                        <q-input borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
 
-                </div>
-            </template>
-        </q-table>
-        <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
-            return Object.values(v)[0]
-        })}} </div>
-        <p class="alert"> {{ errorMessage }}</p>
+                    </div>
+                </template>
+            </q-table>
+            <div class="q-mt-md" v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
+                return Object.values(v)[0]
+            })}} </div>
+            <p class="alert"> {{ errorMessage }}</p>
+        </div>
+        <div class="col-1" v-if="authStore.user.user_type == 'admin'">
+            <q-btn @click="purgeAll"> <i class="fa-solid fa-error"></i>
+                PURGE ALL DATA
+            </q-btn>
+        </div>
+
     </div>
-    <q-dialog v-model="confirm" persistent>
+    <q-dialog v-model="showConfirmDeleteSelectDialog" persistent>
         <q-card class=" dialog ">
             <q-card-section>
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
@@ -92,6 +100,21 @@
             </q-card-section>
         </q-card>
     </q-dialog>
+    <q-dialog v-model="showConfirmDeleteAllDialog" persistent>
+        <q-card class=" dialog ">
+            <q-card-section>
+                <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
+            </q-card-section>
+            <span>MAKE SURE YOU HAVE DOWNLOADED THE BACKUPS VIA DOWNLOAD REPORTS. Are you sure you want to delete the
+                all
+                the data? THIS IS UNREVERTABLE.
+            </span>
+            <q-card-section>
+                <q-btn label="Cancel" color="secondary" v-close-popup />
+                <q-btn class="q-ml-md" label="Delete" color="primary" v-close-popup @click="deleteAllCatalogueData" />
+            </q-card-section>
+        </q-card>
+    </q-dialog>
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
@@ -99,7 +122,8 @@
 .dropdown {
     font-size: x-large;
     width: 100%;
-    border-radius: 15px;
+    border-radius:
+        15px;
 }
 
 .alert {
@@ -111,14 +135,17 @@
 }
 
 .table-header-div {
-    width: 100%;
+    width:
+        100%;
 }
 </style>
+
 <script setup lang="ts">
 import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
 import { fetchWrapper } from '../helpers/fetch-wrapper';
 import { QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
+import { useAuthStore } from '../stores/auth.store';
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
@@ -139,7 +166,9 @@ const pagination = ref({
 })
 const catalogueName = ref("")
 const currentPrimaryKey = ref("")
-const confirm = ref(false)
+const showConfirmDeleteSelectDialog = ref(false)
+const showConfirmDeleteAllDialog = ref(false)
+const authStore = useAuthStore()
 defineExpose({ tableRef })
 function onSelection(details: any) {
     // before selected reference is updated
@@ -241,6 +270,16 @@ async function onItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     showTable.value = true;
     await nextTick() // required for updating catalogue Name
+    tableRef.value!.requestServerInteraction()
+}
+function purgeAll() {
+    showConfirmDeleteAllDialog.value = true;
+}
+async function deleteAllCatalogueData() {
+    let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/`
+    await fetchWrapper.post(url)
+    selectedRowsToBeDeleted.value = []
+    await nextTick()
     tableRef.value!.requestServerInteraction()
 }
 </script>
