@@ -3,8 +3,12 @@
         <form>
             <div class="">
                 <h3>Bulk Data Upload</h3>
-                <p>Entries with existing data (As identified by each catalogry's first column, where the name is usually
-                    with SN in it.) will be overwritten. <br>
+                <p>Entries with existing data will be overwritten. As identified by each catalogry's first column,
+                    where the name is usually with sn in it. <br>
+                    If you a file that have two rows of the same sn, only the
+                    second
+                    row will be uploaded as
+                    the second row will override the first row. <br>
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
@@ -82,7 +86,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
                 <p>
                     {{ dialogHeader.toLocaleLowerCase() == 'error'
                         ? "These files will be removed"
