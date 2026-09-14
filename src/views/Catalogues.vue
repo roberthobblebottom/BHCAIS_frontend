@@ -179,7 +179,6 @@ const authStore = useAuthStore()
 defineExpose({ tableRef })
 function onSelection(details: any) {
     // before selected reference is updated
-    (details)
     if (details.added == true)
         showDeleteSelectedButton.value = true
     else if (selectedRowsToBeDeleted.value.length - details.rows.length == 0)
@@ -262,7 +261,6 @@ async function onRequest(props: any) {
         })
         visibleColumnsTemp.push(h)
         i++;
-        (temp)
     }
     currentPrimaryKey.value = temp[0].name
     columns.value = temp
