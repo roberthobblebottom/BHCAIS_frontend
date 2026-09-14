@@ -86,7 +86,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
                 <p>
                     {{ dialogHeader.toLocaleLowerCase() == 'error'
                         ? "These files will be removed"
@@ -149,7 +149,6 @@ const onAddedListener = (files: readonly File[]) => {
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
     names_of_files_with_zero_bytes.value = []
-        ('on added listener')
     const x = files.map((file: File) => {
         return new Promise<void>((_resolve) => {
             if (file.size == 0) {
@@ -163,7 +162,6 @@ const onAddedListener = (files: readonly File[]) => {
             });
             worker.onmessage = (event) => {
                 workersFinishedWork.push(file.name)
-                    (workersFinishedWork, files.length)
                 if (event.data.name_of_file_with_headers_only != '') {
                     names_of_files_with_headers_only.value.push(event.data.name_of_file_with_headers_only)
                     fileUploaderRef.value.removeFile(file)

@@ -229,10 +229,8 @@ async function onRequest(props: any) {
         + `&sort_by=${sortBy}`
         + `&descending=${descending}`
         + "&current_user=${authStore.user.token}"
-            (url)
     const response = await fetchWrapper.get(url)
     const results = response.results
-        ('results', results)
     const rowCounts = response.row_counts
 
     pagination.value.rowsNumber = rowCounts

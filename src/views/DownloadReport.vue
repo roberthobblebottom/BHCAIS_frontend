@@ -207,12 +207,12 @@ function clearAllSearchTerm() {
 const onSubmit = handleSubmit(async (_values) => {
     isDownloading.value = true
     const searchTermToBeSent: any = {}
-        (selectCatalogues.value.length)
+    console.log(selectCatalogues.value.length)
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
         selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
         errorMessage.value = "Please Select a catalogue."
-            (selectCataloguesProps.value['error-message'])
+        console.log(selectCataloguesProps.value['error-message'])
         nextTick()
         return
     }
@@ -294,7 +294,7 @@ const onSubmit = handleSubmit(async (_values) => {
     }
     for (const catalog of results) {
         const resultData = catalog.data
-            ('resultData', resultData)
+        console.log('resultData', resultData)
         if (resultData.length == 0) {
             cataloguesWithNoResults.value.push(catalog.catalogue_name)
             continue
@@ -304,7 +304,7 @@ const onSubmit = handleSubmit(async (_values) => {
         const rows = resultData.map((row: Object) => Object.values(row).map(
             (e: string) => e != null ? "\"" + e.replaceAll("\"", "'") + "\"" : e).join(",") + "\n"
         ).join("")
-            (rows)
+        console.log(rows)
         const tableInStringFormat = header + rows
 
         const searchTermStringified =
