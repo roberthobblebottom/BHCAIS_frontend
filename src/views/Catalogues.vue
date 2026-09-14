@@ -116,6 +116,21 @@
             </q-card-section>
         </q-card>
     </q-dialog>
+    <q-dialog v-model="showAllDataDeletedDialog">
+        <q-card class=" dialog ">
+            <q-card-section>
+                <q-avatar icon="fa-regular fa-circle-check" color="primary" text-color="white" class="" />
+            </q-card-section>
+            <span>
+                All Catalogue Data has been deleted.
+            </span>
+            <q-card-section>
+                <q-btn label="Ok" v-close-popup />
+            </q-card-section>
+        </q-card>
+    </q-dialog>
+
+
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
@@ -164,6 +179,7 @@ const tableRef: ShallowRef<QTable | null> = useTemplateRef<QTable>("tableRef")
 const rowKey = ref('')
 const selectedRowsToBeDeleted = ref([])
 const showDeleteSelectedButton = ref(false)
+const showAllDataDeletedDialog = ref(false)
 const pagination = ref({
     sortBy: 'desc',
     descending: false,
@@ -284,6 +300,8 @@ async function deleteAllCatalogueData() {
     let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
     await fetchWrapper.post(url)
     selectedRowsToBeDeleted.value = []
+
+    showAllDataDeletedDialog.value = true
     await nextTick()
     tableRef.value!.requestServerInteraction()
 }
