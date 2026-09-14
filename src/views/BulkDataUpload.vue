@@ -3,7 +3,7 @@
         <form>
             <div class="">
                 <h3>Bulk Data Upload</h3>
-                <p>Entries with existing data will be overwritten. As identified by each catalogry's first column,
+                <p>Entries with existing data will be overwritten. As identified by each catalogue's first column,
                     where the name is usually with sn in it. <br>
                     If you a file that have two rows of the same sn, only the
                     second
@@ -149,7 +149,7 @@ const onAddedListener = (files: readonly File[]) => {
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
     names_of_files_with_zero_bytes.value = []
-    console.log('on added listener')
+        ('on added listener')
     const x = files.map((file: File) => {
         return new Promise<void>((_resolve) => {
             if (file.size == 0) {
@@ -163,7 +163,7 @@ const onAddedListener = (files: readonly File[]) => {
             });
             worker.onmessage = (event) => {
                 workersFinishedWork.push(file.name)
-                console.log(workersFinishedWork, files.length)
+                    (workersFinishedWork, files.length)
                 if (event.data.name_of_file_with_headers_only != '') {
                     names_of_files_with_headers_only.value.push(event.data.name_of_file_with_headers_only)
                     fileUploaderRef.value.removeFile(file)

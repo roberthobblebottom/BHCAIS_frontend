@@ -266,9 +266,9 @@ const onEdit = handleSubmit(async () => {
         await getData() // less efficient than directly putting it into the table but this works.
 
         //I don't know how to do these:
-        // console.log('temp', temp)
+        // ('temp', temp)
         // temp = temp.slice(temp.indexOf(oldUserValuesBeforeEdit!), 1)
-        // console.log('temp', temp)
+        // ('temp', temp)
         // temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
         // rows.value = temp as QTr[]
         oldUserValuesBeforeEdit = null

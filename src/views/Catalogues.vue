@@ -179,7 +179,7 @@ const authStore = useAuthStore()
 defineExpose({ tableRef })
 function onSelection(details: any) {
     // before selected reference is updated
-    console.log(details)
+    (details)
     if (details.added == true)
         showDeleteSelectedButton.value = true
     else if (selectedRowsToBeDeleted.value.length - details.rows.length == 0)
@@ -219,7 +219,7 @@ async function deleteSelected() {
 async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
-    console.log(authStore.user.token)
+        (authStore.user.token)
     isLoadingTable.value = true
     let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
         + `?catalogue_name=${catalogueName.value}`
@@ -229,9 +229,10 @@ async function onRequest(props: any) {
         + `&sort_by=${sortBy}`
         + `&descending=${descending}`
         + "&current_user=${authStore.user.token}"
+            (url)
     const response = await fetchWrapper.get(url)
-    console.log('response', response)
     const results = response.results
+        ('results', results)
     const rowCounts = response.row_counts
 
     pagination.value.rowsNumber = rowCounts
@@ -263,7 +264,7 @@ async function onRequest(props: any) {
         })
         visibleColumnsTemp.push(h)
         i++;
-        console.log(temp)
+        (temp)
     }
     currentPrimaryKey.value = temp[0].name
     columns.value = temp

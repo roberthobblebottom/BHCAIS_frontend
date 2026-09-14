@@ -207,12 +207,12 @@ function clearAllSearchTerm() {
 const onSubmit = handleSubmit(async (_values) => {
     isDownloading.value = true
     const searchTermToBeSent: any = {}
-    console.log(selectCatalogues.value.length)
+        (selectCatalogues.value.length)
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
         selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
         errorMessage.value = "Please Select a catalogue."
-        console.log(selectCataloguesProps.value['error-message'])
+            (selectCataloguesProps.value['error-message'])
         nextTick()
         return
     }
@@ -294,7 +294,7 @@ const onSubmit = handleSubmit(async (_values) => {
     }
     for (const catalog of results) {
         const resultData = catalog.data
-        console.log('resultData', resultData)
+            ('resultData', resultData)
         if (resultData.length == 0) {
             cataloguesWithNoResults.value.push(catalog.catalogue_name)
             continue
@@ -302,36 +302,32 @@ const onSubmit = handleSubmit(async (_values) => {
 
         const header = Object.keys(resultData[0]).join(',') + "\n"
         const rows = resultData.map((row: Object) => Object.values(row).map(
-            (e: string) => e != null ? "'" + e
-                .replaceAll(";", '__SEMICOLON__')
-                .replaceAll(",", "__COMMA__")
-                .replaceAll("\'", "__SINGLEQUOTE__")
-                .replaceAll("\n", "__NEW_LINE__") + "'" : e).join(",") + "\n"
+            (e: string) => e != null ? "\"" + e.replaceAll("\"", "'") + "\"" : e).join(",") + "\n"
         ).join("")
-        console.log(rows)
+            (rows)
         const tableInStringFormat = header + rows
 
         const searchTermStringified =
             queryData.search_terms[catalog.catalogue_name] != null
-                ? "search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
+                ? " search term: " + JSON.stringify(searchTermToBeSent[catalog.catalogue_name])
                     .replaceAll("\"", "").replaceAll("{", "")
                     .replaceAll("}", "").replace(":", " eq ")
                 : ""
 
         allCatalogueResultsInCSVs.push({
             //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
-            name: catalog.catalogue_name + "_raw " + searchTermStringified + '.csv',
+            name: catalog.catalogue_name + "_raw" + searchTermStringified + '.csv',
             // name: catalog.catalogue_name + "_raw " + " Downloaded on: " + new Date().toLocaleDateString("en-UK").replaceAll("/", "") + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
     }
 
+    isDownloading.value = false
     if (allCatalogueResultsInCSVs.length == 0) {
         showCataloguesWithNoResultsAlertDialog.value = true
         showNoResultMessage.value = true
         return
     }
-    isDownloading.value = false
 
     const blob = await downloadZip(
         allCatalogueResultsInCSVs as unknown as InputWithoutMeta[]

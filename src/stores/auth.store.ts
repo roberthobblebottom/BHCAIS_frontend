@@ -18,7 +18,7 @@ export const useAuthStore = defineStore(
                 const user = await login(`${baseUrl}/Login`, { username, password });
                 // update pinia state
                 this.user = user;
-                console.log('user', user)
+                ('user', user)
                 // store user details and jwt in local storage to keep user logged in between page refreshes
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));
