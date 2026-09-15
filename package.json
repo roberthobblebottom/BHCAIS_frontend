@@ -12,12 +12,14 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "scr":"ts-node -T -P server/tsconfig.json server/index.ts"
   },
   "dependencies": {
     "@quasar/extras": "^2.0.2",
     "buffer": "^6.0.3",
     "client-zip": "^2.5.0",
+    "node": "^26.8.2",
     "nodemon": "^3.1.14",
     "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "^4.7.1",
