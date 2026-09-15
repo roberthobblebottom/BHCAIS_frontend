@@ -13,7 +13,7 @@
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
-    "scr":"ts-node -T -P server/tsconfig.json server/index.ts"
+    "scr": "ts-node -T -P server/tsconfig.json server/index.ts"
   },
   "dependencies": {
     "@quasar/extras": "^2.0.2",
