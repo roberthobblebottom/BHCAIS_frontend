@@ -30,7 +30,6 @@ function isHeadersCorrect(headersString: string, fileName: string) {
 self.onmessage = (event: MessageEvent) => {
     const file = event.data.file;
 
-    ('file name', file.name)
     const reader = new FileReader()
     if (file.name.includes('.xlsx')) {
         reader.onload = (e: ProgressEvent<FileReader>) => {

@@ -5,6 +5,7 @@ import { router } from '../helpers/router'
 
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
 localStorage.clear();
+console.log('baseURL',baseUrl)
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
@@ -18,7 +19,6 @@ export const useAuthStore = defineStore(
                 const user = await login(`${baseUrl}/Login`, { username, password });
                 // update pinia state
                 this.user = user;
-                ('user', user)
                 // store user details and jwt in local storage to keep user logged in between page refreshes
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));

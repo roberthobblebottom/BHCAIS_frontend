@@ -51,8 +51,7 @@ const quasarConfig = (state: any) => ({
         'error-message': state.errors[0],
     },
 });
-
-
+console.log(`${import.meta.env.VITE_API}`)
 const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfig)
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
 const onSubmit = handleSubmit(async (values) => {

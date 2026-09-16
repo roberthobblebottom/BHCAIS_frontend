@@ -17,10 +17,6 @@
       "@/*": [
         "./*"
       ],
-	"types":["node","express"],  
-    	"typeRoots": ["./node_modules/@types", "./@types"] ,
-	"esModuleInterop": true,
-	"target": "es2022",
       // "@server/*": ["./server/src/*"]
     },
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
