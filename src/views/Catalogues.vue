@@ -234,16 +234,26 @@ async function deleteSelected() {
 async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
-        (authStore.user.token)
     isLoadingTable.value = true
-    let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
-        + `?catalogue_name=${catalogueName.value}`
-        + `&rows_per_page=${rowsPerPage}`
-        + `&current_page_number=${page}`
-        + `&filter_str=${filterStr}`
-        + `&sort_by=${sortBy}`
-        + `&descending=${descending}`
-        + "&current_user=${authStore.user.token}"
+    // let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
+    //     + `?catalogue_name=${catalogueName.value}`
+    //     + `&rows_per_page=${rowsPerPage}`
+    //     + `&current_page_number=${page}`
+    //     + `&filter_str=${filterStr}`
+    //     + `&sort_by=${sortBy}`
+    //     + `&descending=${descending}`
+    //     + "&current_user=${authStore.user.token}"
+    const params = new URLSearchParams({
+        catalogue_name: catalogueName.value,
+        rows_per_page: rowsPerPage.toString(),
+        current_page_number: page.toString(),
+        filter_str: filterStr || '',
+        sort_by: sortBy || '',
+        descending: descending.toString(),
+        current_user: authStore.user.token
+    })
+
+    const url = `${import.meta.env.VITE_API_URL}/GetCatalogue/?${params.toString()}`
     const response = await fetchWrapper.get(url)
     const results = response.results
     const rowCounts = response.row_counts
