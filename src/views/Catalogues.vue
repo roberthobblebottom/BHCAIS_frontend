@@ -66,6 +66,7 @@
                             Selected</button>
 
 
+                        <p class="alert"> {{ errorMessage }}</p>
                         <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
                             <template v-slot:append>
                                 <q-icon name="search" />
@@ -77,7 +78,7 @@
             <div v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
                 return Object.values(v)[0]
             })}} </div>
-            <p class="alert"> {{ errorMessage }}</p>
+            <p class="alert" v-if="!showTable"> {{ errorMessage }}</p>
         </div>
         <div class="col-1" v-if="authStore.user.user_type == 'admin'">
             <q-btn color="primary" @click="purgeAll"> <i class="fa-solid fa-error"></i>
@@ -265,9 +266,17 @@ async function onRequest(props: any) {
     pagination.value.descending = descending
 
     if (results.length == 0) {
-        errorMessage.value = "This is no results for " + catalogueName.value + " and search term " + filterStr
+
         isLoadingTable.value = false
-        showTable.value = false
+        if (filterStr == '') {
+            errorMessage.value = "This is no results for "
+                + catalogueName.value
+            showTable.value = false
+        }
+        else {
+            errorMessage.value = "No search results for search term " + searchTerm.value
+            showTable.value = true
+        }
         return
     } else
         errorMessage.value = ""
