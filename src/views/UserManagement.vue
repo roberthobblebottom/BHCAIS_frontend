@@ -52,9 +52,11 @@
                     <q-select label="User Type" type="dropdown" v-model="userType" v-bind="userTypeProps"
                         :options="['admin', 'normal']">
                     </q-select>
-                    <q-btn flat label="close" color="secondary" v-close-popup />
-                    <q-btn :label="isEdit ? 'edit' : 'create'" color="primary"
-                        @click="isEdit ? onEdit() : onCreate()" />
+                    <div class="flex justify-around">
+                        <q-btn flat label="close" color="secondary" v-close-popup />
+                        <q-btn :label="isEdit ? 'edit' : 'create'" color="primary"
+                            @click="isEdit ? onEdit() : onCreate()" />
+                    </div>
                 </q-form>
             </q-card-section>
 
@@ -106,7 +108,7 @@ const loading = ref(false)
 
 const showFormDialog = ref(false)
 const showAlertDialog = ref(false)
-const isEdit = ref(false)
+// const isEdit = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
@@ -124,12 +126,29 @@ interface UserInterface {
 let oldUserValuesBeforeEdit: UserInterface | null = null
 const schema = yup.object().shape({
     email: yup.string().email().required("email  is required"),
-    password: yup.string()
-        .min(7, 'minimum of 7 characters for password   ')
-        .matches(passwordRegex, passwordError)
-        .notOneOf(commonPasswords.split("\n"), "The password is too common"),
+    isEdit: yup.boolean(),
+    password: yup.string().when(
+        "isEdit", {
+        is: true,
+        then: (schema) => {
+            console.log('here')
+            const c = commonPasswords.split("\n")
+            c.splice(c.indexOf(""))
+            return schema.when("password", {
+                is: (value: string) => value && value.length > 0,
+                then: (s) => s.min(7, 'minimum of 7 characters for password   ')
+                    .matches(passwordRegex, passwordError)
+                    .notOneOf(c, "The password is too common"),
+                otherwise: (s) => s.notRequired()
+            })
+        },
+        otherwise: (schema) => schema.min(7, 'minimum of 7 characters for password   ')
+            .matches(passwordRegex, passwordError)
+            .notOneOf(commonPasswords.split("\n"), "The password is too common")
+    }
+    ),
     confirmPassword: yup.string().oneOf([yup.ref('password'), ""], "Passwords must match."),
-    userType: yup.string().oneOf(['normal', 'admin']).required("User typer is required")
+    userType: yup.string().oneOf(['normal', 'admin']).required("User type is required")
 });
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
@@ -151,6 +170,7 @@ const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfi
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
 const [confirmPassword, confirmPasswordProps] = defineField("confirmPassword" as MaybeRefOrGetter, quasarConfig)
 const [userType, userTypeProps] = defineField("userType" as MaybeRefOrGetter, quasarConfig)
+const [isEdit, _isEditProps] = defineField("isEdit" as MaybeRefOrGetter, quasarConfig)
 const getData = async () => {
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
     // const header = { "Cached-Content": "no-cache" }
@@ -255,7 +275,7 @@ const onEdit = handleSubmit(async () => {
             user_type: userType.value,
             token: authStore.user.token
         }
-
+        console.log('body', body)
         await fetchWrapper.post(url, body)
 
         alertDialogMessage.value = "Sucessfully edited user"
