@@ -24,7 +24,7 @@ export const router = createRouter({
 
 router.beforeEach(async (to: any) => {
     // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/Login'];
+    const publicPages = ['/', '/Login'];
     const authRequired = !publicPages.includes(to.path);
     const auth = useAuthStore();
     if (authRequired && !auth.user) {
@@ -32,7 +32,7 @@ router.beforeEach(async (to: any) => {
         auth.returnUrl = to.fullPath;
         return '/Login';
     }
-    if (auth.user && to.path == '/Login') {
+    if (auth.user && (to.path == '/Login' || to.path == "/")) {
         console.log('logged in user trying to go to /Login, redirecting to /QuickStart')
         return '/QuickStart'
     }
@@ -40,4 +40,6 @@ router.beforeEach(async (to: any) => {
         console.log("unauthorized admin access detected, going back to Quick Start page")
         return '/QuickStart';
     }
+    if (to.path == "/")
+        return '/Login'
 });
