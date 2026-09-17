@@ -81,7 +81,7 @@
             <p class="alert" v-if="!showTable"> {{ errorMessage }}</p>
         </div>
         <div class="col-1" v-if="authStore.user.user_type == 'admin'">
-            <q-btn color="primary" @click="purgeAll"> <i class="fa-solid fa-error"></i>
+            <q-btn color="red" @click="purgeAll"> <i class="fa-solid fa-error"></i>
                 PURGE ALL DATA
             </q-btn>
         </div>
