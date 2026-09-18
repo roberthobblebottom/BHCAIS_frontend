@@ -60,7 +60,7 @@
                 </template>
             </q-uploader>
 
-            <q-btn class="button flex float-left" @click.prevent="downloadTemplatesForTheCatalogs">
+            <q-btn class="button" @click.prevent="downloadTemplatesForTheCatalogs">
                 <i class="fas fa-file-arrow-down"></i>
                 Download Templates
             </q-btn>
@@ -110,6 +110,10 @@
     margin-bottom: 2%;
     width: 100% !important;
     height: 100%;
+}
+
+.button {
+    float: none;
 }
 </style>
 <script setup lang='ts'>
