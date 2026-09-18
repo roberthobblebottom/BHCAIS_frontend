@@ -1,6 +1,4 @@
 <template>
-
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <div>
         <nav v-if="authStore.user" v-show="authStore.user" class="sidebar">
@@ -20,7 +18,6 @@
                             User Management
                         </RouterLink>
                     </div>
-
                     <div class="row">
                         <RouterLink to="/QuickStart" class="nav-item nav-link ">
                             <i class="fas fa-globe"></i> Home
@@ -31,7 +28,6 @@
                             <i class="fas fa-upload"></i>
                             Bulk Data Upload
                         </RouterLink>
-
                     </div>
                     <div class="row">
                         <RouterLink to="/Catalogues" class="nav-item nav-link">
@@ -45,14 +41,12 @@
                             <i class="fas fa-file-arrow-down"></i>
                             Download Report(s)
                         </RouterLink>
-
                     </div>
                     <div class="row">
                         <RouterLink to="/ChangePassword" class="nav-item nav-link">
                             <i class="fas fa-key"></i>
                             Change Password
                         </RouterLink>
-
                     </div>
                     <div class="row">
                         <RouterLink to="/Login" @click="authStore.logout()" class="nav-item nav-link">
@@ -61,7 +55,6 @@
                         </RouterLink>
                     </div>
                 </div>
-
             </div>
         </nav>
         <div class="main-content">

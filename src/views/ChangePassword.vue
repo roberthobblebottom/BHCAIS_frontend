@@ -1,6 +1,5 @@
 <template>
     <div class="small common">
-
         <q-form validation-observer @submit.prevent="onSubmit">
             <h3>Change Password</h3>
 
@@ -17,20 +16,19 @@
                     v-model="confirmNewPassword" v-bind="confirmNewPasswordProps" />
             </div>
             <div class="justify-center">
-
                 <button class="button btn-primary" :disabled="isSubmitting">
                     <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
                     <i class="fa-solid fa-pen-to-square"></i> Change
                 </button>
             </div>
         </q-form>
+
         <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
                 {{ alertMessage }}
                 <q-btn label="Ok" color="primary" v-close-popup />
             </q-card-section>
-
         </q-dialog>
     </div>
 </template>
@@ -52,9 +50,11 @@ import { passwordError, passwordRegex } from '../constants.ts';
 import commonPasswords from '../common-passwords.txt?raw'
 import { ref, type MaybeRefOrGetter } from 'vue';
 import { useAuthStore } from '../stores/auth.store.ts';
+
 const showAlert = ref(false)
 const alertMessage = ref('')
 const isSubmitting = ref(false)
+
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('required'),
     //temporary changed to one min char
@@ -65,6 +65,7 @@ const schema = Yup.object().shape({
         .notOneOf(commonPasswords.split("\n"), "The password is too common"),
     confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
 });
+
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
@@ -79,11 +80,11 @@ const quasarConfig = (state: any) => ({
     },
 });
 
-
 const [oldPassword, oldPasswordProps] = defineField("oldPassword" as MaybeRefOrGetter, quasarConfig)
 const [newPassword, newPasswordProps] = defineField("newPassword" as MaybeRefOrGetter, quasarConfig)
 const [confirmNewPassword, confirmNewPasswordProps] = defineField("confirmNewPassword" as MaybeRefOrGetter, quasarConfig)
-const onSubmit = handleSubmit(async (values) => {
+
+const onSubmit = handleSubmit(async (_values) => {
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
     try {
@@ -91,22 +92,17 @@ const onSubmit = handleSubmit(async (values) => {
             'username': useAuthStore().user.email,
             'old_password': oldPassword.value,
             'new_password': newPassword.value,
-
             'confirm_new_password': confirmNewPassword.value,
             'token': useAuthStore().user.token
         })
     } catch (error: any) {
         alertMessage.value = "ERROR: " + error.toString()
         showAlert.value = true
-    } finally {
-
-        resetForm()
-    }
+    } finally { resetForm() }
     if (response != null) {
         alertMessage.value = "sucessfully changed password"
         showAlert.value = true;
     }
-
 
 })
 </script>

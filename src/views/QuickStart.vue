@@ -1,23 +1,12 @@
-<script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useAuthStore } from '../stores/auth.store';
-
-const authStore = useAuthStore();
-storeToRefs(authStore);
-</script>
-
 <template>
     <v-container class="large common">
         <v-row>
-
             <h1>Welcome to BHCAIS</h1>
         </v-row>
         <v-row>
-
             <h2>Quick Start:</h2>
         </v-row>
         <v-row class="quick-start">
-
             <p class="section">
                 BHCAIS(beh - kaEYEs) is a intermediate system to store information from Excel or CSV files
                 before being transformed and stored in BIG, LKCNHM's Institutional truth layer system.
@@ -26,7 +15,8 @@ storeToRefs(authStore);
                 "Legacy and
                 Miscelleneous Items Reports".
                 You can traverse the system via the sidebar on the left.
-                You may change the password on the <img src="../../public/images/change-password.png" alt="Change Password" />
+                You may change the password on the <img src="../../public/images/change-password.png"
+                    alt="Change Password" />
                 link on the sidebar.
             </p>
             <p class="section" v-if="authStore.user.user_type == 'admin'">
@@ -40,12 +30,13 @@ storeToRefs(authStore);
                     src="../../public/images/edit-and-delete-user-buttons.png" alt="Edit or Delete" /> buttons on the
                 user's
                 individual row.
-
             </p>
             <p class="section">
-                To upload data, Click on the <img alt="Bulk Data Upload" src="../../public/images/bulk-data-upload.png" />on
+                To upload data, Click on the <img alt="Bulk Data Upload"
+                    src="../../public/images/bulk-data-upload.png" />on
                 the sidebar
-                Choose which file to upload by using the <img alt="file picker" src="../../public/images/file-picker.png" />
+                Choose which file to upload by using the <img alt="file picker"
+                    src="../../public/images/file-picker.png" />
                 dialog or by dragging and dropping.
                 Only CSV or Excel files are accepted.
                 The system will automatically check if the headers are correct and they are not empty or headers only
@@ -65,7 +56,6 @@ storeToRefs(authStore);
 
                 hide columns and even delete selected rows by checking on the rows and then click on "Delete
                 Selected".
-
             </p>
             <img src="../../public/images/selected-to-be-deleted.png">
             <p v-if="authStore.user.user_type == 'admin'">Admins could purge all data from the catalogues tables by
@@ -89,15 +79,10 @@ storeToRefs(authStore);
                 no such csv will be downloaded.
             </p>
         </v-row>
-
-
     </v-container>
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
-
-
-
 
 .large {
     height: 100%
@@ -115,3 +100,10 @@ storeToRefs(authStore);
     border-bottom: 1px dotted grey;
 }
 </style>
+<script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '../stores/auth.store';
+
+const authStore = useAuthStore();
+storeToRefs(authStore);
+</script>

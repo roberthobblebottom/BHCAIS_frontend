@@ -28,16 +28,18 @@
 </style>
 
 <script setup lang='ts'>
-import { Form, Field, type FormActions, type GenericObject, useForm } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import * as Yup from 'yup';
 import { useAuthStore } from '../stores/auth.store.ts';
 import { type MaybeRefOrGetter, ref } from 'vue';
 const isSubmitting = ref(false)
 const apiError = ref("")
+
 const schema = Yup.object().shape({
     email: Yup.string().email('Not a valid email format').required('email is required'),
     password: Yup.string().required('Password is required')
 });
+
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
@@ -51,10 +53,10 @@ const quasarConfig = (state: any) => ({
         'error-message': state.errors[0],
     },
 });
-console.log(`${import.meta.env.VITE_API}`)
 const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfig)
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
-const onSubmit = handleSubmit(async (values) => {
+
+const onSubmit = handleSubmit(async (_values) => {
     const authStore = useAuthStore();
     apiError.value = ""
     await authStore.login(email.value, password.value)

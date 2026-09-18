@@ -11,31 +11,38 @@
                     the second row will override the first row. <br>
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
+
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="uploadUrl" field-name="files" method="POST" @uploaded="onUploadedListener"
                 @failed="onFailedListener" color="grey-9" batch>
 
+                <!-- header -->
                 <template v-slot:header="scope">
                     <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
                         <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" :disable="isCheckingFilesValidity"
                             icon="clear_all" @click="scope.removeQueuedFiles" round dense flat>
                             Clear All
                         </q-btn>
+
                         <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles"
                             round dense flat>
                             <q-tooltip>Remove Uploaded Files</q-tooltip>
                         </q-btn>
+
                         <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
+
                         <div class="col ">
                             <div class="q-uploader__title">Click or Drag and Drop files here.</div>
                             <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} /
                                 {{ scope.uploadProgressLabel }}</div>
                         </div>
+
                         <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense
                             flat :disable="isCheckingFilesValidity">
                             Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
+
                         <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
                             :disable="isCheckingFilesValidity" icon="cloud_upload" @click="scope.upload" round dense
                             flat>
@@ -50,54 +57,49 @@
 
                 <template v-if="isCheckingFilesValidity" v-slot:list="scope">
                     <i class="fa-solid fa-spinner fa-spin-pulse"></i> Checking headers validity
-
                 </template>
             </q-uploader>
 
             <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs">
                 <i class="fas fa-file-arrow-down"></i>
-                Download Templates</q-btn>
+                Download Templates
+            </q-btn>
         </form>
     </div>
-    <div>
-        <q-dialog v-model="dialogEnable" :persistent="dialogPersistentIsEnabled" backdrop-filter="blur(4px)"
-            ref="dialogRef">
-            <q-card class="dialog">
-                <q-card-section>
-                    <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
-                        class="" />
-                </q-card-section>
 
-                <h3>{{ dialogHeader }}</h3>
+    <q-dialog v-model="fileValidationViolationdialogEnable" :persistent="dialogPersistentIsEnabled"
+        backdrop-filter="blur(4px)" ref="dialogRef">
+        <q-card class="dialog">
+            <q-card-section>
+                <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
+                    class="" />
+            </q-card-section>
 
-                <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
-                <p>{{ dialogHeader.toLocaleLowerCase() == 'error'
-                    && names_of_files_with_headers_only.length != 0 ?
+            <h3>{{ dialogHeader }}</h3>
+
+            <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
+            <div v-if="dialogHeader.toLocaleLowerCase() == 'error'">
+                <p>{{ names_of_files_with_headers_only.length != 0 ?
                     "Files with headers only: " +
                     names_of_files_with_headers_only.join(",")
                     : '' }}</p>
-                <p>{{ dialogHeader.toLocaleLowerCase() == 'error'
-                    && names_of_files_with_incorrect_headers.length != 0 ?
+
+                <p>{{ names_of_files_with_incorrect_headers.length != 0 ?
                     "Files with incorrect header: " +
                     names_of_files_with_incorrect_headers.join(",")
                     : '' }}</p>
-                <p> {{ dialogHeader.toLocaleLowerCase() == 'error'
-                    && names_of_files_with_zero_bytes.length != 0
+
+                <p> {{ names_of_files_with_zero_bytes.length != 0
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
-                <p>
-                    {{ dialogHeader.toLocaleLowerCase() == 'error'
-                        ? "These files will be removed"
-                        : '' }}
-                </p>
+                }}</p>
 
-                <q-btn label="Ok" color="primary" v-close-popup autofocus />
-
-            </q-card>
-        </q-dialog>
-    </div>
+                <p> These files will be removed</p>
+            </div>
+            <q-btn label="Ok" color="primary" v-close-popup autofocus />
+        </q-card>
+    </q-dialog>
 </template>
 <style>
 @import '../../public/css/dialog.css';
@@ -114,16 +116,18 @@
 import { ref, type Ref } from 'vue';
 import { QUploader, QDialog } from 'quasar';
 
-import { getTemplates } from '../helpers/fetch-wrapper';
+import { getTemplatesFiles } from '../helpers/fetch-wrapper';
 import { useAuthStore } from '../stores/auth.store';
 
 const dialogHeader = ref("")
 const dialogMessage = ref("");
-const dialogEnable = ref(false)
+const fileValidationViolationdialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
+
 let authStore = useAuthStore()
 const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}&token=${authStore.user.token}`);
+
 const isCheckingFilesValidity = ref(false)
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
@@ -132,14 +136,14 @@ let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
 
 async function downloadTemplatesForTheCatalogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token;
-    getTemplates(url).then((download) => {
+    getTemplatesFiles(url).then((download) => {
         var url = window.URL.createObjectURL(download);
         var a = document.createElement('a');
         a.href = url;
         a.download = "templates for the catalogs";
-        document.body.appendChild(a); // append the element to the dom
+        document.body.appendChild(a);
         a.click();
-        a.remove(); // afterwards, remove the element 
+        a.remove();
     })
 }
 
@@ -178,7 +182,7 @@ const onAddedListener = (files: readonly File[]) => {
                     || names_of_files_with_zero_bytes.value.length > 0)
                     && workersFinishedWork.length == files.length) {
                     dialogHeader.value = "Error"
-                    dialogEnable.value = true
+                    fileValidationViolationdialogEnable.value = true
                 }
             }
 
@@ -197,7 +201,7 @@ const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; 
     dialogHeader.value = "Successful"
     dialogMessage.value = "sucessfully uploaded file(s)"
     dialogPersistentIsEnabled.value = false
-    dialogEnable.value = true
+    fileValidationViolationdialogEnable.value = true
 
     fileUploaderRef.value.reset()
 }
@@ -209,7 +213,7 @@ const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; })
     dialogHeader.value = "Error: Upload Failed"
     dialogMessage.value = JSON.parse(info.xhr.response).detail
     dialogPersistentIsEnabled.value = true
-    dialogEnable.value = true
+    fileValidationViolationdialogEnable.value = true
 
     fileUploaderRef.value.reset()
 }

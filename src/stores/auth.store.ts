@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
-
 import { login } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
 
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
 localStorage.clear();
-console.log('baseURL',baseUrl)
+console.log('baseURL', baseUrl)
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
@@ -23,15 +22,14 @@ export const useAuthStore = defineStore(
                 localStorage.setItem('email', JSON.stringify(user.email));
                 localStorage.setItem('user_id', JSON.stringify(user.user_id));
                 localStorage.setItem('user_type', JSON.stringify(user.user_type))
+                //tokens needed for backend routes user authentication
                 localStorage.setItem('token', JSON.stringify(user.token))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
-
             }
             catch (error) {
                 return Promise.reject(error);
             }
-
         },
         logout() {
             this.user = null;

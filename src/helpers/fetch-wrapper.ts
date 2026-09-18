@@ -1,5 +1,4 @@
-import { useAuthStore } from '../stores/auth.store';
-
+import { useAuthStore } from '../stores/auth.store'
 
 export const fetchWrapper = {
     get: request('GET'),
@@ -7,136 +6,108 @@ export const fetchWrapper = {
     put: request('PUT'),
     delete: request('DELETE')
 
-};
+}
 
 function request(method: string) {
     return (url: string, body: any = null) => {
-
         const requestOptions: RequestInit = {
             method,
             headers: authHeader(url, {})
-        };
-
+        }
         if (body) {
             requestOptions.headers = { 'Content-Type': 'application/json' }
-            requestOptions.body = JSON.stringify(body);
+            requestOptions.body = JSON.stringify(body)
         }
-        return fetch(url, requestOptions).then(handleResponse);
+        return fetch(url, requestOptions).then(handleResponse)
     }
 }
+
 export const streamFilesDownload = (url: string, body: any = null) => {
     const requestOptions: RequestInit = {
         method: "POST",
         headers: authHeader(url, {})
-    };
-
+    }
     if (body) {
         requestOptions.headers = { 'Content-Type': 'application/json' }
-        requestOptions.body = JSON.stringify(body);
+        requestOptions.body = JSON.stringify(body)
     }
-    return fetch(url, requestOptions);
+    return fetch(url, requestOptions)
 }
+
+//for deletion of user so that it will also fetch the updated version of the login_user table
 export const noCacheRequestFunction = (url: string, method: string, body: any = null) => {
     const header: any = { 'Cache-Control': 'no-cache' }
     const requestOptions: RequestInit = {
         method,
         headers: authHeader(url, header)
-
-
-    };
+    }
     if (body) {
         requestOptions.headers = { 'Content-Type': 'application/json' }
-        requestOptions.body = JSON.stringify(body);
+        requestOptions.body = JSON.stringify(body)
     }
-    return fetch(url, requestOptions).then(handleResponse);
+    return fetch(url, requestOptions).then(handleResponse)
 }
+
 export const login = (url: string, body: any) => {
     const requestOptions: RequestInit = {
         method: 'POST',
         headers: authHeader(url, {})
-    };
+    }
     if (body) {
-        const formData = new URLSearchParams();
-        Object.keys(body).forEach(key => {
-            formData.append(key, body[key]);
-        });
-        requestOptions.body = formData;
+        const formData = new URLSearchParams()
+        Object.keys(body).forEach(key => formData.append(key, body[key]))
+        requestOptions.body = formData
         // Don't set Content-Type as header — browser will set it automatically
     }
-    return fetch(url, requestOptions).then(handleResponse);
+    return fetch(url, requestOptions).then(handleResponse)
 }
 
-export const getTemplates = async (url: string) => {
+export const getTemplatesFiles = async (url: string) => {
     const requestOptions: RequestInit = {
         method: 'GET',
         headers: authHeader(url, {})
-    };
-
-    const response = await fetch(url, requestOptions);
-    return handleResponseForFiles(response);
+    }
+    const response = await fetch(url, requestOptions)
+    return handleResponseForFiles(response)
 }
-// export const uploadFiles = (url: string, body: any){ 
-//     const requestOptions:RequestInit = {
-//             method:'POST',
-//             headers: authHeader(url)
-//         };
-//         if (body) {
-//             const formData = new URLSearchParams();
-//             Object.keys(body).forEach(key => {
-//                 formData.append(key, body[key]);
-//             });
-//             requestOptions.body = formData;
-//             // Don't set Content-Type as header — browser will set it automatically
-//         }
-//         return fetch(url, requestOptions).then(handleResponse);
-// }
-
-// helper functions
 
 function authHeader(url: string, header: any): HeadersInit {
     // return auth header with jwt if user is logged in and request is to the api url
-    const { user } = useAuthStore();
-    const isLoggedIn = !!user?.token;
-    const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
+    const { user } = useAuthStore()
+    const isLoggedIn = !!user?.token
+    const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL)
     if (isLoggedIn && isApiUrl) {
         header['Authorization'] = `Bearer ${user.token}`
-        return header;
+        return header
     } else {
-        return header;
+        return header
     }
 }
 
 function handleResponse(response: Response, isJSON: boolean = true) {
     return response.text().then(text => {
-        const data = isJSON ? text && JSON.parse(text) : text;
+        const data = isJSON ? text && JSON.parse(text) : text
         if (!response.ok) {
-            const { user, logout } = useAuthStore();
-            if ([401, 403].includes(response.status) && user) {
+            const { user, logout } = useAuthStore()
+            if ([401, 403].includes(response.status) && user)
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
-                logout();
-            }
-
-            const error = data.detail;
-            return Promise.reject(error);
+                logout()
+            const error = data.detail
+            return Promise.reject(error)
         }
-
-        return data;
-    });
+        return data
+    })
 }
 
 function handleResponseForFiles(response: Response) {
     return response.blob().then(data => {
         if (!response.ok) {
-            const { user, logout } = useAuthStore();
-            if ([401, 403].includes(response.status) && user) {
+            const { user, logout } = useAuthStore()
+            if ([401, 403].includes(response.status) && user)
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
-                logout();
-            }
-
-
-            return Promise.reject('error downloading file(s)');
+                logout()
+            return Promise.reject('error downloading file(s)')
         }
-
-        return data;
-    });
+        return data
+    })
 }

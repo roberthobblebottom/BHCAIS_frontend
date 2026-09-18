@@ -8,12 +8,15 @@ import {
 
 } from '../constants';
 import * as xlsx from 'xlsx';
+
 function _send_message_back(name_of_file_with_headers_only: string, name_of_file_with_incorrect_header: string) {
+    //this function may send back files with validation violations, if not they will be empty strings below:
     self.postMessage({
         name_of_file_with_headers_only: name_of_file_with_headers_only,
         name_of_file_with_incorrect_headers: name_of_file_with_incorrect_header
     })
 }
+
 function isHeadersCorrect(headersString: string, fileName: string) {
     if (headersString != printSqlStringColumns.join(",")
         && headersString != negativeSqlStringColumns.join(",")
@@ -27,6 +30,7 @@ function isHeadersCorrect(headersString: string, fileName: string) {
     }
     return true
 }
+
 self.onmessage = (event: MessageEvent) => {
     const file = event.data.file;
 
@@ -51,14 +55,12 @@ self.onmessage = (event: MessageEvent) => {
                 return
             const isInvalidContent = (content == null) ? true : content.length == 0 ? true : false
             if (isInvalidContent) {
-                // fileUploaderRef.value.removeFile(file)
                 _send_message_back(file.name, '')
             } else
                 _send_message_back('', '')
         }
         reader.readAsArrayBuffer(file)
-    }
-    else if (file.name.includes('.csv')) {
+    } else if (file.name.includes('.csv')) {
         reader.onload = (e: ProgressEvent<FileReader>) => {
             const csv = e.target?.result as string
             let headersString = csv.split('\n')[0]?.split(",")

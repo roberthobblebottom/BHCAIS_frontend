@@ -7,11 +7,11 @@ import ChangePassword from '../views/ChangePassword.vue';
 import Catalogues from '../views/Catalogues.vue';
 import DownloadReport from '../views/DownloadReport.vue';
 import UserManagement from '../views/UserManagement.vue';
+
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     linkActiveClass: 'active',
     routes: [
-
         { path: '/QuickStart', component: QuickStart },
         { path: '/Login', component: LoginView },
         { path: '/BulkDataUpload', component: BulkDataUpload },

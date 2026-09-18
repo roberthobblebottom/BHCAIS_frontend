@@ -10,13 +10,11 @@
                             <q-item-label>Prints</q-item-label>
                         </q-item-section>
                     </q-item>
-
                     <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
                         <q-item-section>
                             <q-item-label>Oral Histories</q-item-label>
                         </q-item-section>
                     </q-item>
-
                     <q-item clickable v-close-popup @click='onItemClick("slide")'>
                         <q-item-section>
                             <q-item-label>Slides</q-item-label>
@@ -26,7 +24,6 @@
                         <q-item-section>
                             <q-item-label>Negatives</q-item-label>
                         </q-item-section>
-
                     </q-item>
                     <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
                         <q-item-section>
@@ -45,8 +42,11 @@
                 :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
                 :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
                 v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
+
+                <!-- Headers -->
                 <template v-slot:top="props">
                     <div class="row flex justify-between table-header">
+
                         <q-btn-dropdown class="rounded-borders  " label="hide columns">
                             <div class="q-pa-md rounded-borders">
                                 <p>These toggles are for hiding individual rows</p>
@@ -60,13 +60,14 @@
                                     option-value="name" style="min-width: 150px" />
                             </div>
                         </q-btn-dropdown>
+
                         <button class="button" v-if="showDeleteSelectedButton"
                             @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
                             Delete
                             Selected</button>
 
-
                         <p class="alert"> {{ errorMessage }}</p>
+
                         <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
                             <template v-slot:append>
                                 <q-icon name="search" />
@@ -75,18 +76,20 @@
                     </div>
                 </template>
             </q-table>
+
             <div v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
                 return Object.values(v)[0]
             })}} </div>
             <p class="alert" v-if="!showTable"> {{ errorMessage }}</p>
         </div>
+
         <div class="col-1" v-if="authStore.user.user_type == 'admin'">
             <q-btn color="red" @click="purgeAll"> <i class="fa-solid fa-error"></i>
                 PURGE ALL DATA
             </q-btn>
         </div>
-
     </div>
+
     <q-dialog v-model="showConfirmDeleteSelectDialog" persistent>
         <q-card class=" dialog ">
             <q-card-section>
@@ -102,14 +105,15 @@
             </q-card-section>
         </q-card>
     </q-dialog>
+
     <q-dialog v-model="showConfirmDeleteAllDialog" persistent>
         <q-card class=" dialog ">
             <q-card-section>
                 <q-avatar icon="help_outline" color="primary" text-color="white" class="" />
             </q-card-section>
-            <span>MAKE SURE YOU HAVE DOWNLOADED THE BACKUPS VIA DOWNLOAD REPORTS. Are you sure you want to delete the
-                all
-                the data? THIS IS UNREVERTABLE.
+            <span>MAKE SURE YOU HAVE DOWNLOADED THE BACKUPS VIA DOWNLOAD REPORTS.
+                Are you sure you want to delete the all the data?
+                THIS IS UNREVERTABLE.
             </span>
             <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
@@ -117,6 +121,7 @@
             </q-card-section>
         </q-card>
     </q-dialog>
+
     <q-dialog v-model="showAllDataDeletedDialog">
         <q-card class=" dialog ">
             <q-card-section>
@@ -147,7 +152,6 @@
     font-size: x-large;
     width: 100%;
     border-radius: 15px;
-
 }
 
 .alert {
@@ -169,6 +173,7 @@ import { fetchWrapper } from '../helpers/fetch-wrapper';
 import { QTable, QTr } from 'quasar';
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store';
+
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
@@ -189,46 +194,18 @@ const pagination = ref({
     rowsNumber: 10
 })
 const catalogueName = ref("")
-const currentPrimaryKey = ref("")
+const currentPrimaryKeyUsedForDeleteSelected = ref("")
 const showConfirmDeleteSelectDialog = ref(false)
 const showConfirmDeleteAllDialog = ref(false)
+
 const authStore = useAuthStore()
+
 defineExpose({ tableRef })
-function onSelection(details: any) {
-    // before selected reference is updated
-    if (details.added == true)
-        showDeleteSelectedButton.value = true
-    else if (selectedRowsToBeDeleted.value.length - details.rows.length == 0)
-        showDeleteSelectedButton.value = false
-}
 
-async function deleteSelected() {
-    const selectedIds: any[] = []
-    for (const x of selectedRowsToBeDeleted.value)
-        selectedIds.push(Object.values(x)[0])
-
-    const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
-    try {
-        await fetchWrapper.post(url,
-            {
-                ids_to_be_deleted: selectedIds,
-                catalogue_name: catalogueName.value,
-                current_primary_key: currentPrimaryKey.value,
-                token: authStore.user.token
-            })
-    } catch (error: any) {
-        console.error(error)
-    }
-
-    const newRows = []
-    for (const row of rows.value) {
-        const x = Object.values({ ...row })[0]
-        if (!selectedIds.includes(x))
-            newRows.push(row)
-    }
-    rows.value = newRows
-    selectedRowsToBeDeleted.value = []
-    await nextTick()
+async function onItemClick(catalogue_name1: string) {
+    catalogueName.value = catalogue_name1
+    showTable.value = true;
+    await nextTick() // required for updating catalogue Name
     tableRef.value!.requestServerInteraction()
 }
 
@@ -236,14 +213,6 @@ async function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
     isLoadingTable.value = true
-    // let url = `${import.meta.env.VITE_API_URL}/GetCatalogue/`
-    //     + `?catalogue_name=${catalogueName.value}`
-    //     + `&rows_per_page=${rowsPerPage}`
-    //     + `&current_page_number=${page}`
-    //     + `&filter_str=${filterStr}`
-    //     + `&sort_by=${sortBy}`
-    //     + `&descending=${descending}`
-    //     + "&current_user=${authStore.user.token}"
     const params = new URLSearchParams({
         catalogue_name: catalogueName.value,
         rows_per_page: rowsPerPage.toString(),
@@ -266,11 +235,9 @@ async function onRequest(props: any) {
     pagination.value.descending = descending
 
     if (results.length == 0) {
-
         isLoadingTable.value = false
         if (filterStr == '') {
-            errorMessage.value = "This is no results for "
-                + catalogueName.value
+            errorMessage.value = "This is no results for " + catalogueName.value
             showTable.value = false
         }
         else {
@@ -283,7 +250,6 @@ async function onRequest(props: any) {
 
     const temp: any = []
     const visibleColumnsTemp: any = []
-    let i = 0
     for (const h of Object.keys(results[0])) {
         temp.push({
             name: h,
@@ -295,9 +261,9 @@ async function onRequest(props: any) {
             sortable: true
         })
         visibleColumnsTemp.push(h)
-        i++;
     }
-    currentPrimaryKey.value = temp[0].name
+
+    currentPrimaryKeyUsedForDeleteSelected.value = temp[0].name
     columns.value = temp
     rowKey.value = columns.value[0].name
     rows.value = results
@@ -306,15 +272,49 @@ async function onRequest(props: any) {
     isLoadingTable.value = false
     await nextTick() // nextTick is much fast than setTimeout(,1500)
 }
-async function onItemClick(catalogue_name1: string) {
-    catalogueName.value = catalogue_name1
-    showTable.value = true;
-    await nextTick() // required for updating catalogue Name
+
+function onSelection(details: any) {
+    // this function runs before selected reference is updated
+    if (details.added == true)
+        showDeleteSelectedButton.value = true
+    else if (selectedRowsToBeDeleted.value.length - details.rows.length == 0)
+        showDeleteSelectedButton.value = false
+}
+
+async function deleteSelected() {
+    const selectedIds: any[] = []
+    for (const x of selectedRowsToBeDeleted.value)
+        selectedIds.push(Object.values(x)[0])
+
+    const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
+    try {
+        await fetchWrapper.post(url,
+            {
+                ids_to_be_deleted: selectedIds,
+                catalogue_name: catalogueName.value,
+                current_primary_key: currentPrimaryKeyUsedForDeleteSelected.value,
+                token: authStore.user.token
+            })
+    } catch (error: any) { console.error(error) }
+
+    //setting up rows without the deleted ones
+    const newRows = []
+    for (const row of rows.value) {
+        const x = Object.values({ ...row })[0]
+        if (!selectedIds.includes(x))
+            newRows.push(row)
+    }
+    rows.value = newRows
+
+    selectedRowsToBeDeleted.value = []
+    await nextTick()
     tableRef.value!.requestServerInteraction()
 }
+
 function purgeAll() {
     showConfirmDeleteAllDialog.value = true;
 }
+
 async function deleteAllCatalogueData() {
     let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
     await fetchWrapper.post(url)

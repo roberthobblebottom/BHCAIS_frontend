@@ -2,7 +2,6 @@
 
     <div class="q-pa-md large common">
         <h3>
-
             User Management
         </h3>
         <div class="row justify-end q-mb-md">
@@ -11,6 +10,7 @@
         <q-table class="table-div" v-model:rows="rows" :columns="columns" :row-key="rowKey" ref="tableRef"
             :loading="loading" :wrap-cells="true">
             <template v-slot:body-cell-action="props">
+                <!-- buttons for actions for each rows -->
                 <q-td :props="props">
                     <div class="row justify-around">
                         <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"></q-btn>
@@ -22,7 +22,7 @@
         </q-table>
     </div>
 
-
+    <!-- Create or Edit User Dialog -->
     <q-dialog v-model="showFormDialog">
         <q-card class="dialog">
             <q-card-section class="q-pt-none ">
@@ -39,9 +39,7 @@
                             <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
                                 @click="showPassword = !showPassword" />
                         </template>
-
                     </q-input>
-
                     <q-input :type="showConfirmPassword ? 'text' : 'password'" label="Confirm Password"
                         v-model="confirmPassword" v-bind="confirmPasswordProps">
                         <template v-slot:append>
@@ -59,9 +57,9 @@
                     </div>
                 </q-form>
             </q-card-section>
-
         </q-card>
     </q-dialog>
+    <!-- delete confirmation dialog or Error dialog -->
     <q-dialog v-model="showAlertDialog">
         <q-card class="column items-center 
             q-pb-none text-h6 dialog ">
@@ -73,13 +71,10 @@
                 <div class="delete-confirmation row justify-evenly" v-if="isDeleteConfirmationDialog">
                     <q-btn label="Cancel" color="secondary" v-close-popup />
                     <q-btn label="Delete" color="primary" @click="onDelete(userIdToBeDeleted)" />
-
                 </div>
                 <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
             </q-card-section>
-
         </q-card>
-
     </q-dialog>
 </template>
 <style lang="css" scoped>
@@ -115,6 +110,7 @@ const alertDialogMessage = ref("")
 const isDeleteConfirmationDialog = ref(false)
 const userIdToBeDeleted = ref(-1)
 const authStore = useAuthStore()
+
 interface UserInterface {
     user_id: number
     email: number
@@ -122,8 +118,8 @@ interface UserInterface {
     confirm_password: string
     user_type: string
 }
-
 let oldUserValuesBeforeEdit: UserInterface | null = null
+
 const schema = yup.object().shape({
     email: yup.string().email().required("email  is required"),
     isEdit: yup.boolean(),
@@ -131,7 +127,6 @@ const schema = yup.object().shape({
         "isEdit", {
         is: true,
         then: (schema) => {
-            console.log('here')
             const c = commonPasswords.split("\n")
             c.splice(c.indexOf(""))
             return schema.when("password", {
@@ -150,6 +145,7 @@ const schema = yup.object().shape({
     confirmPassword: yup.string().oneOf([yup.ref('password'), ""], "Passwords must match."),
     userType: yup.string().oneOf(['normal', 'admin']).required("User type is required")
 });
+
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
@@ -164,14 +160,13 @@ const quasarConfig = (state: any) => ({
     },
 });
 
-
-
 const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfig)
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
 const [confirmPassword, confirmPasswordProps] = defineField("confirmPassword" as MaybeRefOrGetter, quasarConfig)
 const [userType, userTypeProps] = defineField("userType" as MaybeRefOrGetter, quasarConfig)
 const [isEdit, _isEditProps] = defineField("isEdit" as MaybeRefOrGetter, quasarConfig)
-const getData = async () => {
+
+const getAllUsers = async () => {
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
     // const header = { "Cached-Content": "no-cache" }
     const response = await noCacheRequestFunction(url, 'get')
@@ -202,8 +197,7 @@ const getData = async () => {
     columns.value = temp
 }
 
-onBeforeMount(async () => await getData())
-
+onBeforeMount(async () => await getAllUsers())
 
 function openCreateDialog() {
     resetForm()
@@ -219,6 +213,8 @@ function openEditDialog(user: any) {
     showFormDialog.value = true
 
     isEdit.value = true
+
+    //filling up form with existing data
     email.value = user.email
     userType.value = user.user_type
     oldUserValuesBeforeEdit = user
@@ -249,7 +245,11 @@ const onCreate = handleSubmit(async () => {
         alertDialogMessage.value = "Sucessfully created user"
 
         const temp: any[] = rows.value
-        temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
+        temp.push({
+            user_id: parseInt(temp[temp.length - 1].user_id) + 1,
+            email: email.value,
+            user_type: userType.value
+        })
         rows.value = temp
         resetForm()
 
@@ -261,6 +261,7 @@ const onCreate = handleSubmit(async () => {
     }
 
 })
+
 const onEdit = handleSubmit(async () => {
     isEdit.value = false
     showFormDialog.value = false
@@ -275,7 +276,6 @@ const onEdit = handleSubmit(async () => {
             user_type: userType.value,
             token: authStore.user.token
         }
-        console.log('body', body)
         await fetchWrapper.post(url, body)
 
         alertDialogMessage.value = "Sucessfully edited user"
@@ -283,7 +283,7 @@ const onEdit = handleSubmit(async () => {
         // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
         //     return value.$data
         // }) as UserInterface[]
-        await getData() // less efficient than directly putting it into the table but this works.
+        await getAllUsers() // less efficient than directly putting it into the table but this works.
 
         //I don't know how to do these:
         // ('temp', temp)
@@ -300,6 +300,7 @@ const onEdit = handleSubmit(async () => {
         showAlertDialog.value = true
     }
 })
+
 async function onDelete(user_id: number) {
     const url = `${import.meta.env.VITE_API_URL}/DeleteUser/`
     try {
@@ -312,7 +313,7 @@ async function onDelete(user_id: number) {
 
         alertDialogMessage.value = "Sucessfully Deleted user"
 
-        await getData() // less efficient than directly putting it into the table but this works.
+        await getAllUsers() // less efficient than directly putting it into the table but this works.
 
     } catch (err: any) {
         alertDialogMessage.value = "Error in Deleting User: " + err
