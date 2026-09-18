@@ -3,9 +3,9 @@
     <div>
         <nav v-if="authStore.user" v-show="authStore.user" class="sidebar">
             <div class="sidebar" v-if="authStore.user">
-                <div class="logo">
-                    <img src="/images/Group-1.svg" alt="LKCNHM Logo" />
-                </div>
+                <!-- <div class="logo"> -->
+                <!-- <img src="/images/Group-1.svg" alt="LKCNHM Logo" /> -->
+                <!-- </div> -->
                 <div>
                     <div class="col">
                         <p class="app-name">BHCAIS</p>
