@@ -60,19 +60,20 @@
                                     option-value="name" style="min-width: 150px" />
                             </div>
                         </q-btn-dropdown>
+                        <div class="header-right row flex justify-evenly">
+                            <button class="button" v-if="showDeleteSelectedButton"
+                                @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
+                                Delete
+                                Selected</button>
 
-                        <button class="button" v-if="showDeleteSelectedButton"
-                            @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
-                            Delete
-                            Selected</button>
+                            <p class="alert"> {{ errorMessage }}</p>
 
-                        <p class="alert"> {{ errorMessage }}</p>
-
-                        <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
-                            <template v-slot:append>
-                                <q-icon name="search" />
-                            </template>
-                        </q-input>
+                            <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
+                                <template v-slot:append>
+                                    <q-icon name="search" />
+                                </template>
+                            </q-input>
+                        </div>
                     </div>
                 </template>
             </q-table>
@@ -164,6 +165,15 @@
 
 .table-header {
     width: 100%
+}
+
+.header-right {
+    width: 40%;
+}
+
+.button {
+    float: left !important;
+    background-color: red;
 }
 </style>
 
