@@ -60,7 +60,7 @@
                                     option-value="name" style="min-width: 150px" />
                             </div>
                         </q-btn-dropdown>
-                        <div class="header-right row flex justify-evenly">
+                        <div class="header-right flex justify-end">
                             <button class="button" v-if="showDeleteSelectedButton"
                                 @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
                                 Delete
@@ -68,7 +68,8 @@
 
                             <p class="alert"> {{ errorMessage }}</p>
 
-                            <q-input class="" borderless dense debounce="300" v-model="searchTerm" placeholder="Search">
+                            <q-input class="q-ml-xl search-term-input" borderless dense debounce="300"
+                                v-model="searchTerm" placeholder="Search">
                                 <template v-slot:append>
                                     <q-icon name="search" />
                                 </template>
@@ -172,8 +173,12 @@
 }
 
 .button {
-    float: left !important;
+    float: none !important;
     background-color: red;
+}
+
+.search-term-input {
+    width: 10vw;
 }
 </style>
 
