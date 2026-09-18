@@ -45,31 +45,32 @@
 
                 <!-- Headers -->
                 <template v-slot:top="props">
-                    <div class="row flex justify-between items-end table-header">
-
-                        <q-btn-dropdown class="rounded-borders  " label="hide columns">
-                            <div class="q-pa-md rounded-borders">
-                                <p>These toggles are for hiding individual rows</p>
-                                <div class="check flex content-start" v-if="$q.screen.gt.xs">
-                                    <div v-for="v in columns">
-                                        <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                    <div class="row flex  items-end table-header">
+                        <div class="col-5">
+                            <q-btn-dropdown class="col-5 rounded-borders  " label="hide columns">
+                                <div class="q-pa-md rounded-borders">
+                                    <p>These toggles are for hiding individual rows</p>
+                                    <div class="check flex content-start" v-if="$q.screen.gt.xs">
+                                        <div v-for="v in columns">
+                                            <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                        </div>
                                     </div>
+                                    <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
+                                        :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
+                                        option-value="name" style="min-width: 150px" />
                                 </div>
-                                <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                    :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                    option-value="name" style="min-width: 150px" />
-                            </div>
-                        </q-btn-dropdown>
-                        <div class="header-right flex justify-end">
-                            <button class="button" v-if="showDeleteSelectedButton"
+                            </q-btn-dropdown>
+                        </div>
+                        <div class="col row flex items-end justify-end">
+                            <button class="col-3 button" v-if="showDeleteSelectedButton"
                                 @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
                                 Delete
                                 Selected</button>
 
-                            <p class="alert"> {{ errorMessage }}</p>
+                            <p v-if="errorMessage != ''" class="col-4 q-ml-xl alert"> {{ errorMessage }}</p>
 
-                            <q-input class="q-ml-xl search-term-input " borderless dense debounce="300"
-                                v-model="searchTerm" placeholder="Search">
+                            <q-input class="col-3 float-right q-ml-xl search-term-input " borderless dense
+                                debounce="300" v-model="searchTerm" placeholder="Search">
                                 <template v-slot:append>
                                     <q-icon name="search" />
                                 </template>
