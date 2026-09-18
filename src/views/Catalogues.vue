@@ -45,7 +45,7 @@
 
                 <!-- Headers -->
                 <template v-slot:top="props">
-                    <div class="row flex justify-between table-header">
+                    <div class="row flex justify-between items-end table-header">
 
                         <q-btn-dropdown class="rounded-borders  " label="hide columns">
                             <div class="q-pa-md rounded-borders">
@@ -68,7 +68,7 @@
 
                             <p class="alert"> {{ errorMessage }}</p>
 
-                            <q-input class="q-ml-xl search-term-input" borderless dense debounce="300"
+                            <q-input class="q-ml-xl search-term-input " borderless dense debounce="300"
                                 v-model="searchTerm" placeholder="Search">
                                 <template v-slot:append>
                                     <q-icon name="search" />
@@ -175,10 +175,12 @@
 .button {
     float: none !important;
     background-color: red;
+    height: 10%;
 }
 
 .search-term-input {
     width: 10vw;
+
 }
 </style>
 

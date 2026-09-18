@@ -60,7 +60,7 @@
                 </template>
             </q-uploader>
 
-            <q-btn class="button float-left" @click.prevent="downloadTemplatesForTheCatalogs">
+            <q-btn class="button flex float-left" @click.prevent="downloadTemplatesForTheCatalogs">
                 <i class="fas fa-file-arrow-down"></i>
                 Download Templates
             </q-btn>
@@ -93,7 +93,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p> These files will be removed</p>
             </div>
