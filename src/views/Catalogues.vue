@@ -220,6 +220,8 @@ defineExpose({ tableRef })
 async function onItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     showTable.value = true;
+    selectedRowsToBeDeleted.value = []
+    showDeleteSelectedButton.value = false
     await nextTick() // required for updating catalogue Name
     tableRef.value!.requestServerInteraction()
 }
