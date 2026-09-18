@@ -45,7 +45,7 @@
 
                 <!-- Headers -->
                 <template v-slot:top="props">
-                    <div class="row flex justify-between table-header">
+                    <div class="row flex justify-between items-end table-header">
 
                         <q-btn-dropdown class="rounded-borders  " label="hide columns">
                             <div class="q-pa-md rounded-borders">
