@@ -93,7 +93,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p> These files will be removed</p>
             </div>
@@ -113,7 +113,7 @@
 }
 
 .button {
-    float: none;
+    float: left !important;
 }
 </style>
 <script setup lang='ts'>
