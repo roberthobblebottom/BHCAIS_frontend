@@ -45,7 +45,7 @@ const showPassword = ref(false)
 const apiError = ref("")
 
 const schema = Yup.object().shape({
-    email: Yup.string().email('Not a valid email format').required('email is required'),
+    email: Yup.string().email('Not a valid email format').required('Email is required'),
     password: Yup.string().required('Password is required')
 });
 

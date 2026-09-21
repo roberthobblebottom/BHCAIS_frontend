@@ -119,7 +119,7 @@ const onSubmit = handleSubmit(async (_values) => {
         showAlert.value = true
     } finally { resetForm() }
     if (response != null) {
-        alertMessage.value = "sucessfully changed password"
+        alertMessage.value = "Sucessfully changed password"
         showAlert.value = true;
     }
 

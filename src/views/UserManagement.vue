@@ -28,7 +28,7 @@
             <q-card-section class="q-pt-none ">
                 <h3>{{ isEdit ? 'Edit User' : 'Create User' }}</h3>
                 <p>
-                    {{ isEdit ? 'Only enter your new password if you want to change the password'
+                    {{ isEdit ? 'Only enter the new password if you want to change the password'
                         : 'All fields are required' }}
                 </p>
                 <q-form ref="userForm" validation-observer @click.prevent="isEdit ? onEdit : onCreate">
@@ -132,8 +132,8 @@ interface UserInterface {
 let oldUserValuesBeforeEdit: UserInterface | null = null
 
 const schema = yup.object().shape({
-    email: yup.string().email().required("email  is required"),
     isEdit: yup.boolean(),
+    email: yup.string().email().required("Email  is required"),
     password: yup.string().when(
         "isEdit", {
         is: true,
@@ -142,13 +142,13 @@ const schema = yup.object().shape({
             c.splice(c.indexOf(""))
             return schema.when("password", {
                 is: (value: string) => value && value.length > 0,
-                then: (s) => s.min(7, 'minimum of 7 characters for password   ')
+                then: (s) => s.min(7, 'Minimum of 7 characters for password   ')
                     .matches(passwordRegex, passwordError)
                     .notOneOf(c, "The password is too common"),
                 otherwise: (s) => s.notRequired()
             })
         },
-        otherwise: (schema) => schema.min(7, 'minimum of 7 characters for password   ')
+        otherwise: (schema) => schema.min(7, 'Minimum of 7 characters for password   ')
             .matches(passwordRegex, passwordError)
             .notOneOf(commonPasswords.split("\n"), "The password is too common")
     }
@@ -233,7 +233,7 @@ function openEditDialog(user: any) {
 function openConfirmDeleteDialog(user: any) {
     showDeleteConfirmationDialog.value = true
     showAlertDialog.value = true
-    alertDialogMessage.value = "are you sure you want to delete this user? " + user.email
+    alertDialogMessage.value = "Are you sure you want to delete this user? " + user.email
     userIdToBeDeleted.value = user.user_id
 }
 
