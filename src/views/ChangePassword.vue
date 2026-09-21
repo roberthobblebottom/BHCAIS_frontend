@@ -88,7 +88,7 @@ const onSubmit = handleSubmit(async (_values) => {
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
     try {
-        response = await fetchWrapper.post(url, {
+        response = await fetchWrapper.put(url, {
             'username': useAuthStore().user.email,
             'old_password': oldPassword.value,
             'new_password': newPassword.value,
