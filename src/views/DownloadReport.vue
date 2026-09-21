@@ -43,7 +43,7 @@
                 <i :class="isDownloading
                     ? 'fa-solid fa-spinner fa-spin-pulse'
                     : 'fas fa-file-arrow-down'"></i>
-                {{ isDownloading ? 'currently downlowding...' : 'Download' }}
+                {{ isDownloading ? 'Currently downloading...' : 'Download' }}
             </button>
         </q-form>
 
@@ -129,7 +129,7 @@ const schema = yup.object().shape({
     selectCatalogues: yup.array()
         .of(yup.string()
             .oneOf(catalogueNames, 'Invalid Catalogue'))
-        .required("selectCatalogues is required"),
+        .required("Selection of catalogues is required"),
 });
 
 const { defineField, handleSubmit } = useForm({

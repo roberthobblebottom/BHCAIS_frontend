@@ -142,7 +142,7 @@
                 <q-avatar icon="fa-regular fa-circle-check" color="primary" text-color="white" class="" />
             </q-card-section>
             <span>
-                All Catalogue Data has been deleted.
+                All catalogue data has been deleted.
             </span>
             <q-card-section>
                 <q-btn label="Ok" v-close-popup />

@@ -93,7 +93,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p> These files will be removed</p>
             </div>
@@ -203,7 +203,7 @@ const onAddedListener = (files: readonly File[]) => {
 }
 const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
     dialogHeader.value = "Successful"
-    dialogMessage.value = "sucessfully uploaded file(s)"
+    dialogMessage.value = "Sucessfully uploaded file(s)"
     dialogPersistentIsEnabled.value = false
     fileValidationViolationdialogEnable.value = true
 
