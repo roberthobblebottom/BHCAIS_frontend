@@ -8,8 +8,13 @@
             </div>
             <q-input label="email" name="email" type="text" class="form-control" v-model="email" v-bind="emailProps" />
 
-            <q-input label="password" name="password" type="password" class="form-control " v-model="password"
-                v-bind="passwordProps" />
+            <q-input label="password" name="password" :type="showPassword ? 'text' : 'password'" class="form-control "
+                v-model="password" v-bind="passwordProps">
+                <template v-slot:append>
+                    <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                        @click=" showPassword = !showPassword" />
+                </template>
+            </q-input>
             <button type="submit" class="button btn-primary" :disabled="isSubmitting">
                 <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
                 Login
@@ -33,6 +38,7 @@ import * as Yup from 'yup';
 import { useAuthStore } from '../stores/auth.store.ts';
 import { type MaybeRefOrGetter, ref } from 'vue';
 const isSubmitting = ref(false)
+const showPassword = ref(false)
 const apiError = ref("")
 
 const schema = Yup.object().shape({
