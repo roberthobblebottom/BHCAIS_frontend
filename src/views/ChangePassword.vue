@@ -4,16 +4,31 @@
             <h3>Change Password</h3>
 
             <div class="form-group">
-                <q-input name="oldPassword" label="Old Password" type="password" class="form-control"
-                    v-model="oldPassword" v-bind="oldPasswordProps" />
+                <q-input name="oldPassword" label="Old Password" class="form-control" v-model="oldPassword"
+                    v-bind="oldPasswordProps" :type="showPassword ? 'text' : 'password'">
+                    <template v-slot:append>
+                        <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                            @click="showPassword = !showPassword" />
+                    </template></q-input>
             </div>
             <div class="form-group">
-                <q-input name="newPassword" label="New Password" type="password" class="form-control "
-                    v-model="newPassword" v-bind="newPasswordProps" />
+                <q-input name="newPassword" label="New Password" :type="showNewPassword ? 'text' : 'password'"
+                    class="form-control " v-model="newPassword" v-bind="newPasswordProps">
+                    <template v-slot:append>
+                        <q-icon :name="showNewPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                            @click="showNewPassword = !showNewPassword" />
+                    </template>
+                </q-input>
             </div>
             <div class="form-group">
-                <q-input name="confirmNewPassword" label="Confirm New Password" type="password" class="form-control "
-                    v-model="confirmNewPassword" v-bind="confirmNewPasswordProps" />
+                <q-input name="confirmNewPassword" label="Confirm New Password"
+                    :type="showConfirmNewPassword ? 'text' : 'password'" class="form-control "
+                    v-model="confirmNewPassword" v-bind="confirmNewPasswordProps">
+                    <template v-slot:append>
+                        <q-icon :name="showConfirmNewPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                            @click=" showConfirmNewPassword = !showConfirmNewPassword" />
+                    </template>
+                </q-input>
             </div>
             <div class="justify-center">
                 <button class="button btn-primary" :disabled="isSubmitting">
@@ -54,7 +69,9 @@ import { useAuthStore } from '../stores/auth.store.ts';
 const showAlert = ref(false)
 const alertMessage = ref('')
 const isSubmitting = ref(false)
-
+const showPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmNewPassword = ref(false)
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('required'),
     //temporary changed to one min char
