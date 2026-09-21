@@ -32,7 +32,7 @@
                         : 'All fields are required' }}
                 </p>
                 <q-form ref="userForm" validation-observer @click.prevent="isEdit ? onEdit : onCreate">
-                    <q-input label="email" v-model="email" , v-bind="emailProps"></q-input>
+                    <q-input label="Email" v-model="email" , v-bind="emailProps"></q-input>
                     <q-input label="Password" v-model="password" v-bind="passwordProps"
                         :type="showPassword ? 'text' : 'password'">
                         <template v-slot:append>

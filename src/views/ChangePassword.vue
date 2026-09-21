@@ -75,9 +75,9 @@ const showPassword = ref(false)
 const showNewPassword = ref(false)
 const showConfirmNewPassword = ref(false)
 const schema = Yup.object().shape({
-    oldPassword: Yup.string().required('required'),
+    oldPassword: Yup.string().required('Required'),
     newPassword: Yup.string()
-        .min(7, 'minimum of 7 characters for password   ')
+        .min(7, 'Minimum of 7 characters for password   ')
         .matches(passwordRegex, passwordError)
         // ,
         .notOneOf(commonPasswords.split("\n"), "The password is too common"),

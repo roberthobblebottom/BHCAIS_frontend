@@ -6,9 +6,9 @@
             <h2>Login</h2>
             <div v-if="apiError" class="alert alert-danger mt-3 mb-0">{{ apiError }}
             </div>
-            <q-input label="email" name="email" type="text" class="form-control" v-model="email" v-bind="emailProps" />
+            <q-input label="Email" name="email" type="text" class="form-control" v-model="email" v-bind="emailProps" />
 
-            <q-input label="password" name="password" :type="showPassword ? 'text' : 'password'" class="form-control "
+            <q-input label="Password" name="password" :type="showPassword ? 'text' : 'password'" class="form-control "
                 v-model="password" v-bind="passwordProps">
 
                 <template v-slot:append>
