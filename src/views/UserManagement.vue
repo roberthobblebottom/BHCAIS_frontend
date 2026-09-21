@@ -276,7 +276,7 @@ const onEdit = handleSubmit(async () => {
             user_type: userType.value,
             token: authStore.user.token
         }
-        await fetchWrapper.post(url, body)
+        await fetchWrapper.put(url, body)
 
         alertDialogMessage.value = "Sucessfully edited user"
 
@@ -309,7 +309,7 @@ async function onDelete(user_id: number) {
             token: authStore.user.token
         }
 
-        await fetchWrapper.post(url, body)
+        await fetchWrapper.delete(url, body)
 
         alertDialogMessage.value = "Sucessfully Deleted user"
 
