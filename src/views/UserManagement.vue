@@ -52,8 +52,12 @@
                     </q-select>
                     <div class="flex justify-around">
                         <q-btn flat label="close" color="secondary" v-close-popup />
-                        <q-btn :label="isEdit ? 'edit' : 'create'" color="primary"
-                            @click="isEdit ? onEdit() : onCreate()" />
+                        <q-btn :disable='isInProgress' :label="isEdit ? 'edit ' : 'create '" color="primary"
+                            @click="isEdit ? onEdit() : onCreate()">
+                            <i :class="isInProgress
+                                ? 'fa-solid fa-spinner fa-spin-pulse'
+                                : 'fa-solid fa-pen-to-square'"></i>
+                        </q-btn>
                     </div>
                 </q-form>
             </q-card-section>
@@ -64,13 +68,18 @@
         <q-card class="column items-center 
             q-pb-none text-h6 dialog ">
             <q-card-section class="  items-center column q-pb-none">
-                <q-avatar v-if="isDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white"
+                <q-avatar v-if="showDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white"
                     class="" />
                 <q-avatar v-else icon="error" color="primary" text-color="white" class="" />
                 {{ alertDialogMessage }}
-                <div class="delete-confirmation row justify-evenly" v-if="isDeleteConfirmationDialog">
+                <div class="delete-confirmation row justify-evenly" v-if="showDeleteConfirmationDialog">
                     <q-btn label="Cancel" color="secondary" v-close-popup />
-                    <q-btn label="Delete" color="primary" @click="onDelete(userIdToBeDeleted)" />
+                    <q-btn :disable="isDeleteInProgress" label="Delete " color="primary"
+                        @click="onDelete(userIdToBeDeleted)">
+                        <i :class="isDeleteInProgress
+                            ? 'fa-solid fa-spinner fa-spin-pulse'
+                            : 'fa-solid fa-pen-to-square'"></i>
+                    </q-btn>
                 </div>
                 <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
             </q-card-section>
@@ -107,8 +116,10 @@ const showAlertDialog = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const alertDialogMessage = ref("")
-const isDeleteConfirmationDialog = ref(false)
+const showDeleteConfirmationDialog = ref(false)
 const userIdToBeDeleted = ref(-1)
+const isInProgress = ref(false)
+const isDeleteInProgress = ref(false)
 const authStore = useAuthStore()
 
 interface UserInterface {
@@ -201,7 +212,7 @@ onBeforeMount(async () => await getAllUsers())
 
 function openCreateDialog() {
     resetForm()
-    isDeleteConfirmationDialog.value = false
+    showDeleteConfirmationDialog.value = false
     showFormDialog.value = true
 
     isEdit.value = false
@@ -209,7 +220,7 @@ function openCreateDialog() {
 
 function openEditDialog(user: any) {
     resetForm()
-    isDeleteConfirmationDialog.value = false
+    showDeleteConfirmationDialog.value = false
     showFormDialog.value = true
 
     isEdit.value = true
@@ -220,7 +231,7 @@ function openEditDialog(user: any) {
     oldUserValuesBeforeEdit = user
 }
 function openConfirmDeleteDialog(user: any) {
-    isDeleteConfirmationDialog.value = true
+    showDeleteConfirmationDialog.value = true
     showAlertDialog.value = true
     alertDialogMessage.value = "are you sure you want to delete this user? " + user.email
     userIdToBeDeleted.value = user.user_id
@@ -230,8 +241,7 @@ function openConfirmDeleteDialog(user: any) {
 
 const onCreate = handleSubmit(async () => {
     isEdit.value = false
-    showFormDialog.value = false
-
+    isInProgress.value = true
     const url = `${import.meta.env.VITE_API_URL}/CreateUser/`
     try {
         await fetchWrapper.post(url, {
@@ -258,14 +268,15 @@ const onCreate = handleSubmit(async () => {
     }
     finally {
         showAlertDialog.value = true
+        showFormDialog.value = false
+        isInProgress.value = false
     }
 
 })
 
 const onEdit = handleSubmit(async () => {
     isEdit.value = false
-    showFormDialog.value = false
-
+    isInProgress.value = true
     const url = `${import.meta.env.VITE_API_URL}/EditUser/`
     try {
         const body = {
@@ -298,11 +309,14 @@ const onEdit = handleSubmit(async () => {
         alertDialogMessage.value = "Error in editing User: " + err
     } finally {
         showAlertDialog.value = true
+        showFormDialog.value = false
+        isInProgress.value = false
     }
 })
 
 async function onDelete(user_id: number) {
     const url = `${import.meta.env.VITE_API_URL}/DeleteUser/`
+    isDeleteInProgress.value = true
     try {
         const body = {
             user_id: user_id,
@@ -318,8 +332,9 @@ async function onDelete(user_id: number) {
     } catch (err: any) {
         alertDialogMessage.value = "Error in Deleting User: " + err
     } finally {
+        isDeleteInProgress.value = false
         showAlertDialog.value = true
-        isDeleteConfirmationDialog.value = false
+        showDeleteConfirmationDialog.value = false
     }
 }
 

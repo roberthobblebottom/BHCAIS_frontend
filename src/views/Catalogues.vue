@@ -5,32 +5,33 @@
             <q-btn-dropdown color="primary" class="dropdown"
                 :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
                 <q-list>
-                    <q-item clickable v-close-popup @click='onItemClick("print")'>
+                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("print")'>
                         <q-item-section>
                             <q-item-label>Prints</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click='onItemClick("oral_history")'>
+                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("oral_history")'>
                         <q-item-section>
                             <q-item-label>Oral Histories</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click='onItemClick("slide")'>
+                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("slide")'>
                         <q-item-section>
                             <q-item-label>Slides</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="onItemClick('negative')">
+                    <q-item clickable v-close-popup @click="onCatalogDropDownItemClick('negative')">
                         <q-item-section>
                             <q-item-label>Negatives</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="onItemClick('library_and_archive')">
+                    <q-item clickable v-close-popup @click="onCatalogDropDownItemClick('library_and_archive')">
                         <q-item-section>
                             <q-item-label>Library and Archives</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="onItemClick('legacy_and_miscellaneous_items_report')">
+                    <q-item clickable v-close-popup
+                        @click="onCatalogDropDownItemClick('legacy_and_miscellaneous_items_report')">
                         <q-item-section>
                             <q-item-label>Legacy and Misc Items Report</q-item-label>
                         </q-item-section>
@@ -39,9 +40,9 @@
             </q-btn-dropdown>
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
             <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
-                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequest"
+                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequestCatalogData"
                 :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
-                v-model:selected="selectedRowsToBeDeleted" @selection="onSelection" :wrap-cells="true">
+                v-model:selected="selectedRowsToBeDeleted" @selection="onSelectionForDeletion" :wrap-cells="true">
 
                 <!-- Headers -->
                 <template v-slot:top="props">
@@ -87,7 +88,7 @@
         </div>
 
         <div class="col-1" v-if="authStore.user.user_type == 'admin'">
-            <q-btn color="red" @click="purgeAll"> <i class="fa-solid fa-error"></i>
+            <q-btn color="red" @click="showConfirmDeleteAllDialogFunction"> <i class="fa-solid fa-error"></i>
                 PURGE ALL DATA
             </q-btn>
         </div>
@@ -104,7 +105,12 @@
             </span>
             <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
-                <q-btn class="q-ml-md" label="Delete" color="primary" v-close-popup @click="deleteSelected" />
+                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary"
+                    @click="deleteSelected">
+                    <i :class="isDeleteInProgress
+                        ? 'fa-solid fa-spinner fa-spin-pulse'
+                        : 'fa-solid fa-pen-to-square'"></i>
+                </q-btn>
             </q-card-section>
         </q-card>
     </q-dialog>
@@ -120,7 +126,12 @@
             </span>
             <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
-                <q-btn class="q-ml-md" label="Delete" color="primary" v-close-popup @click="deleteAllCatalogueData" />
+                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary"
+                    @click="deleteAllCatalogueData">
+                    <i :class="isDeleteInProgress
+                        ? 'fa-solid fa-spinner fa-spin-pulse'
+                        : 'fa-solid fa-pen-to-square'"></i>
+                </q-btn>
             </q-card-section>
         </q-card>
     </q-dialog>
@@ -215,12 +226,12 @@ const catalogueName = ref("")
 const currentPrimaryKeyUsedForDeleteSelected = ref("")
 const showConfirmDeleteSelectDialog = ref(false)
 const showConfirmDeleteAllDialog = ref(false)
-
+const isDeleteInProgress = ref(false)
 const authStore = useAuthStore()
 
 defineExpose({ tableRef })
 
-async function onItemClick(catalogue_name1: string) {
+async function onCatalogDropDownItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     showTable.value = true;
     selectedRowsToBeDeleted.value = []
@@ -229,7 +240,7 @@ async function onItemClick(catalogue_name1: string) {
     tableRef.value!.requestServerInteraction()
 }
 
-async function onRequest(props: any) {
+async function onRequestCatalogData(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
     isLoadingTable.value = true
@@ -293,7 +304,7 @@ async function onRequest(props: any) {
     await nextTick() // nextTick is much fast than setTimeout(,1500)
 }
 
-function onSelection(details: any) {
+function onSelectionForDeletion(details: any) {
     // this function runs before selected reference is updated
     if (details.added == true)
         showDeleteSelectedButton.value = true
@@ -303,6 +314,7 @@ function onSelection(details: any) {
 
 async function deleteSelected() {
     const selectedIds: any[] = []
+    isDeleteInProgress.value = true
     for (const x of selectedRowsToBeDeleted.value)
         selectedIds.push(Object.values(x)[0])
 
@@ -329,19 +341,26 @@ async function deleteSelected() {
     selectedRowsToBeDeleted.value = []
     await nextTick()
     tableRef.value!.requestServerInteraction()
+
+    isDeleteInProgress.value = false
+    showConfirmDeleteSelectDialog.value = false
 }
 
-function purgeAll() {
+function showConfirmDeleteAllDialogFunction() {
     showConfirmDeleteAllDialog.value = true;
 }
 
 async function deleteAllCatalogueData() {
+
+    isDeleteInProgress.value = true
     let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
     await fetchWrapper.delete(url)
     selectedRowsToBeDeleted.value = []
 
-    showAllDataDeletedDialog.value = true
     await nextTick()
     tableRef.value!.requestServerInteraction()
+
+    isDeleteInProgress.value = false
+    showAllDataDeletedDialog.value = false
 }
 </script>
