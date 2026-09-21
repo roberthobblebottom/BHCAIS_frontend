@@ -1,6 +1,6 @@
 <template>
     <div class="small common">
-        <q-form validation-observer @submit.prevent="onSubmit">
+        <q-form validation-observer>
             <h3>Change Password</h3>
 
             <div class="form-group">
@@ -31,10 +31,12 @@
                 </q-input>
             </div>
             <div class="justify-center">
-                <button class="button btn-primary" :disabled="isSubmitting">
-                    <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
-                    <i class="fa-solid fa-pen-to-square"></i> Change
-                </button>
+                <q-btn :disable='isSubmitting' class="button btn-primary" @click.prevent="onSubmit">
+                    <i :class="isSubmitting
+                        ? 'fa-solid fa-spinner fa-spin-pulse'
+                        : 'fa-solid fa-pen-to-square'"></i>
+                    Change
+                </q-btn>
             </div>
         </q-form>
 
@@ -102,6 +104,7 @@ const [newPassword, newPasswordProps] = defineField("newPassword" as MaybeRefOrG
 const [confirmNewPassword, confirmNewPasswordProps] = defineField("confirmNewPassword" as MaybeRefOrGetter, quasarConfig)
 
 const onSubmit = handleSubmit(async (_values) => {
+    isSubmitting.value = true
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
     try {
@@ -121,5 +124,6 @@ const onSubmit = handleSubmit(async (_values) => {
         showAlert.value = true;
     }
 
+    isSubmitting.value = false
 })
 </script>

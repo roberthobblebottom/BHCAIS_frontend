@@ -10,14 +10,17 @@
 
             <q-input label="password" name="password" :type="showPassword ? 'text' : 'password'" class="form-control "
                 v-model="password" v-bind="passwordProps">
+
                 <template v-slot:append>
                     <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
                         @click=" showPassword = !showPassword" />
                 </template>
             </q-input>
             <button type="submit" class="button btn-primary" :disabled="isSubmitting">
-                <span v-show="isSubmitting" class="spinner-border spinner-border-sm mr-1"></span>
-                Login
+                login <i :class="isSubmitting
+                    ? 'fa-solid fa-spinner fa-spin-pulse'
+                    : 'fa-solid fa-right-to-bracket'"></i>
+
             </button>
         </q-form>
     </div>
@@ -63,6 +66,7 @@ const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfi
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
 
 const onSubmit = handleSubmit(async (_values) => {
+    isSubmitting.value = true
     const authStore = useAuthStore();
     apiError.value = ""
     await authStore.login(email.value, password.value)
@@ -73,5 +77,7 @@ const onSubmit = handleSubmit(async (_values) => {
         });
 
     resetForm()
+
+    isSubmitting.value = false
 })
 </script>
