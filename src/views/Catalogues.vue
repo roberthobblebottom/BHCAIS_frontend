@@ -308,7 +308,7 @@ async function deleteSelected() {
 
     const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
     try {
-        await fetchWrapper.post(url,
+        await fetchWrapper.delete(url,
             {
                 ids_to_be_deleted: selectedIds,
                 catalogue_name: catalogueName.value,
@@ -337,7 +337,7 @@ function purgeAll() {
 
 async function deleteAllCatalogueData() {
     let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
-    await fetchWrapper.post(url)
+    await fetchWrapper.delete(url)
     selectedRowsToBeDeleted.value = []
 
     showAllDataDeletedDialog.value = true
