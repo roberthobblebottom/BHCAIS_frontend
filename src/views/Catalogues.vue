@@ -87,8 +87,8 @@
             <p class="alert" v-if="!showTable"> {{ errorMessage }}</p>
         </div>
 
-        <div class="col-1" v-if="authStore.user.user_type == 'admin'">
-            <q-btn color="red" @click="showConfirmDeleteAllDialogFunction"> <i class="fa-solid fa-error"></i>
+        <div class="col-1 q-mt-xl" v-if="authStore.user.user_type == 'admin'">
+            <q-btn rounded color="red" @click="showConfirmDeleteAllDialogFunction"> <i class="fa-solid fa-error"></i>
                 PURGE ALL DATA
             </q-btn>
         </div>
