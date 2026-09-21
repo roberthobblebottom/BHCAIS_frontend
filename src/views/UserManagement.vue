@@ -75,7 +75,7 @@
                 <div class="delete-confirmation row justify-evenly" v-if="isDeleteConfirmationDialog">
                     <q-btn label="Cancel" color="secondary" v-close-popup />
                     <q-btn label="Delete " color="primary" @click="onDelete(userIdToBeDeleted)">
-                        <i :class="inProgress
+                        <i :class="deleteInProgress
                             ? 'fa-solid fa-spinner fa-spin-pulse'
                             : 'fa-solid fa-pen-to-square'"></i>
                     </q-btn>
