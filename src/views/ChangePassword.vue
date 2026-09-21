@@ -76,7 +76,6 @@ const showNewPassword = ref(false)
 const showConfirmNewPassword = ref(false)
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('required'),
-    //temporary changed to one min char
     newPassword: Yup.string()
         .min(7, 'minimum of 7 characters for password   ')
         .matches(passwordRegex, passwordError)
