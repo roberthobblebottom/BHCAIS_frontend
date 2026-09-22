@@ -234,6 +234,8 @@ defineExpose({ tableRef })
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     showTable.value = true;
+    searchTerm.value = ""
+    pagination.value.sortBy = ''
     selectedRowsToBeDeleted.value = []
     showDeleteSelectedButton.value = false
     await nextTick() // required for updating catalogue Name
