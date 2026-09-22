@@ -1,5 +1,5 @@
 <template>
-    <v-container class="large common">
+    <v-container class="small common">
         <v-row>
             <h1>Welcome to BHCAIS</h1>
         </v-row>
@@ -7,7 +7,35 @@
             <h2>Quick Start:</h2>
         </v-row>
         <v-row class="quick-start">
-            <p class="section">
+            <p>
+                The Biodiversity Histories Consolidated Artifact Inventory System (BHCAIS) is an intermediate data
+                staging platform. Allowing seamless uploading of artifact inventory data with minimal fuss and open
+                flexible data formatting.
+            </p>
+            <p>
+
+                Use the Navigation Menu located at the side of the screen to access the various functions.
+            </p>
+            <p>
+                <img alt="User
+                Management" src="../../public/images/user-management.png"></img> : For Admins, add or remove access
+                rights to the system.
+            </p>
+            <p>
+
+                <img alt="Bulk Data Upload" src="../../public/images/bulk-data-upload.png" /> : Upload files by
+                providing populated templates. Empty templates can be downloaded from here as well.
+            </p>
+            <p>
+                <img alt="Catalogues" src="../../public/images/catalogues.png" /> : View data currently on the system.
+                also select rows via checkboxes to delete entries.
+            </p>
+            <p>
+
+                <img src="../../public/images/download-reports.png" alt="Download Report(s)" />
+                : Download Data from the system. Search terms filters are also possible.
+            </p>
+            <!-- <p class="section">
                 BHCAIS(beh - kaEYEs) is a intermediate system to store information from Excel or CSV files
                 before being transformed and stored in BIG, LKCNHM's Institutional truth layer system.
 
@@ -77,7 +105,7 @@
                 and the respective search terms contraints you have indicated.
                 If there is no search results for given catalog or given search terms,
                 no such csv will be downloaded.
-            </p>
+            </p> -->
         </v-row>
     </v-container>
 </template>
@@ -89,8 +117,8 @@
 }
 
 .quick-start {
-    display: grid;
-    row-gap: 4%;
+    /* display: grid;
+    row-gap: 4%;*/
     height: 70vh;
     overflow: auto;
 }
