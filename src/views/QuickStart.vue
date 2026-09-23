@@ -18,7 +18,7 @@
             </p>
             <p>
                 <img alt="User
-                Management" src="../../public/images/user-management.png"></img> : For Admins, add or remove access
+                Management" src="../../public/images/user-management.png"></img> : (Admins Only) Sdd or remove access
                 rights to the system.
             </p>
             <p>
