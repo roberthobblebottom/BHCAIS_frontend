@@ -1,0 +1,42 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup SSH, ssh, pull
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+          GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          
+          cat > ~/.ssh/config << 'EOF'
+          Host *
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking accept-new
+            UserKnownHostsFile ~/.ssh/known_hosts
+          EOF
+      
+
+          ssh "${USERNAME}@${HOST}" << 'EOF'
+          cd ~/BHCAIS_frontend 
+          # Uses Deploy Key as I have set up before using commands like for id_ed25519 private key
+          git pull origin main
+          bash run.sh
+          EOF

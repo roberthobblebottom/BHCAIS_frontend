@@ -253,7 +253,7 @@ async function onRequestCatalogData(props: any) {
         filter_str: filterStr || '',
         sort_by: sortBy || '',
         descending: descending.toString(),
-        current_user: authStore.user.token
+        token: authStore.user.token
     })
 
     const url = `${import.meta.env.VITE_API_URL}/GetCatalogue/?${params.toString()}`
