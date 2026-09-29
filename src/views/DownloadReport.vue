@@ -270,74 +270,68 @@ const onSubmit = handleSubmit(async (_values) => {
     // reading the chunks streamed
     let isReadDone = false;
     const textDecoder = new TextDecoder()
-    let text = ""
+    let results: { [index: string]: any[] } = {}
+    let currentCatalogue = ""
     while (!isReadDone) {
         let { value, done } = await reader!.read();
         isReadDone = done
         if (isReadDone)
             break
-        text += textDecoder.decode(value)
+        const decodedValue = textDecoder.decode(value)
+        for (const lineString of decodedValue.split('\n')) {
+            if (lineString == "")
+                continue
+            const obj = JSON.parse(lineString)
+            if (Object.keys(obj)[0] == 'catalogue_name') {
+                currentCatalogue = Object.values(obj)[0] as string
+                results[currentCatalogue] = []
+
+            } else {
+                if (currentCatalogue == "")
+                    throw new Error("currentCatalogue is a empty string. it should be populated")
+                results[currentCatalogue]?.push(obj)
+            }
+        }
+
     }
 
-    const results: any = []
+    // const results: any = []
     const noResultString = "no results"
 
-    for (const subText of text.split("catalogue_name").slice(1)) {
-        const returnedCat = !subText.includes(noResultString)
-            ? subText.slice(1, subText.indexOf("{"))
-            : subText.replace("=", "").replace("no results", "")
+    console.log(results)
 
-        if (subText.includes(noResultString)) {
-            results.push({
-                catalogue_name: returnedCat,
-                data: []
-            })
-            continue
-        }
-
-        //Formatting the returned python dict string text
-        //slice the first and the last characters. "{" and "}"
-        const rows = subText.slice(subText.indexOf("{"))
-            .slice(0, subText.length - 1).split("},{")
-        const newRows = []
-        for (let row of rows) {
-            row = row.at(0) == "{"
-                ? row + "}"
-                : "{" + row + "}"
-            row = row.replace("},}", "}")
-            newRows.push(JSON.parse(row))
-        }
-        results.push({
-            catalogue_name: returnedCat,
-            data: newRows
-        })
-    }
-
-    for (const catalog of results) {
-        const resultData = catalog.data
+    for (const catalogName of Object.keys(results)) {
+        const resultData: any[] = results[catalogName]!
 
         if (resultData.length == 0) {
-            cataloguesWithNoResults.value.push(catalog.catalogue_name)
+            cataloguesWithNoResults.value.push(catalogName)
             continue
         }
 
         const header = Object.keys(resultData[0]).join(',') + "\n"
-        const rows = resultData.map((row: Object) => Object.values(row).map(
-            (e: string) => e != null ? "\"" + e.replaceAll("\"", "'") + "\"" : e).join(",") + "\n"
+        //these two maps is for making the string csv compliant.
+        const rows = resultData.map(
+            (row: Object) => Object.values(row).map(
+                //for each element of a row
+                (e: string) =>
+                    e != null
+                        ? "\"" + e.toString().replaceAll("\"", "'") + "\""
+                        : e
+            ).join(",") + "\n" // commas (,) between elements 
+            // and \n character to end the row of elements
         ).join("")
-        console.log(rows)
         const tableInStringFormat = header + rows
 
         const searchTermStringified =
-            queryData.search_terms[catalog.catalogue_name] != null
-                ? " search term: " + JSON.stringify(searchTermsToBeSent[catalog.catalogue_name])
+            queryData.search_terms[catalogName] != null
+                ? " search term: " + JSON.stringify(searchTermsToBeSent[catalogName])
                     .replaceAll("\"", "").replaceAll("{", "")
                     .replaceAll("}", "").replace(":", " eq ")
                 : ""
 
         allCatalogueResultsInCSVs.push({
             //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
-            name: catalog.catalogue_name + "_raw" + searchTermStringified + '.csv',
+            name: catalogName + "_raw" + searchTermStringified + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
     }
