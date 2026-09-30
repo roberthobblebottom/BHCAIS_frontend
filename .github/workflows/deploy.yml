@@ -35,8 +35,9 @@ jobs:
       
 
           ssh "${USERNAME}@${HOST}" << 'EOF'
-          cd ~/BHCAIS_backend
+          cd ~/BHCAIS_frontend
           # Uses Deploy Key as I have set up before using commands like for id_ed25519 private key
           git pull origin main
+          cd ~/BHCAIS_backend
           bash build_and_run.sh
           EOF
