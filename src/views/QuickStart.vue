@@ -1,10 +1,10 @@
 <template>
-    <v-container class="small common">
+    <v-container class="medium common">
         <v-row>
-            <h3>Welcome to BHCAIS</h3>
+            <h3 class="text-weight-bold">Welcome to BHCAIS</h3>
         </v-row>
         <v-row>
-            <h3>Quick Start:</h3>
+            <h4 class="q-mb-md">Quick Start:</h4>
         </v-row>
         <v-row class="quick-start">
             <p>
@@ -13,7 +13,6 @@
                 flexible data formatting.
             </p>
             <p>
-
                 Use the Navigation Menu located at the side of the screen to access the various functions.
             </p>
             <p>
@@ -22,7 +21,6 @@
                 rights to the system.
             </p>
             <p>
-
                 <img alt="Bulk Data Upload" src="../../public/images/bulk-data-upload.png" /> : Upload files by
                 providing populated templates. Empty templates can be downloaded from here as well.
             </p>
@@ -31,7 +29,6 @@
                 also select rows via checkboxes to delete entries.
             </p>
             <p>
-
                 <img src="../../public/images/download-reports.png" alt="Download Report(s)" />
                 : Download Data from the system. Search terms filters are also possible.
             </p>
@@ -112,8 +109,8 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-.large {
-    height: 100%
+.medium {
+    height: 100%;
 }
 
 .quick-start {

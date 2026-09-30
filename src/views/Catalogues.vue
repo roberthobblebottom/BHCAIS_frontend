@@ -42,7 +42,8 @@
             <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
                 :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequestCatalogData"
                 :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
-                v-model:selected="selectedRowsToBeDeleted" @selection="onSelectionForDeletion" :wrap-cells="true">
+                v-model:selected="selectedRowsToBeDeleted" @selection="onSelectionForDeletion" :wrap-cells="true"
+                :table-style="{ zoom: '60%' }" :dense="true">
 
                 <!-- Headers -->
                 <template v-slot:top="props">
