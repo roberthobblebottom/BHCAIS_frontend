@@ -1,7 +1,7 @@
 <template>
     <v-container class="small common">
         <v-row>
-            <h2>Welcome to BHCAIS</h2>
+            <h3>Welcome to BHCAIS</h3>
         </v-row>
         <v-row>
             <h3>Quick Start:</h3>

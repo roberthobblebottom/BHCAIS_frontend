@@ -7,7 +7,7 @@
   left: 0;
   top: 0;
   height: 100%;
-  width: 7.5vw;
+  width: 8vw;
   background-color: #280401;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
 }
 
 .app-name {
-  font-size: large !important;
+  font-size: medium !important;
   text-align: center;
   font-weight: 900;
 }
@@ -54,7 +54,7 @@ a,
   float: left;
   position: relative;
   top: anchor(top);
-  margin-left: max(7vw, 9vw);
+  margin-left: max(8vw, 10vw);
   margin-top: 5%;
   border-radius: 15px;
   display: flex;
