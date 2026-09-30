@@ -1,5 +1,5 @@
 * {
-  font-size: large;
+  font-size: medium;
 }
 
 .sidebar {
@@ -7,7 +7,7 @@
   left: 0;
   top: 0;
   height: 100%;
-  width: 7vw;
+  width: 7.5vw;
   background-color: #280401;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
 }
 
 .app-name {
-  font-size: xx-large !important;
+  font-size: large !important;
   text-align: center;
   font-weight: 900;
 }
@@ -54,7 +54,7 @@ a,
   float: left;
   position: relative;
   top: anchor(top);
-  margin-left: max(7vw, 8vw);
+  margin-left: max(7vw, 9vw);
   margin-top: 5%;
   border-radius: 15px;
   display: flex;

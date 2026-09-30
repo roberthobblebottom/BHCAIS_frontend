@@ -1,10 +1,10 @@
 <template>
     <v-container class="small common">
         <v-row>
-            <h1>Welcome to BHCAIS</h1>
+            <h2>Welcome to BHCAIS</h2>
         </v-row>
         <v-row>
-            <h2>Quick Start:</h2>
+            <h3>Quick Start:</h3>
         </v-row>
         <v-row class="quick-start">
             <p>
