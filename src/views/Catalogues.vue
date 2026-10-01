@@ -68,6 +68,11 @@
                                 v-if="showDeleteSelectedButton" @click="showConfirmDeleteSelectDialog = true">
                                 Delete Selected</q-btn>
 
+
+                            <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                                @click="props.toggleFullscreen" class="q-ml-md" label="full screen" />
+
+
                             <p v-if="errorMessage != ''" class="col-4 q-ml-xl alert"> {{ errorMessage }}</p>
 
                             <q-input class="col-3 float-right q-ml-xl search-term-input " borderless dense
@@ -76,6 +81,7 @@
                                     <q-icon name="search" />
                                 </template>
                             </q-input>
+
                         </div>
                     </div>
                 </template>
@@ -125,8 +131,8 @@
             <q-card-section>
                 <q-btn label="Cancel" v-close-popup />
                 <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="blue" :icon="isDeleteInProgress
-                        ? 'fa-regular fa-spinner fa-spin-pulse'
-                        : 'fa-regular fa-pen-to-square'
+                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    : 'fa-regular fa-pen-to-square'
                     " @click="deleteAllCatalogueData">
                 </q-btn>
             </q-card-section>
@@ -185,6 +191,10 @@
     width: 10vw;
 
 }
+
+.common {
+    overflow-y: scroll;
+}
 </style>
 
 <script setup lang="ts">
@@ -237,6 +247,7 @@ async function onRequestCatalogData(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
     isLoadingTable.value = true
+    console.log(rowsPerPage)
     const params = new URLSearchParams({
         catalogue_name: catalogueName.value,
         rows_per_page: rowsPerPage.toString(),
