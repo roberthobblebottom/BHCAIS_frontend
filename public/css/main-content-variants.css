@@ -1,33 +1,29 @@
 .common {
+    min-height: 50vh;
+    max-height: 80vh;
+    width: 100%;
     background-color: white;
     border-radius: 15px;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    padding-top: 1px;
+    margin-top: 5%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.large {
-    padding: 2%;
-    min-width: 45vw;
-    max-width: 85vw;
-    max-height: 100vh;
-    min-height: 80vh;
+.small {
+    width: 50%;
 }
 
 .medium {
-    padding: 3%;
-    max-width: 50vw;
-    min-height: 20vh;
-    height: 50vh;
+    width: 70%;
 }
 
-.small {
-    padding: 6%;
-    max-width: 30vw;
-    min-height: 20vh;
-}
 
 .button {
-    max-width: 200px !important;
-
+    /* max-width: 700px !important; */
+    min-width: 300px;
     float: right;
 }
 

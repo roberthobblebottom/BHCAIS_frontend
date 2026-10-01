@@ -33,12 +33,10 @@ html {
 }
 
 .content {
-  margin-right: 20% !important;
   background-color: white;
   border-radius: 15px;
-  min-width: 800px;
-  min-height: 600px;
   display: flex !important;
+  width: 40%;
   justify-content: center !important;
   align-items: center !important;
 }

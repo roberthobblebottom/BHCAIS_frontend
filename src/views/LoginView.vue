@@ -1,9 +1,9 @@
 <template>
-    <div class="content">
+    <div class="small common">
 
         <q-form @submit.prevent="onSubmit" validation-observer>
-            <h1>BHCAIS</h1>
-            <h2>Login</h2>
+            <h3>BHCAIS</h3>
+            <h3>Login</h3>
             <div v-if="apiError" class="alert alert-danger mt-3 mb-0">{{ apiError }}
             </div>
             <q-input label="Email" name="email" type="text" class="form-control" v-model="email" v-bind="emailProps" />
@@ -16,22 +16,29 @@
                         @click=" showPassword = !showPassword" />
                 </template>
             </q-input>
-            <button type="submit" class="button btn-primary" :disabled="isSubmitting">
-                login <i :class="isSubmitting
-                    ? 'fa-solid fa-spinner fa-spin-pulse'
-                    : 'fa-solid fa-right-to-bracket'"></i>
+            <q-btn color='primary' type="submit" class="button btn-primary" :disabled="isSubmitting" :icon="isSubmitting
+                ? 'fa-solid fa-spinner fa-spin-pulse'
+                : 'fa-solid fa-right-to-bracket'
+                ">
+                Login
 
-            </button>
+            </q-btn>
         </q-form>
     </div>
 </template>
-<style>
+<style scoped>
 /**do not scope this style block **/
 
-@import '../../public/css/login.css';
+
+@import '../../public/css/main-content-variants.css';
 
 .alert {
     color: red;
+}
+
+h3 {
+    margin-bottom: 0vh !important;
+    margin-top: 0% !important;
 }
 </style>
 

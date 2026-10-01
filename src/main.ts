@@ -6,6 +6,7 @@ import { Quasar } from 'quasar'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate"
 import '@quasar/extras/ionicons-v4/ionicons-v4.css'
 import '@quasar/extras/material-icons/material-icons.css'
+import '@quasar/extras/fontawesome-v7/fontawesome-v7.css'
 
 import 'quasar/src/css/index.sass'
 const app = createApp(App)

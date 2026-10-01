@@ -1,74 +1,120 @@
 <template>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <div>
-        <nav v-if="authStore.user" v-show="authStore.user" class="sidebar">
-            <div class="sidebar" v-if="authStore.user">
-                <!-- <div class="logo"> -->
-                <!-- <img src="/images/Group-1.svg" alt="LKCNHM Logo" /> -->
-                <!-- </div> -->
-                <div>
-                    <div class="col">
-                        <p class="app-name">BHCAIS</p>
-                        <p class="user-details">User: {{ authStore.user.email }}</p>
-                        <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
-                    </div>
-                    <div class="row" v-if="authStore.user.user_type == 'admin'">
-                        <RouterLink to="/UserManagement" class="nav-item nav-link ">
-                            <i class="fa-solid fa-users-gear"></i>
-                            User Management
-                        </RouterLink>
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/QuickStart" class="nav-item nav-link ">
-                            <i class="fas fa-globe"></i> Home
-                        </RouterLink>
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/BulkDataUpload" class="nav-item nav-link">
-                            <i class="fas fa-upload"></i>
-                            Bulk Data Upload
-                        </RouterLink>
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/Catalogues" class="nav-item nav-link">
-                            <i class="fas fa-rectangle-list"></i>
-                            Catalogues
-                        </RouterLink>
+    <q-layout view="hHh lpR fFf">
+        <q-drawer show-if-above v-model="drawerLeft" :mini="miniState" style="background-color: #280401;"
+            @mouseenter="miniState = !miniState && isPassedWidthThreshold" :breakpoint="100"
+            @mouseleave="miniState = !miniState && isPassedWidthThreshold" v-if="authStore.user" side="left" :width=200>
 
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/DownloadReport" class="nav-item nav-link">
-                            <i class="fas fa-file-arrow-down"></i>
-                            Download Report(s)
-                        </RouterLink>
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/ChangePassword" class="nav-item nav-link">
-                            <i class="fas fa-key"></i>
-                            Change Password
-                        </RouterLink>
-                    </div>
-                    <div class="row">
-                        <RouterLink to="/Login" @click="authStore.logout()" class="nav-item nav-link">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            logout
-                        </RouterLink>
-                    </div>
+            <!-- <div class="logo"> -->
+            <!-- <img src="/images/Group-1.svg" alt="LKCNHM Logo" /> -->
+            <!-- </div> -->
+            <div class="sidebar">
+                <div class="col">
+                    <p class="app-name">BHCAIS</p>
+                    <p class="user-details">User: {{ authStore.user.email }}</p>
+                    <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
+                </div>
+                <div class="" v-if="authStore.user.user_type == 'admin'">
+                    <RouterLink to="/UserManagement" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fa-solid fa-users-gear"></i>
+                        {{ miniState ? '' : 'User Management' }}
+                    </RouterLink>
+                </div>
+                <div class="">
+                    <RouterLink to="/QuickStart" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fas fa-globe"></i> {{ miniState ? '' : 'Home' }}
+                    </RouterLink>
+                </div>
+                <div class="">
+                    <RouterLink to="/BulkDataUpload" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fas fa-upload"></i> {{ miniState ? '' : 'Bulk Data Upload' }}
+                    </RouterLink>
+                </div>
+                <div class="">
+                    <RouterLink to="/Catalogues" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fas fa-rectangle-list"></i> {{ miniState ? '' : 'Catalogues' }}
+                    </RouterLink>
+
+                </div>
+                <div class="">
+                    <RouterLink to="/DownloadReport" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fas fa-file-arrow-down"></i> {{ miniState ? '' : 'Download Reports(s)' }}
+                    </RouterLink>
+                </div>
+                <div>
+                    <RouterLink to="/ChangePassword" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fas fa-key"></i> {{ miniState ? '' : 'Change Password' }}
+                    </RouterLink>
+                </div>
+                <div class="">
+                    <RouterLink to="/Login" @click="authStore.logout()" :class="miniState ? 'mini-row' : 'row'">
+                        <i class="fa-solid fa-right-from-bracket "></i> {{ miniState ? '' : 'Logout' }}
+                    </RouterLink>
                 </div>
             </div>
-        </nav>
-        <div class="main-content">
-            <RouterView />
-        </div>
-    </div>
+        </q-drawer>
+        <q-page-container class="all">
+            <q-page padding>
+                <div class="main-content">
+                    <RouterView />
+                </div>
+            </q-page>
+        </q-page-container>
+    </q-layout>
 </template>
 
 <style scoped>
 @import '../public/css/navbar.css';
+
+.mini-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30% !important;
+}
+
+.row {
+
+    margin-top: 5% !important;
+
+}
 </style>
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { useAuthStore } from './stores/auth.store.ts';
+import { ref } from 'vue';
+
+import { QBtn } from 'quasar'
+
+QBtn.props.noCaps = { type: Boolean, default: true }
+
 const authStore = useAuthStore()
+const drawerLeft = ref(true)
+const miniState = ref(false)
+const widthThreshold = ref(700)
+const isPassedWidthThreshold = ref(false)
+// useWindowSize.js
+import { onMounted, onBeforeUnmount } from 'vue'
+const handleWindowSizeChange = () => {
+    const height = window.innerHeight
+    const width = window.innerWidth
+    console.log('handleWindowSizeChange', height, width)
+    if (width < widthThreshold.value) {
+        miniState.value = true
+        isPassedWidthThreshold.value = true
+    } else {
+        miniState.value = false
+        isPassedWidthThreshold.value = false
+    }
+};
+
+onMounted(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    handleWindowSizeChange();
+});
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", handleWindowSizeChange);
+});
+
 </script>

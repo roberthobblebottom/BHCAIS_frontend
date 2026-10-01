@@ -1,5 +1,5 @@
 <template>
-    <v-container class="medium common">
+    <div class=" common">
         <v-row>
             <h3 class="text-weight-bold">Welcome to BHCAIS</h3>
         </v-row>
@@ -104,14 +104,11 @@
                 no such csv will be downloaded.
             </p> -->
         </v-row>
-    </v-container>
+    </div>
 </template>
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-.medium {
-    height: 100%;
-}
 
 .quick-start {
     /* display: grid;

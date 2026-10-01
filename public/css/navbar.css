@@ -2,34 +2,21 @@
   font-size: medium;
 }
 
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 11vw;
-  background-color: #280401;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  padding-right: 1vw;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  color: white;
-  anchor-name: --sidebar;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
 
 .app-name {
-  font-size: large !important;
+  margin-top: 5%;
+  font-size: x-large !important;
   text-align: center;
   font-weight: 900;
+  color: white;
 }
 
 .user-details {
   text-align: center !important;
   font-size: small;
   width: 100% !important;
+
+  color: white;
 }
 
 
@@ -46,24 +33,19 @@ a,
   width: 100%;
 }
 
-#app {
-  display: flex;
-  justify-content: space-between;
+
+.all {
+
+  background-image: url('../images/01-0101.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.main-content {
-  /* background-color: white !important; */
-  position-anchor: --siderbar;
-  float: left;
-  position: relative;
-  top: anchor(top);
-  margin-left: max(10vw, 12vw);
-  margin-top: 5%;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.sidebar {
+  overflow: hidden;
 }
+
+.main-content {}
 
 .loginDetails {
   margin-left: 15px;
@@ -97,13 +79,4 @@ a,
 
 .nav-links li a:hover {
   background-color: #7e3ff2;
-}
-
-.sidebar .nav-links li a {
-  display: flex;
-  align-items: center;
-}
-
-.sidebar .nav-links li a i {
-  margin-right: 10px;
 }

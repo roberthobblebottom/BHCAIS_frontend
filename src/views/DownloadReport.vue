@@ -1,6 +1,6 @@
 <template>
-    <div class="large common flex  flex-start" :style="{ height: overallDivHeight }">
-        <q-form validation-observer class="download-report-form" @submit.prevent="onSubmit">
+    <div class=" common medium ">
+        <q-form validation-observer @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
 
             <q-select v-model="selectCatalogues" @clear="onCatalogueSelectClear" @add="onCatalogueSelectAdd"
@@ -9,16 +9,14 @@
                 :error-message="errorMessage" :error="errorMessage != ''"></q-select>
 
             <!-- inner div for one or more search term -->
-            <div class="col inner" :style="{ height: searchTermPanelHeight }">
+            <div class="col search-terms-div">
                 <div class="row justifiy-between items-end">
-                    <label class="col-7 search-terms-label">Search Terms
+                    <label class="col-6 search-terms-label">Search Terms
                         (Optional):</label>
-                    <Button class="col " @click.prevent="clearAllSearchTerm">
-                        <i class="fa-solid fa-circle-xmark"></i>
-                        Clear </Button>
-                    <Button class="col q-ml-md" @click.prevent="addSearchTerm">
-                        <i class="fas fa-add"></i>
-                        Add </Button>
+                    <q-btn color="red" class="col-3" @click.prevent="clearAllSearchTerm" icon="fa-regular fa-x">
+                        Clear </q-btn>
+                    <q-btn color="blue" class="col q-ml-md button2" @click.prevent="addSearchTerm" icon="fas fa-add">
+                        Add </q-btn>
                 </div>
 
                 <div class="row " v-for="x of selectedSearchTerms">
@@ -39,12 +37,11 @@
                 </div>
             </div>
 
-            <button :disable='!isDownloading' class="download-button " @click="onSubmit">
-                <i :class="isDownloading
-                    ? 'fa-solid fa-spinner fa-spin-pulse'
-                    : 'fas fa-file-arrow-down'"></i>
+            <q-btn color="blue" :disable='isDownloading' class="download-button " @click="onSubmit" :icon="isDownloading
+                ? 'fa-regular fa-spinner fa-spin-pulse'
+                : 'fas fa-file-arrow-down'">
                 {{ isDownloading ? 'Currently downloading...' : 'Download' }}
-            </button>
+            </q-btn>
         </q-form>
 
         <q-dialog v-model="showCataloguesWithNoResultsAlertDialog">
@@ -68,32 +65,28 @@
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
 
-.download-report-form {
-    width: 100%;
-}
 
-.inner {
+.search-terms-div {
     margin-top: 2vh;
     background-color: rgb(253, 253, 253);
 }
 
-.common {
-    max-width: 200vw !important;
-}
 
 .download-button {
-    margin-top: 2vh;
-    width: 26%;
+    margin-top: 5vh;
+    width: 30%;
     float: right;
-}
-
-.large {
-    min-height: 20vh;
 }
 
 .search-terms-label {
     color: grey !important;
     font-size: 16px;
+}
+
+.common {
+    display: flex;
+    flex-direction: column;
+    max-height: none;
 }
 </style>
 
@@ -120,10 +113,6 @@ const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
 const showNoResultMessage = ref(false)
 
-//styling
-const overallDivHeight = ref("")
-const searchTermPanelHeight = ref("")
-
 //field validation
 const schema = yup.object().shape({
     selectCatalogues: yup.array()
@@ -143,6 +132,11 @@ const quasarConfig = (state: any) => ({
     },
 });
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
+
+
+
+
+
 
 function onCatalogueSelectAdd(details: { index: number; value: string; }) {
     const currentlySelected: string[] = selectCatalogues.value!
@@ -186,8 +180,7 @@ function onCatalogueSelectClear() {
 
 function clearAllSearchTerm() {
     selectedSearchTerms.value = [["", ""]]
-    overallDivHeight.value = "27vh"
-    searchTermPanelHeight.value = '7vh'
+
 }
 
 function filterFunction(filterTerm: string, update: any) {
@@ -205,14 +198,6 @@ function filterFunction(filterTerm: string, update: any) {
 
 function addSearchTerm() {
     selectedSearchTerms.value.push(["", ""])
-
-    //5 is for the space for the headers and add/clear button
-    const heightSearchTermPanel: number = selectedSearchTerms.value.length * 3.5 + 5
-    //20 for the remaining height of the main content in .large div
-    const overallHeight = heightSearchTermPanel + 20
-
-    overallDivHeight.value = overallHeight.toString() + "vh"
-    searchTermPanelHeight.value = heightSearchTermPanel.toString() + "vh"
 }
 
 

@@ -1,6 +1,6 @@
 <template>
-    <div class="q-pa-md large common  ">
-        <div class="outer">
+    <div class="q-pa-md  common  ">
+        <div>
             <h3>View Catalogues </h3>
             <q-btn-dropdown color="primary" class="dropdown"
                 :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
@@ -64,10 +64,9 @@
                             </q-btn-dropdown>
                         </div>
                         <div class="col row flex items-end justify-end">
-                            <button class="col-3 button" v-if="showDeleteSelectedButton"
-                                @click="showConfirmDeleteSelectDialog = true"><i class="fa-solid fa-circle-xmark"></i>
-                                Delete
-                                Selected</button>
+                            <q-btn color='red' icon='fa-regular fa-circle-xmark' class="col-7 button"
+                                v-if="showDeleteSelectedButton" @click="showConfirmDeleteSelectDialog = true">
+                                Delete Selected</q-btn>
 
                             <p v-if="errorMessage != ''" class="col-4 q-ml-xl alert"> {{ errorMessage }}</p>
 
@@ -89,7 +88,7 @@
         </div>
 
         <div class="col-1 q-mt-xl" v-if="authStore.user.user_type == 'admin'">
-            <q-btn rounded color="red" @click="showConfirmDeleteAllDialogFunction"> <i class="fa-solid fa-error"></i>
+            <q-btn color="red" @click="showConfirmDeleteAllDialogFunction" icon="fa-solid fa-square-xmark">
                 PURGE ALL DATA
             </q-btn>
         </div>
@@ -106,11 +105,9 @@
             </span>
             <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
-                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary"
-                    @click="deleteSelected">
-                    <i :class="isDeleteInProgress
-                        ? 'fa-solid fa-spinner fa-spin-pulse'
-                        : 'fa-solid fa-pen-to-square'"></i>
+                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary" :icon="isDeleteInProgress
+                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    : 'fa-regular fa-pen-to-square'" @click="deleteSelected">
                 </q-btn>
             </q-card-section>
         </q-card>
@@ -126,12 +123,11 @@
                 THIS IS UNREVERTABLE.
             </span>
             <q-card-section>
-                <q-btn label="Cancel" color="secondary" v-close-popup />
-                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary"
-                    @click="deleteAllCatalogueData">
-                    <i :class="isDeleteInProgress
-                        ? 'fa-solid fa-spinner fa-spin-pulse'
-                        : 'fa-solid fa-pen-to-square'"></i>
+                <q-btn label="Cancel" v-close-popup />
+                <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="blue" :icon="isDeleteInProgress
+                        ? 'fa-regular fa-spinner fa-spin-pulse'
+                        : 'fa-regular fa-pen-to-square'
+                    " @click="deleteAllCatalogueData">
                 </q-btn>
             </q-card-section>
         </q-card>
@@ -156,12 +152,7 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-.large {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow: auto
-}
+
 
 .dropdown {
     font-size: x-large;
@@ -187,7 +178,6 @@
 
 .button {
     float: none !important;
-    background-color: red;
     height: 10%;
 }
 
@@ -347,6 +337,7 @@ async function deleteSelected() {
 
     isDeleteInProgress.value = false
     showConfirmDeleteSelectDialog.value = false
+    showDeleteSelectedButton.value = false
 }
 
 function showConfirmDeleteAllDialogFunction() {

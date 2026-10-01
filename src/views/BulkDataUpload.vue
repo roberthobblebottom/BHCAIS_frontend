@@ -1,5 +1,5 @@
 <template>
-    <div class="medium common">
+    <div class=" common">
         <form>
             <div class="">
                 <h3>Bulk Data Upload</h3>
@@ -60,8 +60,7 @@
                 </template>
             </q-uploader>
 
-            <q-btn rounded class="button" @click.prevent="downloadTemplatesForTheCatalogs">
-                <i class="fas fa-file-arrow-down"></i>
+            <q-btn class="button" @click.prevent="downloadTemplatesForTheCatalogs" icon="fas fa-file-arrow-down">
                 Download Templates
             </q-btn>
         </form>
@@ -70,12 +69,12 @@
     <q-dialog v-model="fileValidationViolationdialogEnable" :persistent="dialogPersistentIsEnabled"
         backdrop-filter="blur(4px)" ref="dialogRef">
         <q-card class="dialog">
-            <q-card-section>
+            <q-card-section class="card-section-avatar">
                 <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
                     class="" />
             </q-card-section>
 
-            <h3>{{ dialogHeader }}</h3>
+            <h3 class='dialog-h3'>{{ dialogHeader }}</h3>
 
             <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
             <div v-if="dialogHeader.toLocaleLowerCase() == 'error'">
@@ -93,11 +92,11 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p> These files will be removed</p>
             </div>
-            <q-btn label="Ok" color="primary" v-close-popup autofocus />
+            <q-btn icon="fa-solid fa-check" label="Ok" color="primary" v-close-popup autofocus />
         </q-card>
     </q-dialog>
 </template>
@@ -114,6 +113,14 @@
 
 .button {
     float: left !important;
+}
+
+.card-section-avatar {
+    margin-bottom: 1%;
+}
+
+.dialog-h3 {
+    margin-top: -1vh;
 }
 </style>
 <script setup lang='ts'>

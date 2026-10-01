@@ -1,11 +1,12 @@
 <template>
 
-    <div class="q-pa-md large common">
+    <div class="q-pa-md  common">
         <h3>
             User Management
         </h3>
         <div class="row justify-end q-mb-md">
-            <button class="button" @click="openCreateDialog">Create User</button>
+            <q-btn class="button" color="blue" @click="openCreateDialog" icon="fa-solid fa-user-plus">Create
+                User</q-btn>
         </div>
         <q-table class="table-div" v-model:rows="rows" :columns="columns" :row-key="rowKey" ref="tableRef"
             :loading="loading" :wrap-cells="true">
@@ -13,8 +14,10 @@
                 <!-- buttons for actions for each rows -->
                 <q-td :props="props">
                     <div class="row justify-around">
-                        <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"></q-btn>
-                        <q-btn color="red" @click="openConfirmDeleteDialog(props.row)" label="Delete"></q-btn>
+                        <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"
+                            icon="fa-solid fa-user-pen"></q-btn>
+                        <q-btn color="red" @click="openConfirmDeleteDialog(props.row)" label="Delete"
+                            icon="fa-solid fa-user-minus"></q-btn>
                     </div>
 
                 </q-td>
@@ -55,8 +58,8 @@
                         <q-btn :disable='isInProgress' :label="isEdit ? 'edit ' : 'create '" color="primary"
                             @click="isEdit ? onEdit() : onCreate()">
                             <i :class="isInProgress
-                                ? 'fa-solid fa-spinner fa-spin-pulse'
-                                : 'fa-solid fa-pen-to-square'"></i>
+                                ? 'fa-regular fa-spinner fa-spin-pulse'
+                                : 'fa-regular fa-pen-to-square'"></i>
                         </q-btn>
                     </div>
                 </q-form>
@@ -77,8 +80,8 @@
                     <q-btn :disable="isDeleteInProgress" label="Delete " color="primary"
                         @click="onDelete(userIdToBeDeleted)">
                         <i :class="isDeleteInProgress
-                            ? 'fa-solid fa-spinner fa-spin-pulse'
-                            : 'fa-solid fa-pen-to-square'"></i>
+                            ? 'fa-regular fa-spinner fa-spin-pulse'
+                            : 'fa-regular fa-pen-to-square'"></i>
                     </q-btn>
                 </div>
                 <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
@@ -93,6 +96,10 @@
 .delete-confirmation {
     width: 100%;
 }
+
+.button {
+    min-width: 100px !important;
+}
 </style>
 <script setup lang="ts">
 import { QForm, QTr } from 'quasar';
@@ -105,6 +112,11 @@ import { passwordRegex, passwordError } from '../constants';
 
 import commonPasswords from '../common-passwords.txt?raw'
 import { useAuthStore } from '../stores/auth.store';
+import { QBtn } from 'quasar'
+
+QBtn.props.noCaps = { type: Boolean, default: true }
+
+
 const columns: Ref<any[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
 const rowKey = ref('user_id')

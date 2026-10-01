@@ -1,5 +1,5 @@
 <template>
-    <div class="small common">
+    <div class="common medium">
         <q-form validation-observer>
             <h3>Change Password</h3>
 
@@ -31,10 +31,11 @@
                 </q-input>
             </div>
             <div class="justify-center">
-                <q-btn :disable='isSubmitting' class="button btn-primary" @click.prevent="onSubmit">
-                    <i :class="isSubmitting
-                        ? 'fa-solid fa-spinner fa-spin-pulse'
-                        : 'fa-solid fa-pen-to-square'"></i>
+                <q-btn :disable='isSubmitting' color="blue" class="button2 " @click.prevent="onSubmit" :icon="isSubmitting
+                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    : 'fa-regular fa-pen-to-square'
+                    ">
+
                     Change
                 </q-btn>
             </div>
@@ -50,14 +51,22 @@
     </div>
 </template>
 <style scoped>
-@import '../../public/css/login.css';
+/* @import '../../public/css/login.css'; */
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
 
 .invalid-feedback {
     color: red;
 }
+
+.button2 {
+
+    margin-top: 2vh;
+    width: 50% !important;
+    float: right;
+}
 </style>
+
 
 <script setup lang='ts'>
 import { useForm } from 'vee-validate';
@@ -67,6 +76,10 @@ import { passwordError, passwordRegex } from '../constants.ts';
 import commonPasswords from '../common-passwords.txt?raw'
 import { ref, type MaybeRefOrGetter } from 'vue';
 import { useAuthStore } from '../stores/auth.store.ts';
+import { QBtn } from 'quasar'
+
+QBtn.props.noCaps = { type: Boolean, default: true }
+
 
 const showAlert = ref(false)
 const alertMessage = ref('')
