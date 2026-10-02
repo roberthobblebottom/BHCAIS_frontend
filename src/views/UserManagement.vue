@@ -286,6 +286,9 @@ const onCreate = handleSubmit(async () => {
 
     } catch (err: any) {
         alertDialogMessage.value = "Error in Creating User: " + err
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
     }
     finally {
         showAlertDialog.value = true
@@ -328,6 +331,9 @@ const onEdit = handleSubmit(async () => {
 
     } catch (err: any) {
         alertDialogMessage.value = "Error in editing User: " + err
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
     } finally {
         showAlertDialog.value = true
         showFormDialog.value = false
@@ -352,6 +358,9 @@ async function onDelete(user_id: number) {
 
     } catch (err: any) {
         alertDialogMessage.value = "Error in Deleting User: " + err
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
     } finally {
         isDeleteInProgress.value = false
         showAlertDialog.value = true

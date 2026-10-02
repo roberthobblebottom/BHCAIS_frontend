@@ -149,15 +149,23 @@ let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
 
 async function downloadTemplatesForTheCatalogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token;
-    getTemplatesFiles(url).then((download) => {
-        var url = window.URL.createObjectURL(download);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = "templates for the catalogs";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-    })
+    try {
+        getTemplatesFiles(url).then((download) => {
+            var url = window.URL.createObjectURL(download);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = "templates for the catalogs";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+    }
+    catch (err: any) {
+        console.log("The response is " + err + " please check on the backend for any errors")
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
+    }
 }
 
 const onAddedListener = (files: readonly File[]) => {

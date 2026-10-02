@@ -261,7 +261,16 @@ async function onRequestCatalogData(props: any) {
     })
 
     const url = `${import.meta.env.VITE_API_URL}/GetCatalogue/?${params.toString()}`
-    const response = await fetchWrapper.get(url)
+    let response = null
+    try {
+        response = await fetchWrapper.get(url)
+    }
+    catch (err: any) {
+        console.log("The response is " + err + " please check on the backend for any errors")
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
+    }
     const results = response.results
     const rowCounts = response.row_counts
 
@@ -333,7 +342,14 @@ async function deleteSelected() {
                 current_primary_key: currentPrimaryKeyUsedForDeleteSelected.value,
                 token: authStore.user.token
             })
-    } catch (error: any) { console.error(error) }
+    } catch (error: any) {
+        console.error(error)
+
+
+        if (error.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
+    }
 
     //setting up rows without the deleted ones
     const newRows = []
@@ -361,13 +377,21 @@ async function deleteAllCatalogueData() {
 
     isDeleteInProgress.value = true
     let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
-    await fetchWrapper.delete(url)
+    try {
+        await fetchWrapper.delete(url)
+    } catch (err: any) {
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
+    }
     selectedRowsToBeDeleted.value = []
 
     await nextTick()
-    tableRef.value!.requestServerInteraction()
+    if (tableRef.value != null)
+        tableRef.value!.requestServerInteraction()
 
     isDeleteInProgress.value = false
-    showAllDataDeletedDialog.value = false
+    showConfirmDeleteAllDialog.value = false
+    showAllDataDeletedDialog.value = true
 }
 </script>

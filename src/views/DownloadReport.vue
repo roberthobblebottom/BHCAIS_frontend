@@ -203,7 +203,6 @@ function addSearchTerm() {
 
 
 const onSubmit = handleSubmit(async (_values) => {
-    isDownloading.value = true
 
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
@@ -221,11 +220,12 @@ const onSubmit = handleSubmit(async (_values) => {
             if (catalogueFieldAndSearchTermPair[0] == null || catalogueFieldAndSearchTermPair[1] == null)
                 continue
             const fieldsWithCatPrefix = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
+            console.log("-------", fieldsWithCatPrefix)
             for (const fieldWithCatPrefix of fieldsWithCatPrefix) {
                 const field = fieldWithCatPrefix.replace(cat, "").trim()
 
-                //only add search term if the pair are not empty
-                if (fieldWithCatPrefix.includes(cat) && field != ""
+                //only add search term if the pair are not empty or is "Select All"
+                if ((fieldWithCatPrefix.includes(cat) && field != "" || field == "Select All")
                     && (catalogueFieldAndSearchTermPair[1] as String).trim() != "")
                     searchTermsToBeSent[cat][field] = catalogueFieldAndSearchTermPair[1]
             }
@@ -233,7 +233,7 @@ const onSubmit = handleSubmit(async (_values) => {
         if (Object.keys(searchTermsToBeSent[cat]).length == 0)
             delete searchTermsToBeSent[cat]
     }
-
+    console.log("search term", searchTermsToBeSent)
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermsToBeSent },
@@ -245,37 +245,56 @@ const onSubmit = handleSubmit(async (_values) => {
     cataloguesWithNoResults.value = []
     showNoResultMessage.value = false
     let reader = null
-
+    let response = null
     try {
-        const response = await streamFilesDownload(url, queryData)
+        response = await streamFilesDownload(url, queryData)
         reader = response.body!.getReader()
     }
-    catch (err) { console.error(err) }
+    catch (err: any) {
+        console.log("The response is " + err + " please check on the backend for any errors")
+        if (err.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
+    }
 
     // reading the chunks streamed
     let isReadDone = false;
     const textDecoder = new TextDecoder()
     let results: { [index: string]: any[] } = {}
     let currentCatalogue = ""
+    let buffer = ""
     while (!isReadDone) {
         let { value, done } = await reader!.read();
         isReadDone = done
         if (isReadDone)
             break
         const decodedValue = textDecoder.decode(value)
-        for (const lineString of decodedValue.split('\n')) {
+
+        for (let lineString of decodedValue.split('\n')) {
             if (lineString == "")
                 continue
-            const obj = JSON.parse(lineString)
-            if (Object.keys(obj)[0] == 'catalogue_name') {
-                currentCatalogue = Object.values(obj)[0] as string
-                results[currentCatalogue] = []
-
-            } else {
-                if (currentCatalogue == "")
-                    throw new Error("currentCatalogue is a empty string. it should be populated")
-                results[currentCatalogue]?.push(obj)
+            if (buffer != "") {
+                lineString = buffer + lineString
             }
+
+            console.log("lineString", lineString, "\n")
+            try {
+                const obj = JSON.parse(lineString)
+                if (Object.keys(obj)[0] == 'catalogue_name') {
+                    currentCatalogue = Object.values(obj)[0] as string
+                    results[currentCatalogue] = []
+
+                } else {
+                    if (currentCatalogue == "")
+                        throw new Error("currentCatalogue is a empty string. it should be populated")
+                    results[currentCatalogue]?.push(obj)
+                }
+                buffer = ""
+            } catch (SyntaxError) {
+                buffer += lineString
+                continue
+            }
+
         }
 
     }

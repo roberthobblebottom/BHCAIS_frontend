@@ -32,6 +32,7 @@ export const streamFilesDownload = (url: string, body: any = null) => {
         requestOptions.body = JSON.stringify(body)
     }
     return fetch(url, requestOptions)
+
 }
 
 //for deletion of user so that it will also fetch the updated version of the login_user table
@@ -68,7 +69,7 @@ export const getTemplatesFiles = async (url: string) => {
         headers: authHeader(url, {})
     }
     const response = await fetch(url, requestOptions)
-    return handleResponseForFiles(response)
+    return handleResponseForTemplateFiles(response)
 }
 
 function authHeader(url: string, header: any): HeadersInit {
@@ -87,25 +88,29 @@ function authHeader(url: string, header: any): HeadersInit {
 function handleResponse(response: Response, isJSON: boolean = true) {
     return response.text().then(text => {
         const data = isJSON ? text && JSON.parse(text) : text
+
         if (!response.ok) {
             const { user, logout } = useAuthStore()
+            console.log(user)
             if ([401, 403].includes(response.status) && user)
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
                 logout()
-            const error = data.detail
+
+            const error = data.details
             return Promise.reject(error)
         }
         return data
     })
 }
 
-function handleResponseForFiles(response: Response) {
+function handleResponseForTemplateFiles(response: Response) {
     return response.blob().then(data => {
         if (!response.ok) {
             const { user, logout } = useAuthStore()
             if ([401, 403].includes(response.status) && user)
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
                 logout()
+
             return Promise.reject('error downloading file(s)')
         }
         return data

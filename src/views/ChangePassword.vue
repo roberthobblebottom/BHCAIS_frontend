@@ -136,6 +136,9 @@ const onSubmit = handleSubmit(async (_values) => {
         alertMessage.value = "ERROR: " + error.toString()
         showAlert.value = true
         isError.value = true
+        if (error.toString().includes("NetworkError")) {
+            useAuthStore().logout()
+        }
     } finally { resetForm() }
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
