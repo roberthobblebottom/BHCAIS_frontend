@@ -93,11 +93,7 @@
     font-size: 16px;
 }
 
-.common {
-    display: flex;
-    flex-direction: column;
-    max-height: none;
-}
+.common {}
 </style>
 
 <script setup lang="ts">
