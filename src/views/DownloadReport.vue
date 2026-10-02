@@ -1,5 +1,5 @@
 <template>
-    <div class=" common medium ">
+    <div class=" common medium  ">
         <q-form validation-observer @submit.prevent="onSubmit">
             <h3>Download Reports</h3>
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="small common">
+    <div class="small common absolute-center">
 
         <q-form @submit.prevent="onSubmit" validation-observer>
             <h3>BHCAIS</h3>
@@ -40,6 +40,7 @@
 h3 {
     margin-bottom: 0vh !important;
     margin-top: 5% !important;
+
 }
 </style>
 
