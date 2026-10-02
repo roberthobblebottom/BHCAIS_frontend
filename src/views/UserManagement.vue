@@ -66,7 +66,7 @@
                         <q-btn :disable='isInProgress' size="md" color="primary"
                             @click="isEdit ? onEdit() : onCreate()">
                             <q-icon :name="isInProgress
-                                ? 'fa-regular fa-spinner fa-spin-pulse'
+                                ? 'fa-solid fa-spinner fa-spin-pulse'
                                 : 'fa-regular fa-pen-to-square'" size='xs' class="q-mr-sm"></q-icon>
                             {{ isEdit ? 'Edit ' : 'Create ' }}
                         </q-btn>
@@ -88,7 +88,7 @@
                     <q-btn :disable="isDeleteInProgress" size="md" color="primary" @click="onDelete(userIdToBeDeleted)">
 
                         <q-icon :class="isDeleteInProgress
-                            ? 'fa-regular fa-spinner fa-spin-pulse'
+                            ? 'fa-solid fa-spinner fa-spin-pulse'
                             : 'fa-regular fa-pen-to-square'" size='xs' class="q-mr-sm"></q-icon>
                         Delete
                     </q-btn>

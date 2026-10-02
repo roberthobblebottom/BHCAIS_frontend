@@ -115,7 +115,7 @@
             <q-card-section>
                 <q-btn label="Cancel" color="secondary" v-close-popup />
                 <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="primary" :icon="isDeleteInProgress
-                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    ? 'fa-solid fa-spinner fa-spin-pulse'
                     : 'fa-regular fa-pen-to-square'" @click="deleteSelected">
                 </q-btn>
             </q-card-section>
@@ -134,7 +134,7 @@
             <q-card-section>
                 <q-btn label="Cancel" v-close-popup />
                 <q-btn :disable='isDeleteInProgress' class="q-ml-md" label="Delete" color="blue" :icon="isDeleteInProgress
-                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    ? 'fa-solid fa-spinner fa-spin-pulse'
                     : 'fa-regular fa-pen-to-square'
                     " @click="deleteAllCatalogueData">
                 </q-btn>

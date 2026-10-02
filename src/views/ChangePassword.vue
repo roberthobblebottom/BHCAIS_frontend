@@ -31,10 +31,12 @@
                 </q-input>
             </div>
             <div class="justify-center">
-                <q-btn :disable='isSubmitting' color="blue" class="button2 " @click.prevent="onSubmit" :icon="isSubmitting
-                    ? 'fa-regular fa-spinner fa-spin-pulse'
-                    : 'fa-regular fa-pen-to-square'
-                    ">
+                <q-btn :disable='isSubmitting' color="blue" class="flex float-right q-mt-md" size='md'
+                    @click.prevent="onSubmit">
+                    <q-icon size="sm" :name="isSubmitting
+                        ? 'fa-solid fa-spinner fa-spin-pulse'
+                        : 'fa-regular fa-pen-to-square'
+                        "></q-icon>
 
                     Change
                 </q-btn>
@@ -45,7 +47,7 @@
             <q-card-section class="column items-center 
             q-pb-none text-h6 dialog ">
                 {{ alertMessage }}
-                <q-btn label="Ok" color="primary" v-close-popup />
+                <q-btn label="Ok" color="primary" v-close-popup size="md" class="q-mt-md" />
             </q-card-section>
         </q-dialog>
     </div>

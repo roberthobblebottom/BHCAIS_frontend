@@ -45,10 +45,10 @@
                 </div>
             </div>
 
-            <q-btn color="blue" size="md" :disable='isDownloading' class="download-button " @click="onSubmit">
+            <q-btn color="blue" size="md" :disable='isDownloading' class="flex float-right q-mt-md " @click="onSubmit">
 
                 <q-icon :name="isDownloading
-                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    ? 'fa-solid fa-spinner fa-spin-pulse'
                     : 'fas fa-file-arrow-down'" class="q-mr-sm" size="sm"></q-icon>
                 {{ isDownloading ? 'Currently downloading...' : 'Download' }}
             </q-btn>
@@ -82,18 +82,12 @@
 }
 
 
-.download-button {
-    margin-top: 5vh;
-    width: 30%;
-    float: right;
-}
+
 
 .search-terms-label {
     color: grey !important;
     font-size: 16px;
 }
-
-.common {}
 </style>
 
 <script setup lang="ts">

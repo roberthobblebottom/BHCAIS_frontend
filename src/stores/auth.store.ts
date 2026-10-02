@@ -3,8 +3,6 @@ import { login } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
 
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
-localStorage.clear();
-console.log('baseURL', baseUrl)
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
