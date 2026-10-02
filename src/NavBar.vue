@@ -16,39 +16,39 @@
                 </div>
                 <div class="" v-if="authStore.user.user_type == 'admin'">
                     <RouterLink to="/UserManagement" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fa-solid fa-users-gear"></i>
+                        <i class="fa-solid fa-users-gear q-mr-sm"></i>
                         {{ miniState ? '' : 'User Management' }}
                     </RouterLink>
                 </div>
                 <div class="">
                     <RouterLink to="/QuickStart" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-globe"></i> {{ miniState ? '' : 'Home' }}
+                        <i class="fas fa-globe q-mr-sm"></i> {{ miniState ? '' : 'Home' }}
                     </RouterLink>
                 </div>
                 <div class="">
                     <RouterLink to="/BulkDataUpload" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-upload"></i> {{ miniState ? '' : 'Bulk Data Upload' }}
+                        <i class="fas fa-upload q-mr-sm"></i> {{ miniState ? '' : 'Bulk Data Upload' }}
                     </RouterLink>
                 </div>
                 <div class="">
                     <RouterLink to="/Catalogues" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-rectangle-list"></i> {{ miniState ? '' : 'Catalogues' }}
+                        <i class="fas fa-rectangle-list q-mr-sm"></i> {{ miniState ? '' : 'Catalogues' }}
                     </RouterLink>
 
                 </div>
                 <div class="">
                     <RouterLink to="/DownloadReport" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-file-arrow-down"></i> {{ miniState ? '' : 'Download Reports(s)' }}
+                        <i class="fas fa-file-arrow-down q-mr-sm"></i> {{ miniState ? '' : 'Download Reports(s)' }}
                     </RouterLink>
                 </div>
                 <div>
                     <RouterLink to="/ChangePassword" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-key"></i> {{ miniState ? '' : 'Change Password' }}
+                        <i class="fas fa-key q-mr-sm"></i> {{ miniState ? '' : 'Change Password' }}
                     </RouterLink>
                 </div>
                 <div class="">
                     <RouterLink to="/Login" @click="authStore.logout()" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fa-solid fa-right-from-bracket "></i> {{ miniState ? '' : 'Logout' }}
+                        <i class="fa-solid fa-right-from-bracket q-mr-sm"></i> {{ miniState ? '' : 'Logout' }}
                     </RouterLink>
                 </div>
             </div>
