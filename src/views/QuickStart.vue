@@ -113,7 +113,6 @@
 .quick-start {
     /* display: grid;
     row-gap: 4%;*/
-    height: 70vh;
     overflow: auto;
 }
 
