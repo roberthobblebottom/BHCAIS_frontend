@@ -16,10 +16,11 @@
                         @click=" showPassword = !showPassword" />
                 </template>
             </q-input>
-            <q-btn color='primary' type="submit" class="button btn-primary" :disabled="isSubmitting" :icon="isSubmitting
-                ? 'fa-solid fa-spinner fa-spin-pulse'
-                : 'fa-solid fa-right-to-bracket'
-                ">
+            <q-btn size="md" color='primary' type="submit" class="button flexbox float-right" :disabled="isSubmitting">
+                <q-icon :name="isSubmitting
+                    ? 'fa-solid fa-spinner fa-spin-pulse'
+                    : 'fa-solid fa-right-to-bracket'
+                    " size="sm" class="q-mr-sm"></q-icon>
                 Login
 
             </q-btn>
@@ -38,7 +39,7 @@
 
 h3 {
     margin-bottom: 0vh !important;
-    margin-top: 0% !important;
+    margin-top: 5% !important;
 }
 </style>
 

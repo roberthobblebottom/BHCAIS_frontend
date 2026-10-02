@@ -5,8 +5,9 @@
             User Management
         </h3>
         <div class="row justify-end q-mb-md">
-            <q-btn class="button" color="blue" @click="openCreateDialog" icon="fa-solid fa-user-plus">Create
-                User</q-btn>
+            <q-btn class="button" color="blue" size='md' @click="openCreateDialog">
+                <q-icon name="fa-solid fa-user-plus" size='xs' class="q-mr-sm"></q-icon>
+                Create User</q-btn>
         </div>
         <q-table class="table-div" v-model:rows="rows" :columns="columns" :row-key="rowKey" ref="tableRef"
             :loading="loading" :wrap-cells="true">
@@ -14,10 +15,17 @@
                 <!-- buttons for actions for each rows -->
                 <q-td :props="props">
                     <div class="row justify-around">
-                        <q-btn color="blue" @click="openEditDialog(props.row)" label="Edit"
-                            icon="fa-solid fa-user-pen"></q-btn>
-                        <q-btn color="red" @click="openConfirmDeleteDialog(props.row)" label="Delete"
-                            icon="fa-solid fa-user-minus"></q-btn>
+                        <q-btn color="blue" @click="openEditDialog(props.row)" size="md">
+                            <q-icon name="fa-solid fa-user-pen" size='xs' class="q-mr-sm"></q-icon>
+
+                            Edit
+                        </q-btn>
+                        <q-btn color="red" @click="openConfirmDeleteDialog(props.row)" size="md">
+
+                            <q-icon name="fa-solid fa-user-minus" size='xs' class="q-mr-sm"></q-icon>
+
+                            Delete
+                        </q-btn>
                     </div>
 
                 </q-td>
@@ -54,12 +62,13 @@
                         :options="['admin', 'normal']">
                     </q-select>
                     <div class="flex justify-around">
-                        <q-btn flat label="close" color="secondary" v-close-popup />
-                        <q-btn :disable='isInProgress' :label="isEdit ? 'edit ' : 'create '" color="primary"
+                        <q-btn flat label="Close" color="secondary" size="md" v-close-popup />
+                        <q-btn :disable='isInProgress' size="md" color="primary"
                             @click="isEdit ? onEdit() : onCreate()">
-                            <i :class="isInProgress
+                            <q-icon :name="isInProgress
                                 ? 'fa-regular fa-spinner fa-spin-pulse'
-                                : 'fa-regular fa-pen-to-square'"></i>
+                                : 'fa-regular fa-pen-to-square'" size='xs' class="q-mr-sm"></q-icon>
+                            {{ isEdit ? 'Edit ' : 'Create ' }}
                         </q-btn>
                     </div>
                 </q-form>
@@ -68,20 +77,20 @@
     </q-dialog>
     <!-- delete confirmation dialog or Error dialog -->
     <q-dialog v-model="showAlertDialog">
-        <q-card class="column items-center 
+        <q-card class="column  items-center  justify-center
             q-pb-none text-h6 dialog ">
-            <q-card-section class="  items-center column q-pb-none">
-                <q-avatar v-if="showDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white"
-                    class="" />
-                <q-avatar v-else icon="error" color="primary" text-color="white" class="" />
-                {{ alertDialogMessage }}
-                <div class="delete-confirmation row justify-evenly" v-if="showDeleteConfirmationDialog">
-                    <q-btn label="Cancel" color="secondary" v-close-popup />
-                    <q-btn :disable="isDeleteInProgress" label="Delete " color="primary"
-                        @click="onDelete(userIdToBeDeleted)">
-                        <i :class="isDeleteInProgress
+            <q-card-section class="  justify-center items-center column q-pb-none">
+                <q-avatar v-if="showDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white" />
+                <q-avatar v-else icon="error" color="primary" text-color="white" />
+                <div class="q-mt-sm"> {{ alertDialogMessage }}</div>
+                <div class="delete-confirmation row justify-evenly q-mt-sm" v-if="showDeleteConfirmationDialog">
+                    <q-btn flat label="Cancel" color="secondary" v-close-popup size="md" />
+                    <q-btn :disable="isDeleteInProgress" size="md" color="primary" @click="onDelete(userIdToBeDeleted)">
+
+                        <q-icon :class="isDeleteInProgress
                             ? 'fa-regular fa-spinner fa-spin-pulse'
-                            : 'fa-regular fa-pen-to-square'"></i>
+                            : 'fa-regular fa-pen-to-square'" size='xs' class="q-mr-sm"></q-icon>
+                        Delete
                     </q-btn>
                 </div>
                 <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />

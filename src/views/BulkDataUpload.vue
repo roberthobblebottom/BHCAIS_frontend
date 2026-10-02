@@ -60,8 +60,8 @@
                 </template>
             </q-uploader>
 
-            <q-btn class="button" @click.prevent="downloadTemplatesForTheCatalogs" icon="fas fa-file-arrow-down">
-                Download Templates
+            <q-btn class="float-left" @click.prevent="downloadTemplatesForTheCatalogs" size="md">
+                <q-icon name="fas fa-file-arrow-down" size="sm"></q-icon> Download Templates
             </q-btn>
         </form>
     </div>
@@ -96,7 +96,10 @@
 
                 <p> These files will be removed</p>
             </div>
-            <q-btn icon="fa-solid fa-check" label="Ok" color="primary" v-close-popup autofocus />
+            <q-btn size="md" label="Ok" color="primary" v-close-popup autofocus>
+
+                <q-icon name="fa-solid fa-check" size="sm"></q-icon>
+            </q-btn>
         </q-card>
     </q-dialog>
 </template>
@@ -111,9 +114,7 @@
     height: 100%;
 }
 
-.button {
-    float: left !important;
-}
+
 
 .card-section-avatar {
     margin-bottom: 1%;
