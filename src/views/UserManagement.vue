@@ -78,12 +78,12 @@
     <!-- delete confirmation dialog or Error dialog -->
     <q-dialog v-model="showAlertDialog">
         <q-card class="column  items-center  justify-center
-            q-pb-none text-h6 dialog ">
+            q-pb-none  dialog ">
             <q-card-section class="  justify-center items-center column q-pb-none">
                 <q-avatar v-if="showDeleteConfirmationDialog" icon="help_outline" color="primary" text-color="white" />
                 <q-avatar v-else icon="error" color="primary" text-color="white" />
-                <div class="q-mt-sm"> {{ alertDialogMessage }}</div>
-                <div class="delete-confirmation row justify-evenly q-mt-sm" v-if="showDeleteConfirmationDialog">
+                <div class="q-mt-md"> {{ alertDialogMessage }}</div>
+                <div class="delete-confirmation row justify-evenly q-mt-md" v-if="showDeleteConfirmationDialog">
                     <q-btn flat label="Cancel" color="secondary" v-close-popup size="md" />
                     <q-btn :disable="isDeleteInProgress" size="md" color="primary" @click="onDelete(userIdToBeDeleted)">
 

@@ -33,7 +33,7 @@
             <div class="justify-center">
                 <q-btn :disable='isSubmitting' color="blue" class="flex float-right q-mt-md" size='md'
                     @click.prevent="onSubmit">
-                    <q-icon size="sm" :name="isSubmitting
+                    <q-icon size="sm" class="q-mr-sm" :name="isSubmitting
                         ? 'fa-solid fa-spinner fa-spin-pulse'
                         : 'fa-regular fa-pen-to-square'
                         "></q-icon>
@@ -45,8 +45,10 @@
 
         <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
             <q-card-section class="column items-center 
-            q-pb-none text-h6 dialog ">
-                {{ alertMessage }}
+            q-pb-none  dialog ">
+                <q-avatar v-if="isError" icon="error" color="primary" text-color="white" />
+                <q-avatar v-else icon="check" color="primary" text-color="white" />
+                <div class="q-mt-md"> {{ alertMessage }}</div>
                 <q-btn label="Ok" color="primary" v-close-popup size="md" class="q-mt-md" />
             </q-card-section>
         </q-dialog>
@@ -89,6 +91,7 @@ const isSubmitting = ref(false)
 const showPassword = ref(false)
 const showNewPassword = ref(false)
 const showConfirmNewPassword = ref(false)
+const isError = ref(false)
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('Required'),
     newPassword: Yup.string()
@@ -132,10 +135,12 @@ const onSubmit = handleSubmit(async (_values) => {
     } catch (error: any) {
         alertMessage.value = "ERROR: " + error.toString()
         showAlert.value = true
+        isError.value = true
     } finally { resetForm() }
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
         showAlert.value = true;
+        isError.value = false
     }
 
     isSubmitting.value = false

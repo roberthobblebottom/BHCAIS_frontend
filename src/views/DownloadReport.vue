@@ -66,7 +66,7 @@
                     + cataloguesWithNoResults.join(",")
                     + "\n They will not be included in the zip file." }}</label>
 
-                <q-btn label="Ok" color="primary" v-close-popup autofocus />
+                <q-btn class="q-mt-md" label="Ok" color="primary" size="md" v-close-popup autofocus />
             </q-card>
         </q-dialog>
     </div>

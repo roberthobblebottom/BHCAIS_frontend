@@ -151,7 +151,7 @@
                 All catalogue data has been deleted.
             </span>
             <q-card-section>
-                <q-btn label="Ok" v-close-popup />
+                <q-btn label="Ok" v-close-popup size="md" />
             </q-card-section>
         </q-card>
     </q-dialog>
