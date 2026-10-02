@@ -13,10 +13,18 @@
                 <div class="row justifiy-between items-end">
                     <label class="col-6 search-terms-label">Search Terms
                         (Optional):</label>
-                    <q-btn color="red" class="col-3" @click.prevent="clearAllSearchTerm" icon="fa-regular fa-x">
-                        Clear </q-btn>
-                    <q-btn color="blue" class="col q-ml-md button2" @click.prevent="addSearchTerm" icon="fas fa-add">
-                        Add </q-btn>
+                    <div class="col flex justify-end">
+
+                        <q-btn color="red" size="md" class="" @click.prevent="clearAllSearchTerm">
+
+                            <q-icon name="fa-regular fa-x" class="q-mr-sm" size="sm"></q-icon>
+                            Clear </q-btn>
+                        <q-btn color="blue" size="md" class="q-ml-md " @click.prevent="addSearchTerm">
+
+                            <q-icon name="fas fa-add" class="q-mr-sm" size="sm"></q-icon>
+                            Add </q-btn>
+
+                    </div>
                 </div>
 
                 <div class="row " v-for="x of selectedSearchTerms">
@@ -37,9 +45,11 @@
                 </div>
             </div>
 
-            <q-btn color="blue" :disable='isDownloading' class="download-button " @click="onSubmit" :icon="isDownloading
-                ? 'fa-regular fa-spinner fa-spin-pulse'
-                : 'fas fa-file-arrow-down'">
+            <q-btn color="blue" size="md" :disable='isDownloading' class="download-button " @click="onSubmit">
+
+                <q-icon :name="isDownloading
+                    ? 'fa-regular fa-spinner fa-spin-pulse'
+                    : 'fas fa-file-arrow-down'" class="q-mr-sm" size="sm"></q-icon>
                 {{ isDownloading ? 'Currently downloading...' : 'Download' }}
             </q-btn>
         </q-form>
@@ -288,10 +298,7 @@ const onSubmit = handleSubmit(async (_values) => {
     for (const catalogName of Object.keys(results)) {
         const resultData: any[] = results[catalogName]!
 
-        if (resultData.length == 0) {
-            cataloguesWithNoResults.value.push(catalogName)
-            continue
-        }
+
 
         const header = Object.keys(resultData[0]).join(',') + "\n"
         //these two maps is for making the string csv compliant.
@@ -306,7 +313,10 @@ const onSubmit = handleSubmit(async (_values) => {
             // and \n character to end the row of elements
         ).join("")
         const tableInStringFormat = header + rows
-
+        if (rows.replaceAll("\"", "").trim().toLowerCase() === noResultString.toString()) {
+            cataloguesWithNoResults.value.push(catalogName)
+            continue
+        }
         const searchTermStringified =
             queryData.search_terms[catalogName] != null
                 ? " search term: " + JSON.stringify(searchTermsToBeSent[catalogName])
@@ -322,12 +332,12 @@ const onSubmit = handleSubmit(async (_values) => {
     }
 
     isDownloading.value = false
-
     if (allCatalogueResultsInCSVs.length == 0) {
         showCataloguesWithNoResultsAlertDialog.value = true
         showNoResultMessage.value = true
         return
     }
+
 
     const blob = await downloadZip(
         allCatalogueResultsInCSVs as unknown as InputWithoutMeta[]

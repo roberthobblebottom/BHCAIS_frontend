@@ -64,8 +64,10 @@
                             </q-btn-dropdown>
                         </div>
                         <div class="col row flex items-end justify-end">
-                            <q-btn color='red' icon='fa-regular fa-circle-xmark' class="col-7 button"
-                                v-if="showDeleteSelectedButton" @click="showConfirmDeleteSelectDialog = true">
+                            <q-btn color='red' size="md" class=" button" v-if="showDeleteSelectedButton"
+                                @click="showConfirmDeleteSelectDialog = true">
+
+                                <q-icon name="fa-regular fa-circle-xmark" class="q-mr-sm" size="sm"></q-icon>
                                 Delete Selected</q-btn>
 
 
@@ -94,7 +96,8 @@
         </div>
 
         <div class="col-1 q-mt-xl" v-if="authStore.user.user_type == 'admin'">
-            <q-btn color="red" @click="showConfirmDeleteAllDialogFunction" icon="fa-solid fa-square-xmark">
+            <q-btn color="red" size="md" @click="showConfirmDeleteAllDialogFunction">
+                <q-icon name="fa-solid fa-square-xmark" class="q-mr-sm" size="sm"></q-icon>
                 PURGE ALL DATA
             </q-btn>
         </div>
@@ -184,7 +187,6 @@
 
 .button {
     float: none !important;
-    height: 10%;
 }
 
 .search-term-input {
