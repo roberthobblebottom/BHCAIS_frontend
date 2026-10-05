@@ -3,7 +3,7 @@
     <q-layout view="hHh lpR fFf">
         <q-drawer show-if-above v-model="drawerLeft" :mini="miniState" style="background-color: #280401;"
             @mouseenter="miniState = !miniState && isPassedWidthThreshold" :breakpoint="100"
-            @mouseleave="miniState = !miniState && isPassedWidthThreshold" v-if="authStore.user" side="left" :width=200>
+            @mouseleave="miniState = !miniState && isPassedWidthThreshold" v-if="isUserLoggedIn" side="left" :width=200>
 
             <!-- <div class="logo"> -->
             <!-- <img src="/images/Group-1.svg" alt="LKCNHM Logo" /> -->
@@ -83,8 +83,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { useAuthStore } from './stores/auth.store.ts';
-import { ref, onBeforeUpdate } from 'vue';
+import { ref, watch, computed } from 'vue';
 
+
+import { onMounted, onBeforeUnmount } from 'vue'
 import { QBtn } from 'quasar'
 
 QBtn.props.noCaps = { type: Boolean, default: true }
@@ -94,12 +96,11 @@ const drawerLeft = ref(true)
 const miniState = ref(false)
 const widthThreshold = ref(700)
 const isPassedWidthThreshold = ref(false)
+
+const isUserLoggedIn = computed(() => !!authStore.user)
 // useWindowSize.js
-import { onMounted, onBeforeUnmount } from 'vue'
 const handleWindowSizeChange = () => {
-    const height = window.innerHeight
     const width = window.innerWidth
-    console.log('handleWindowSizeChange', height, width)
     if (width < widthThreshold.value) {
         miniState.value = true
         isPassedWidthThreshold.value = true
@@ -115,9 +116,12 @@ onMounted(() => {
     handleWindowSizeChange();
 });
 onBeforeUnmount(() => {
+    console.log('on before unmount')
     window.removeEventListener("resize", handleWindowSizeChange);
 });
-onBeforeUpdate(() => {
-    miniState.value = false
+
+watch(isUserLoggedIn, (_value: boolean) => {
+    miniState.value = isPassedWidthThreshold.value
 })
+
 </script>

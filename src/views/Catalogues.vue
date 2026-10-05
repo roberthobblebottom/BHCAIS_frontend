@@ -261,16 +261,7 @@ async function onRequestCatalogData(props: any) {
     })
 
     const url = `${import.meta.env.VITE_API_URL}/GetCatalogue/?${params.toString()}`
-    let response = null
-    try {
-        response = await fetchWrapper.get(url)
-    }
-    catch (err: any) {
-        console.log("The response is " + err + " please check on the backend for any errors")
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    }
+    const response = await fetchWrapper.get(url)
     const results = response.results
     const rowCounts = response.row_counts
 
@@ -334,22 +325,13 @@ async function deleteSelected() {
         selectedIds.push(Object.values(x)[0])
 
     const url = `${import.meta.env.VITE_API_URL}/DeleteSelectedRows/`
-    try {
-        await fetchWrapper.delete(url,
-            {
-                ids_to_be_deleted: selectedIds,
-                catalogue_name: catalogueName.value,
-                current_primary_key: currentPrimaryKeyUsedForDeleteSelected.value,
-                token: authStore.user.token
-            })
-    } catch (error: any) {
-        console.error(error)
+    await fetchWrapper.delete(url,
+        {
+            ids_to_be_deleted: selectedIds,
+            catalogue_name: catalogueName.value,
+            current_primary_key: currentPrimaryKeyUsedForDeleteSelected.value,
+        })
 
-
-        if (error.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    }
 
     //setting up rows without the deleted ones
     const newRows = []
@@ -376,14 +358,9 @@ function showConfirmDeleteAllDialogFunction() {
 async function deleteAllCatalogueData() {
 
     isDeleteInProgress.value = true
-    let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/?token=${useAuthStore().user.token}`
-    try {
-        await fetchWrapper.delete(url)
-    } catch (err: any) {
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    }
+    let url = `${import.meta.env.VITE_API_URL}/DeleteAllCatalogueData/`
+    await fetchWrapper.delete(url)
+
     selectedRowsToBeDeleted.value = []
 
     await nextTick()

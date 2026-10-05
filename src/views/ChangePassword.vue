@@ -124,22 +124,17 @@ const onSubmit = handleSubmit(async (_values) => {
     isSubmitting.value = true
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
-    try {
-        response = await fetchWrapper.put(url, {
-            'username': useAuthStore().user.email,
-            'old_password': oldPassword.value,
-            'new_password': newPassword.value,
-            'confirm_new_password': confirmNewPassword.value,
-            'token': useAuthStore().user.token
-        })
-    } catch (error: any) {
+    response = await fetchWrapper.put(url, {
+        'username': useAuthStore().user.email,
+        'old_password': oldPassword.value,
+        'new_password': newPassword.value,
+        'confirm_new_password': confirmNewPassword.value,
+        'token': useAuthStore().user.token
+    }).catch((error) => {
         alertMessage.value = "ERROR: " + error.toString()
         showAlert.value = true
         isError.value = true
-        if (error.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    } finally { resetForm() }
+    }).finally(() => { resetForm() })
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
         showAlert.value = true;

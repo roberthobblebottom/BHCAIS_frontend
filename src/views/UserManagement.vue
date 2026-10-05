@@ -120,7 +120,6 @@ import * as yup from 'yup';
 import { passwordRegex, passwordError } from '../constants';
 
 import commonPasswords from '../common-passwords.txt?raw'
-import { useAuthStore } from '../stores/auth.store';
 import { QBtn } from 'quasar'
 
 QBtn.props.noCaps = { type: Boolean, default: true }
@@ -141,7 +140,6 @@ const showDeleteConfirmationDialog = ref(false)
 const userIdToBeDeleted = ref(-1)
 const isInProgress = ref(false)
 const isDeleteInProgress = ref(false)
-const authStore = useAuthStore()
 
 interface UserInterface {
     user_id: number
@@ -264,36 +262,30 @@ const onCreate = handleSubmit(async () => {
     isEdit.value = false
     isInProgress.value = true
     const url = `${import.meta.env.VITE_API_URL}/CreateUser/`
-    try {
-        await fetchWrapper.post(url, {
-            email: email.value,
-            password: password.value,
-            confirm_password: confirmPassword.value,
-            user_type: userType.value,
-        })
-
-        alertDialogMessage.value = "Sucessfully created user"
-
-        const temp: any[] = rows.value
-        temp.push({
-            user_id: parseInt(temp[temp.length - 1].user_id) + 1,
-            email: email.value,
-            user_type: userType.value
-        })
-        rows.value = temp
-        resetForm()
-
-    } catch (err: any) {
-        alertDialogMessage.value = "Error in Creating User: " + err
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    }
-    finally {
+    await fetchWrapper.post(url, {
+        email: email.value,
+        password: password.value,
+        confirm_password: confirmPassword.value,
+        user_type: userType.value,
+    }).finally(() => {
         showAlertDialog.value = true
         showFormDialog.value = false
         isInProgress.value = false
-    }
+    })
+
+    alertDialogMessage.value = "Sucessfully created user"
+
+    const temp: any[] = rows.value
+    temp.push({
+        user_id: parseInt(temp[temp.length - 1].user_id) + 1,
+        email: email.value,
+        user_type: userType.value
+    })
+    rows.value = temp
+    resetForm()
+
+
+
 
 })
 
@@ -301,69 +293,57 @@ const onEdit = handleSubmit(async () => {
     isEdit.value = false
     isInProgress.value = true
     const url = `${import.meta.env.VITE_API_URL}/EditUser/`
-    try {
-        const body = {
-            user_id: oldUserValuesBeforeEdit!.user_id,
-            email: email.value,
-            password: (password.value == null || password.value == "") ? "" : password.value,
-            confirm_password: (confirmPassword.value == null || confirmPassword.value == "") ? "" : confirmPassword.value,
-            user_type: userType.value,
-        }
-        console.log(body)
-        await fetchWrapper.put(url, body)
-
-        alertDialogMessage.value = "Sucessfully edited user"
-
-        // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
-        //     return value.$data
-        // }) as UserInterface[]
-        await getAllUsers() // less efficient than directly putting it into the table but this works.
-
-        //I don't know how to do these:
-        // ('temp', temp)
-        // temp = temp.slice(temp.indexOf(oldUserValuesBeforeEdit!), 1)
-        // ('temp', temp)
-        // temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
-        // rows.value = temp as QTr[]
-        oldUserValuesBeforeEdit = null
-        resetForm()
-
-    } catch (err: any) {
-        alertDialogMessage.value = "Error in editing User: " + err
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    } finally {
+    const body = {
+        user_id: oldUserValuesBeforeEdit!.user_id,
+        email: email.value,
+        password: (password.value == null || password.value == "") ? "" : password.value,
+        confirm_password: (confirmPassword.value == null || confirmPassword.value == "") ? "" : confirmPassword.value,
+        user_type: userType.value,
+    }
+    console.log(body)
+    await fetchWrapper.put(url, body).finally(() => {
         showAlertDialog.value = true
         showFormDialog.value = false
         isInProgress.value = false
-    }
+    })
+    alertDialogMessage.value = "Sucessfully edited user"
+
+    // let temp: UserInterface[] = rows.value.map((value: QTr, index: number, array: QTr[]) => {
+    //     return value.$data
+    // }) as UserInterface[]
+    await getAllUsers() // less efficient than directly putting it into the table but this works.
+
+    //I don't know how to do these:
+    // ('temp', temp)
+    // temp = temp.slice(temp.indexOf(oldUserValuesBeforeEdit!), 1)
+    // ('temp', temp)
+    // temp.push({ user_id: parseInt(temp[temp.length - 1].user_id) + 1, email: email.value, user_type: userType.value })
+    // rows.value = temp as QTr[]
+    oldUserValuesBeforeEdit = null
+    resetForm()
+
+
+
 })
 
 async function onDelete(user_id: number) {
     const url = `${import.meta.env.VITE_API_URL}/DeleteUser/`
     isDeleteInProgress.value = true
-    try {
-        const body = {
-            user_id: user_id,
-        }
+    const body = {
+        user_id: user_id,
+    }
 
-        await fetchWrapper.delete(url, body)
-
-        alertDialogMessage.value = "Sucessfully Deleted user"
-
-        await getAllUsers() // less efficient than directly putting it into the table but this works.
-
-    } catch (err: any) {
-        alertDialogMessage.value = "Error in Deleting User: " + err
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    } finally {
+    await fetchWrapper.delete(url, body).finally(() => {
         isDeleteInProgress.value = false
         showAlertDialog.value = true
         showDeleteConfirmationDialog.value = false
-    }
+
+    })
+
+    alertDialogMessage.value = "Sucessfully Deleted user"
+
+    await getAllUsers() // less efficient than directly putting it into the table but this works.
+
 }
 
 </script>

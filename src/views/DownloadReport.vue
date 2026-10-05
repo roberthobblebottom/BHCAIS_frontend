@@ -100,6 +100,7 @@ import { downloadZip, type InputWithoutMeta } from 'client-zip';
 import { Buffer } from 'buffer';
 import { catalogueNames, getHeaderDict } from '../constants';
 import { useAuthStore } from '../stores/auth.store';
+import { symRoundedClosedCaptionDisabled } from '@quasar/extras/material-symbols-rounded';
 
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
@@ -220,7 +221,6 @@ const onSubmit = handleSubmit(async (_values) => {
             if (catalogueFieldAndSearchTermPair[0] == null || catalogueFieldAndSearchTermPair[1] == null)
                 continue
             const fieldsWithCatPrefix = catalogueFieldAndSearchTermPair[0]!.toString().split(",")
-            console.log("-------", fieldsWithCatPrefix)
             for (const fieldWithCatPrefix of fieldsWithCatPrefix) {
                 const field = fieldWithCatPrefix.replace(cat, "").trim()
 
@@ -233,7 +233,6 @@ const onSubmit = handleSubmit(async (_values) => {
         if (Object.keys(searchTermsToBeSent[cat]).length == 0)
             delete searchTermsToBeSent[cat]
     }
-    console.log("search term", searchTermsToBeSent)
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermsToBeSent },
@@ -245,18 +244,11 @@ const onSubmit = handleSubmit(async (_values) => {
     cataloguesWithNoResults.value = []
     showNoResultMessage.value = false
     let reader = null
-    let response = null
 
-    try {
-        response = await streamFilesDownload(url, queryData)
-        reader = response.body!.getReader()
-    }
-    catch (err: any) {
-        console.log("The response is " + err + " please check on the backend for any errors")
-        if (err.toString().includes("NetworkError")) {
-            useAuthStore().logout()
-        }
-    }
+    reader = await streamFilesDownload(url, queryData)
+
+
+
 
     // reading the chunks streamed
     let isReadDone = false;
@@ -303,7 +295,6 @@ const onSubmit = handleSubmit(async (_values) => {
     // const results: any = []
     const noResultString = "no results"
 
-    console.log(results)
 
     for (const catalogName of Object.keys(results)) {
         const resultData: any[] = results[catalogName]!

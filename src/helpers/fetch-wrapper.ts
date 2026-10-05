@@ -36,7 +36,7 @@ export const streamFilesDownload = (url: string, body: any = null) => {
         requestOptions.body = JSON.stringify(body)
     }
 
-    return fetch(url, requestOptions)
+    return fetch(url, requestOptions).then(handleResponseStreaming)
 
 }
 
@@ -91,28 +91,47 @@ function authHeader(url: string, header: any): HeadersInit {
 }
 
 function handleResponse(response: Response, isJSON: boolean = true) {
+    const statusCode = response.status
     return response.text().then(text => {
         const data = isJSON ? text && JSON.parse(text) : text
-
         if (!response.ok) {
             const { user, logout } = useAuthStore()
-            console.log(user)
-            if ([401, 403].includes(response.status) && user)
+            if ([401, 403].includes(statusCode) && user) {
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
+                console.log(statusCode)
+                console.log("logging out")
                 logout()
-
+            }
             const error = data.details
             return Promise.reject(error)
         }
         return data
-    })
+    }).catch((err) => console.warn(err))
 }
-
+function handleResponseStreaming(response: Response, isJSON: boolean = true) {
+    const statusCode = response.status
+    const { user, logout } = useAuthStore()
+    if (!response.ok && [401].includes(statusCode) && user) {
+        console.log(statusCode)
+        console.log("logging out")
+        logout()
+    }
+    let reader = null
+    try {
+        reader = response.body!.getReader()
+    }
+    catch (err) {
+        console.warn(err)
+    }
+    return reader
+}
 function handleResponseForTemplateFiles(response: Response) {
+
+    const statusCode = response.status
     return response.blob().then(data => {
         if (!response.ok) {
             const { user, logout } = useAuthStore()
-            if ([401, 403].includes(response.status) && user)
+            if ([401, 403].includes(statusCode) && user)
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
                 logout()
 
@@ -121,3 +140,5 @@ function handleResponseForTemplateFiles(response: Response) {
         return data
     })
 }
+
+

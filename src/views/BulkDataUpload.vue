@@ -92,7 +92,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p> These files will be removed</p>
             </div>
@@ -144,7 +144,6 @@ let authStore = useAuthStore()
 const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`);
 
 const headers = ref(
-
     [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]
 )
 
@@ -239,6 +238,7 @@ const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; })
     if (info.xhr.status == 0)
         return
     dialogHeader.value = "Error: Upload Failed"
+    console.log('info', info)
     dialogMessage.value = JSON.parse(info.xhr.response).detail
     dialogPersistentIsEnabled.value = true
     fileValidationViolationdialogEnable.value = true

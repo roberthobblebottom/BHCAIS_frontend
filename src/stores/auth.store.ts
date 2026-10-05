@@ -2,11 +2,13 @@ import { defineStore } from 'pinia'
 import { login } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
+import { nextTick } from 'vue';
+import isPassedThreshold from '../NavBar.vue'
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
         // initialize state from local storage to enable user to stay logged in
-        user: JSON.parse(localStorage.getItem('user')!),
+        user: JSON.parse(sessionStorage.getItem('user')!),
         returnUrl: null
     }),
     actions: {
@@ -16,13 +18,14 @@ export const useAuthStore = defineStore(
                 // update pinia state
                 this.user = user;
                 // store user details and jwt in local storage to keep user logged in between page refreshes
-                localStorage.setItem('email', JSON.stringify(user.email));
-                localStorage.setItem('user_id', JSON.stringify(user.user_id));
-                localStorage.setItem('user_type', JSON.stringify(user.user_type))
+                sessionStorage.setItem('email', JSON.stringify(user.email));
+                sessionStorage.setItem('user_id', JSON.stringify(user.user_id));
+                sessionStorage.setItem('user_type', JSON.stringify(user.user_type))
                 //tokens needed for backend routes user authentication
-                localStorage.setItem('token', JSON.stringify(user.token))
+                sessionStorage.setItem('token', JSON.stringify(user.token))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart');
+
             }
             catch (error) {
                 return Promise.reject(error);
@@ -30,7 +33,7 @@ export const useAuthStore = defineStore(
         },
         logout() {
             this.user = null;
-            localStorage.clear();
+            sessionStorage.clear();
             router.push('/Login');
         }
     },
