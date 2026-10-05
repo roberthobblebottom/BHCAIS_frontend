@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-//import tsconfigPaths from 'vite-tsconfig-paths';
+//import tsconfigPaths from 'vite-tsconfig-paths'
 import { join } from 'node:path'
 import { quasar } from '@quasar/vite-plugin'
 export default defineConfig({
@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
- //   tsconfigPaths(),
+    //   tsconfigPaths(),
     // @quasar/plugin-vite options list:
     // https://github.com/quasarframework/quasar/blob/dev/vite-plugin/index.d.ts
     quasar({
@@ -23,17 +23,17 @@ export default defineConfig({
       // '@': path.resolve(__dirname,"./src")
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
- tsconfigPaths: true
+    tsconfigPaths: true
   },
-    build: {
-        rollupOptions: {
-            output:{
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        return id.toString().split('node_modules/')[1].split('/')[0].toString();
-                    }
-                }
-            }
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+          }
         }
+      }
     }
+  }
 })

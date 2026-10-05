@@ -6,8 +6,8 @@ import {
     libraryAndArchivesSqlStringColumns,
     legacyAndMiscellaneousItemsReportSqlStringColumns,
 
-} from '../constants';
-import * as xlsx from 'xlsx';
+} from '../constants'
+import * as xlsx from 'xlsx'
 
 function _send_message_back(name_of_file_with_headers_only: string, name_of_file_with_incorrect_header: string) {
     //this function may send back files with validation violations, if not they will be empty strings below:
@@ -32,15 +32,15 @@ function isHeadersCorrect(headersString: string, fileName: string) {
 }
 
 self.onmessage = (event: MessageEvent) => {
-    const file = event.data.file;
+    const file = event.data.file
 
     const reader = new FileReader()
     if (file.name.includes('.xlsx')) {
         reader.onload = (e: ProgressEvent<FileReader>) => {
-            const data = new Uint8Array(e.target?.result as ArrayBuffer);
-            const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 });
-            const sheetName = workbook.SheetNames[0]!;
-            const worksheet: any = workbook.Sheets[sheetName];
+            const data = new Uint8Array(e.target?.result as ArrayBuffer)
+            const workbook = xlsx.read(data, { type: 'array', sheetRows: 2 })
+            const sheetName = workbook.SheetNames[0]!
+            const worksheet: any = workbook.Sheets[sheetName]
 
             // Extract headers (first row)
             let tempHeadersValues: any[] = xlsx.utils.sheet_to_json(worksheet, {

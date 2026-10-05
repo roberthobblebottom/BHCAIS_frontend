@@ -200,11 +200,11 @@
 </style>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
-import { fetchWrapper } from '../helpers/fetch-wrapper';
-import { QTable, QTr } from 'quasar';
+import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue'
+import { fetchWrapper } from '../helpers/fetch-wrapper'
+import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
-import { useAuthStore } from '../stores/auth.store';
+import { useAuthStore } from '../stores/auth.store'
 
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
@@ -236,7 +236,7 @@ defineExpose({ tableRef })
 
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
-    showTable.value = true;
+    showTable.value = true
     searchTerm.value = ""
     pagination.value.sortBy = ''
     selectedRowsToBeDeleted.value = []
@@ -352,7 +352,7 @@ async function deleteSelected() {
 }
 
 function showConfirmDeleteAllDialogFunction() {
-    showConfirmDeleteAllDialog.value = true;
+    showConfirmDeleteAllDialog.value = true
 }
 
 async function deleteAllCatalogueData() {

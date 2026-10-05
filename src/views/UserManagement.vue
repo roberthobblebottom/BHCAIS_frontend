@@ -300,7 +300,6 @@ const onEdit = handleSubmit(async () => {
         confirm_password: (confirmPassword.value == null || confirmPassword.value == "") ? "" : confirmPassword.value,
         user_type: userType.value,
     }
-    console.log(body)
     await fetchWrapper.put(url, body).finally(() => {
         showAlertDialog.value = true
         showFormDialog.value = false

@@ -81,9 +81,9 @@
 </style>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
-import { useAuthStore } from './stores/auth.store.ts';
-import { ref, watch, computed } from 'vue';
+import { RouterLink, RouterView } from 'vue-router'
+import { useAuthStore } from './stores/auth.store.ts'
+import { ref, watch, computed } from 'vue'
 
 
 import { onMounted, onBeforeUnmount } from 'vue'
@@ -108,17 +108,17 @@ const handleWindowSizeChange = () => {
         miniState.value = false
         isPassedWidthThreshold.value = false
     }
-};
+}
 
 
 onMounted(() => {
-    window.addEventListener("resize", handleWindowSizeChange);
-    handleWindowSizeChange();
-});
+    window.addEventListener("resize", handleWindowSizeChange)
+    handleWindowSizeChange()
+})
 onBeforeUnmount(() => {
     console.log('on before unmount')
-    window.removeEventListener("resize", handleWindowSizeChange);
-});
+    window.removeEventListener("resize", handleWindowSizeChange)
+})
 
 watch(isUserLoggedIn, (_value: boolean) => {
     miniState.value = isPassedWidthThreshold.value

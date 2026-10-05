@@ -126,14 +126,14 @@
 }
 </style>
 <script setup lang='ts'>
-import { ref, type Ref } from 'vue';
-import { QUploader, QDialog } from 'quasar';
+import { ref, type Ref } from 'vue'
+import { QUploader, QDialog } from 'quasar'
 
-import { getTemplatesFiles } from '../helpers/fetch-wrapper';
-import { useAuthStore } from '../stores/auth.store';
+import { getTemplatesFiles } from '../helpers/fetch-wrapper'
+import { useAuthStore } from '../stores/auth.store'
 
 const dialogHeader = ref("")
-const dialogMessage = ref("");
+const dialogMessage = ref("")
 const fileValidationViolationdialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
@@ -141,7 +141,7 @@ const fileUploaderRef = ref()
 
 
 let authStore = useAuthStore()
-const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`);
+const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`)
 
 const headers = ref(
     [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]
@@ -154,16 +154,16 @@ let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
 
 
 async function downloadTemplatesForTheCatalogs() {
-    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token;
+    const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token
     try {
         getTemplatesFiles(url).then((download) => {
-            var url = window.URL.createObjectURL(download);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = "templates for the catalogs";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            var url = window.URL.createObjectURL(download)
+            var a = document.createElement('a')
+            a.href = url
+            a.download = "templates for the catalogs"
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
         })
     }
     catch (err: any) {
@@ -190,7 +190,7 @@ const onAddedListener = (files: readonly File[]) => {
             }
             const worker = new Worker(new URL('../helpers/fileCheckerWorker.ts', import.meta.url), {
                 type: 'module'
-            });
+            })
             worker.onmessage = (event) => {
                 workersFinishedWork.push(file.name)
                 if (event.data.name_of_file_with_headers_only != '') {
@@ -216,15 +216,15 @@ const onAddedListener = (files: readonly File[]) => {
             worker.postMessage({ file: file })
 
             worker.onerror = (error) => {
-                console.error('Worker error:', error);
-                worker.terminate();
+                console.error('Worker error:', error)
+                worker.terminate()
             }
         })
     })
     //Promise all then is very slow so I don't use it.
 
 }
-const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
+const onUploadedListener = (info: { files: readonly any[], xhr: XMLHttpRequest }) => {
     dialogHeader.value = "Successful"
     dialogMessage.value = "Sucessfully uploaded file(s)"
     dialogPersistentIsEnabled.value = false
@@ -233,7 +233,7 @@ const onUploadedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; 
     fileUploaderRef.value.reset()
 }
 
-const onFailedListener = (info: { files: readonly any[]; xhr: XMLHttpRequest; }) => {
+const onFailedListener = (info: { files: readonly any[], xhr: XMLHttpRequest }) => {
     // this listener calls out even when there is not Failure of upload so i have to check:
     if (info.xhr.status == 0)
         return
