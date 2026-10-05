@@ -1,12 +1,12 @@
 <template>
     <div class=" common">
-        <v-row>
+        <div>
             <h3 class="text-weight-bold">Welcome to BHCAIS</h3>
-        </v-row>
-        <v-row>
+        </div>
+        <div>
             <h4 class="q-mb-md">Quick Start:</h4>
-        </v-row>
-        <v-row class="quick-start">
+        </div>
+        <div class="quick-start">
             <p>
                 The Biodiversity Histories Consolidated Artifact Inventory System (BHCAIS) is an intermediate data
                 staging platform. Allowing seamless uploading of artifact inventory data with minimal fuss and open
@@ -103,7 +103,7 @@
                 If there is no search results for given catalog or given search terms,
                 no such csv will be downloaded.
             </p> -->
-        </v-row>
+        </div>
     </div>
 </template>
 <style scoped>
