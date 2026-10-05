@@ -115,8 +115,6 @@
     height: 100%;
 }
 
-
-
 .card-section-avatar {
     margin-bottom: 1%;
 }
@@ -139,14 +137,12 @@ const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
 
 
-
 let authStore = useAuthStore()
 const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`)
 
 const headers = ref(
     [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]
 )
-
 const isCheckingFilesValidity = ref(false)
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])

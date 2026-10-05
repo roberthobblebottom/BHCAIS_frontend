@@ -249,7 +249,7 @@ async function onRequestCatalogData(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filterStr = props.filter
     isLoadingTable.value = true
-    console.log(rowsPerPage)
+
     const params = new URLSearchParams({
         catalogue_name: catalogueName.value,
         rows_per_page: rowsPerPage.toString(),

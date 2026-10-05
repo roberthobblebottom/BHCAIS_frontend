@@ -198,7 +198,6 @@ const [isEdit, _isEditProps] = defineField("isEdit" as MaybeRefOrGetter, quasarC
 
 const getAllUsers = async () => {
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
-    // const header = { "Cached-Content": "no-cache" }
     const response = await noCacheRequestFunction(url, 'get')
 
     const results = response.results
@@ -283,10 +282,6 @@ const onCreate = handleSubmit(async () => {
     })
     rows.value = temp
     resetForm()
-
-
-
-
 })
 
 const onEdit = handleSubmit(async () => {
@@ -340,9 +335,7 @@ async function onDelete(user_id: number) {
     })
 
     alertDialogMessage.value = "Sucessfully Deleted user"
-
     await getAllUsers() // less efficient than directly putting it into the table but this works.
-
 }
 
 </script>

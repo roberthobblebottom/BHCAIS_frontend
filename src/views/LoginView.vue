@@ -89,9 +89,7 @@ const onSubmit = handleSubmit(async (_values) => {
             apiError.value = error
             return error
         })
-
     resetForm()
-
     isSubmitting.value = false
 })
 </script>

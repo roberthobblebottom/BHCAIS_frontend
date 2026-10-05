@@ -74,9 +74,7 @@
 }
 
 .row {
-
     margin-top: 5% !important;
-
 }
 </style>
 
@@ -98,7 +96,7 @@ const widthThreshold = ref(700)
 const isPassedWidthThreshold = ref(false)
 
 const isUserLoggedIn = computed(() => !!authStore.user)
-// useWindowSize.js
+
 const handleWindowSizeChange = () => {
     const width = window.innerWidth
     if (width < widthThreshold.value) {
@@ -116,7 +114,6 @@ onMounted(() => {
     handleWindowSizeChange()
 })
 onBeforeUnmount(() => {
-    console.log('on before unmount')
     window.removeEventListener("resize", handleWindowSizeChange)
 })
 

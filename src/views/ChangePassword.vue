@@ -124,6 +124,7 @@ const onSubmit = handleSubmit(async (_values) => {
     isSubmitting.value = true
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
+
     response = await fetchWrapper.put(url, {
         'username': useAuthStore().user.email,
         'old_password': oldPassword.value,
@@ -135,6 +136,7 @@ const onSubmit = handleSubmit(async (_values) => {
         showAlert.value = true
         isError.value = true
     }).finally(() => { resetForm() })
+
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
         showAlert.value = true

@@ -13,16 +13,11 @@ export const useAuthStore = defineStore(
         async login(username: string, password: string) {
             try {
                 const user = await login(`${baseUrl}/Login`, { username, password })
-                // update pinia state
+
                 this.user = user
-                // store user details and jwt in local storage to keep user logged in between page refreshes
-                sessionStorage.setItem('email', JSON.stringify(user.email))
-                sessionStorage.setItem('user_id', JSON.stringify(user.user_id))
-                sessionStorage.setItem('user_type', JSON.stringify(user.user_type))
-                //tokens needed for backend routes user authentication
+
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart')
-
             }
             catch (error) {
                 return Promise.reject(error)
