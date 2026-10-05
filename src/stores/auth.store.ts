@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { login } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
 const baseUrl = `${import.meta.env.VITE_API_URL}`
-import { nextTick } from 'vue'
-import isPassedThreshold from '../NavBar.vue'
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
@@ -22,7 +20,6 @@ export const useAuthStore = defineStore(
                 sessionStorage.setItem('user_id', JSON.stringify(user.user_id))
                 sessionStorage.setItem('user_type', JSON.stringify(user.user_type))
                 //tokens needed for backend routes user authentication
-                sessionStorage.setItem('token', JSON.stringify(user.token))
                 // redirect to previous url or default to home page
                 router.push(this.returnUrl || '/QuickStart')
 

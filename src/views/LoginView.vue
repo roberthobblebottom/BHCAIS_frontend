@@ -86,7 +86,6 @@ const onSubmit = handleSubmit(async (_values) => {
     apiError.value = ""
     await authStore.login(email.value, password.value)
         .catch(error => {
-
             apiError.value = error
             return error
         })

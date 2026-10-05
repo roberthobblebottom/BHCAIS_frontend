@@ -36,8 +36,23 @@ export const streamFilesDownload = (url: string, body: any = null) => {
         requestOptions.body = JSON.stringify(body)
     }
 
-    return fetch(url, requestOptions).then(handleResponseStreaming)
-
+    return fetch(url, requestOptions).then(response => {
+        const statusCode = response.status
+        const { user, logout } = useAuthStore()
+        if (!response.ok && [401].includes(statusCode) && user) {
+            console.log(statusCode)
+            console.log("logging out")
+            logout()
+        }
+        let reader = null
+        try {
+            reader = response.body!.getReader()
+        }
+        catch (err) {
+            console.warn(err)
+        }
+        return reader
+    })
 }
 
 //for deletion of user so that it will also fetch the updated version of the login_user table
@@ -65,7 +80,13 @@ export const login = (url: string, body: any) => {
         requestOptions.body = formData
         // Don't set Content-Type as header — browser will set it automatically
     }
-    return fetch(url, requestOptions).then(handleResponse)
+    return fetch(url, requestOptions).then(async response => {
+        const text = await response.text()
+        const data = text && JSON.parse(text)
+        if (!response.ok)
+            return Promise.reject(data.detail)
+        return data
+    })
 }
 
 export const getTemplatesFiles = async (url: string) => {
@@ -73,8 +94,18 @@ export const getTemplatesFiles = async (url: string) => {
         method: 'GET',
         headers: authHeader(url, {})
     }
-    const response = await fetch(url, requestOptions)
-    return handleResponseForTemplateFiles(response)
+    return await fetch(url, requestOptions).then((response: Response) => {
+        const statusCode = response.status
+        return response.blob().then(data => {
+            if (!response.ok) {
+                const { user, logout } = useAuthStore()
+                if ([401, 403].includes(statusCode) && user)
+                    logout()
+                return Promise.reject('error downloading file(s)')
+            }
+            return data
+        })
+    })
 }
 
 function authHeader(url: string, header: any): HeadersInit {
@@ -107,38 +138,6 @@ function handleResponse(response: Response, isJSON: boolean = true) {
         }
         return data
     }).catch((err) => console.warn(err))
-}
-function handleResponseStreaming(response: Response, isJSON: boolean = true) {
-    const statusCode = response.status
-    const { user, logout } = useAuthStore()
-    if (!response.ok && [401].includes(statusCode) && user) {
-        console.log(statusCode)
-        console.log("logging out")
-        logout()
-    }
-    let reader = null
-    try {
-        reader = response.body!.getReader()
-    }
-    catch (err) {
-        console.warn(err)
-    }
-    return reader
-}
-function handleResponseForTemplateFiles(response: Response) {
-
-    const statusCode = response.status
-    return response.blob().then(data => {
-        if (!response.ok) {
-            const { user, logout } = useAuthStore()
-            if ([401, 403].includes(statusCode) && user)
-                // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
-                logout()
-
-            return Promise.reject('error downloading file(s)')
-        }
-        return data
-    })
 }
 
 
