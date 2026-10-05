@@ -246,7 +246,9 @@ const onSubmit = handleSubmit(async (_values) => {
     showNoResultMessage.value = false
     let reader = null
     let response = null
+
     try {
+        console.log(queryData)
         response = await streamFilesDownload(url, queryData)
         reader = response.body!.getReader()
     }

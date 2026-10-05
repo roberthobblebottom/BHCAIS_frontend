@@ -270,7 +270,6 @@ const onCreate = handleSubmit(async () => {
             password: password.value,
             confirm_password: confirmPassword.value,
             user_type: userType.value,
-            token: authStore.user.token
         })
 
         alertDialogMessage.value = "Sucessfully created user"
@@ -306,11 +305,11 @@ const onEdit = handleSubmit(async () => {
         const body = {
             user_id: oldUserValuesBeforeEdit!.user_id,
             email: email.value,
-            password: password.value == null ? "" : password.value,
-            confirm_password: confirmPassword.value == null ? "" : confirmPassword.value,
+            password: (password.value == null || password.value == "") ? "" : password.value,
+            confirm_password: (confirmPassword.value == null || confirmPassword.value == "") ? "" : confirmPassword.value,
             user_type: userType.value,
-            token: authStore.user.token
         }
+        console.log(body)
         await fetchWrapper.put(url, body)
 
         alertDialogMessage.value = "Sucessfully edited user"
@@ -347,7 +346,6 @@ async function onDelete(user_id: number) {
     try {
         const body = {
             user_id: user_id,
-            token: authStore.user.token
         }
 
         await fetchWrapper.delete(url, body)

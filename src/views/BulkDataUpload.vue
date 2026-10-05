@@ -14,7 +14,7 @@
 
             <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
                 ref="fileUploaderRef" :url="uploadUrl" field-name="files" method="POST" @uploaded="onUploadedListener"
-                @failed="onFailedListener" color="grey-9" batch>
+                @failed="onFailedListener" color="grey-9" batch :headers="headers">
 
                 <!-- header -->
                 <template v-slot:header="scope">
@@ -92,7 +92,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p> These files will be removed</p>
             </div>
@@ -138,8 +138,15 @@ const fileValidationViolationdialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
 const fileUploaderRef = ref()
 
+
+
 let authStore = useAuthStore()
-const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}&token=${authStore.user.token}`);
+const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`);
+
+const headers = ref(
+
+    [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]
+)
 
 const isCheckingFilesValidity = ref(false)
 let names_of_files_with_headers_only: Ref<string[]> = ref([])

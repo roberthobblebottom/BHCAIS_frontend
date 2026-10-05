@@ -15,7 +15,9 @@ function request(method: string) {
             headers: authHeader(url, {})
         }
         if (body) {
-            requestOptions.headers = { 'Content-Type': 'application/json' }
+            requestOptions.headers = {
+                ...{ 'Content-Type': 'application/json' }, ...requestOptions.headers
+            }
             requestOptions.body = JSON.stringify(body)
         }
         return fetch(url, requestOptions).then(handleResponse)
@@ -28,9 +30,12 @@ export const streamFilesDownload = (url: string, body: any = null) => {
         headers: authHeader(url, {})
     }
     if (body) {
-        requestOptions.headers = { 'Content-Type': 'application/json' }
+        requestOptions['headers'] = {
+            ...{ 'Content-Type': 'application/json' }, ...requestOptions.headers
+        }
         requestOptions.body = JSON.stringify(body)
     }
+
     return fetch(url, requestOptions)
 
 }
