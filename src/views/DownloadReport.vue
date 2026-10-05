@@ -93,14 +93,14 @@
 <script setup lang="ts">
 //partial credits: https://stackblitz.com/edit/vee-validate-v4-quasar-framework?file=src%2FApp.vue
 import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { streamFilesDownload } from '../helpers/fetch-wrapper';
-import { downloadZip, type InputWithoutMeta } from 'client-zip';
-import { Buffer } from 'buffer';
-import { catalogueNames, getHeaderDict } from '../constants';
-import { useAuthStore } from '../stores/auth.store';
-import { symRoundedClosedCaptionDisabled } from '@quasar/extras/material-symbols-rounded';
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { streamFilesDownload } from '../helpers/fetch-wrapper'
+import { downloadZip, type InputWithoutMeta } from 'client-zip'
+import { Buffer } from 'buffer'
+import { catalogueNames, getHeaderDict } from '../constants'
+import { useAuthStore } from '../stores/auth.store'
+import { symRoundedClosedCaptionDisabled } from '@quasar/extras/material-symbols-rounded'
 
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref(["Select All"])
@@ -120,18 +120,18 @@ const schema = yup.object().shape({
         .of(yup.string()
             .oneOf(catalogueNames, 'Invalid Catalogue'))
         .required("Selection of catalogues is required"),
-});
+})
 
 const { defineField, handleSubmit } = useForm({
     validationSchema: schema,
     initialValues: { selectCatalogues: [] },
-});
+})
 const quasarConfig = (state: any) => ({
     props: {
         error: !!state.errors[0],
         'error-message': state.errors[0],
     },
-});
+})
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
 
 
@@ -139,13 +139,13 @@ const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues"
 
 
 
-function onCatalogueSelectAdd(details: { index: number; value: string; }) {
+function onCatalogueSelectAdd(details: { index: number, value: string }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.push(details.value)
     setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
 }
 
-function onCatalogueSelectRemove(details: { index: number; value: string; }) {
+function onCatalogueSelectRemove(details: { index: number, value: string }) {
     const currentlySelected: string[] = selectCatalogues.value!
     currentlySelected.splice(currentlySelected.indexOf(details.value), 1)
     setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected)
@@ -164,7 +164,7 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
     allCatalogueFields.value = ["Select All"]
     filteredCatalogueFields.value = ["Select All"]
     for (const x of currentlySelected) {
-        let key = x as keyof typeof getHeaderDict; // for using string as keys for the object
+        let key = x as keyof typeof getHeaderDict // for using string as keys for the object
         const newFields = []
         for (const x1 of getHeaderDict[key])
             newFields.push(key + " " + x1)
@@ -251,13 +251,13 @@ const onSubmit = handleSubmit(async (_values) => {
 
 
     // reading the chunks streamed
-    let isReadDone = false;
+    let isReadDone = false
     const textDecoder = new TextDecoder()
     let results: { [index: string]: any[] } = {}
     let currentCatalogue = ""
     let buffer = ""
     while (!isReadDone) {
-        let { value, done } = await reader!.read();
+        let { value, done } = await reader!.read()
         isReadDone = done
         if (isReadDone)
             break
@@ -351,6 +351,6 @@ const onSubmit = handleSubmit(async (_values) => {
 
     if (cataloguesWithNoResults.value.length > 0)
         showCataloguesWithNoResultsAlertDialog.value = true
-});
+})
 
 </script>

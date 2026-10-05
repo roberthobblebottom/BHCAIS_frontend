@@ -111,13 +111,13 @@
 }
 </style>
 <script setup lang="ts">
-import { QForm, QTr } from 'quasar';
-import { onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue';
-import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper';
-import { useForm } from 'vee-validate';
+import { QForm, QTr } from 'quasar'
+import { onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue'
+import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper'
+import { useForm } from 'vee-validate'
 
-import * as yup from 'yup';
-import { passwordRegex, passwordError } from '../constants';
+import * as yup from 'yup'
+import { passwordRegex, passwordError } from '../constants'
 
 import commonPasswords from '../common-passwords.txt?raw'
 import { QBtn } from 'quasar'
@@ -174,21 +174,21 @@ const schema = yup.object().shape({
     ),
     confirmPassword: yup.string().oneOf([yup.ref('password'), ""], "Passwords must match."),
     userType: yup.string().oneOf(['normal', 'admin']).required("User type is required")
-});
+})
 
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
         terms: false,
     },
-});
+})
 
 const quasarConfig = (state: any) => ({
     props: {
         error: !!state.errors[0],
         'error-message': state.errors[0],
     },
-});
+})
 
 const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfig)
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)

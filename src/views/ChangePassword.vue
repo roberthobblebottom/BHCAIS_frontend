@@ -73,13 +73,13 @@
 
 
 <script setup lang='ts'>
-import { useForm } from 'vee-validate';
-import * as Yup from 'yup';
-import { fetchWrapper } from '../helpers/fetch-wrapper.ts';
-import { passwordError, passwordRegex } from '../constants.ts';
+import { useForm } from 'vee-validate'
+import * as Yup from 'yup'
+import { fetchWrapper } from '../helpers/fetch-wrapper.ts'
+import { passwordError, passwordRegex } from '../constants.ts'
 import commonPasswords from '../common-passwords.txt?raw'
-import { ref, type MaybeRefOrGetter } from 'vue';
-import { useAuthStore } from '../stores/auth.store.ts';
+import { ref, type MaybeRefOrGetter } from 'vue'
+import { useAuthStore } from '../stores/auth.store.ts'
 import { QBtn } from 'quasar'
 
 QBtn.props.noCaps = { type: Boolean, default: true }
@@ -100,21 +100,21 @@ const schema = Yup.object().shape({
         // ,
         .notOneOf(commonPasswords.split("\n"), "The password is too common"),
     confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword'), ""], "New Passwords must match.")
-});
+})
 
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
         terms: false,
     },
-});
+})
 
 const quasarConfig = (state: any) => ({
     props: {
         error: !!state.errors[0],
         'error-message': state.errors[0],
     },
-});
+})
 
 const [oldPassword, oldPasswordProps] = defineField("oldPassword" as MaybeRefOrGetter, quasarConfig)
 const [newPassword, newPasswordProps] = defineField("newPassword" as MaybeRefOrGetter, quasarConfig)
@@ -137,7 +137,7 @@ const onSubmit = handleSubmit(async (_values) => {
     }).finally(() => { resetForm() })
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
-        showAlert.value = true;
+        showAlert.value = true
         isError.value = false
     }
 

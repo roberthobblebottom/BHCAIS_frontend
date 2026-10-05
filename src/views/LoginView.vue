@@ -51,10 +51,10 @@ h3 {
 </style>
 
 <script setup lang='ts'>
-import { useForm } from 'vee-validate';
-import * as Yup from 'yup';
-import { useAuthStore } from '../stores/auth.store.ts';
-import { type MaybeRefOrGetter, ref } from 'vue';
+import { useForm } from 'vee-validate'
+import * as Yup from 'yup'
+import { useAuthStore } from '../stores/auth.store.ts'
+import { type MaybeRefOrGetter, ref } from 'vue'
 const isSubmitting = ref(false)
 const showPassword = ref(false)
 const apiError = ref("")
@@ -62,34 +62,34 @@ const apiError = ref("")
 const schema = Yup.object().shape({
     email: Yup.string().email('Not a valid email format').required('Email is required'),
     password: Yup.string().required('Password is required')
-});
+})
 
 const { defineField, handleSubmit, resetForm } = useForm({
     validationSchema: schema,
     initialValues: {
         terms: false,
     },
-});
+})
 
 const quasarConfig = (state: any) => ({
     props: {
         error: !!state.errors[0],
         'error-message': state.errors[0],
     },
-});
+})
 const [email, emailProps] = defineField("email" as MaybeRefOrGetter, quasarConfig)
 const [password, passwordProps] = defineField("password" as MaybeRefOrGetter, quasarConfig)
 
 const onSubmit = handleSubmit(async (_values) => {
     isSubmitting.value = true
-    const authStore = useAuthStore();
+    const authStore = useAuthStore()
     apiError.value = ""
     await authStore.login(email.value, password.value)
         .catch(error => {
 
             apiError.value = error
             return error
-        });
+        })
 
     resetForm()
 

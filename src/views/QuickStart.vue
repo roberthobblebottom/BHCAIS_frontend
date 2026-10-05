@@ -122,9 +122,9 @@
 }
 </style>
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useAuthStore } from '../stores/auth.store';
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '../stores/auth.store'
 
-const authStore = useAuthStore();
-storeToRefs(authStore);
+const authStore = useAuthStore()
+storeToRefs(authStore)
 </script>
