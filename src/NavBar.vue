@@ -82,8 +82,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from './stores/auth.store.ts'
 import { ref, watch, computed } from 'vue'
-
-
 import { onMounted, onBeforeUnmount } from 'vue'
 import { QBtn } from 'quasar'
 

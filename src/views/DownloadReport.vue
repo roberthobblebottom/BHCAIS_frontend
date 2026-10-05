@@ -103,8 +103,8 @@ import { useAuthStore } from '../stores/auth.store'
 import { symRoundedClosedCaptionDisabled } from '@quasar/extras/material-symbols-rounded'
 
 const catalogueOptions = ref(catalogueNames)
-const allCatalogueFields: Ref<string[]> = ref(["Select All"])
-const filteredCatalogueFields: Ref<string[]> = ref(["Select All"])
+const allCatalogueFields: Ref<string[]> = ref([""])
+const filteredCatalogueFields: Ref<string[]> = ref([""])
 const selectedSearchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
 const errorMessage = ref("")
 const isDownloading = ref(false)
@@ -161,13 +161,14 @@ function onCatalogueSelectRemove(details: { index: number, value: string }) {
 }
 
 function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
-    allCatalogueFields.value = ["Select All"]
-    filteredCatalogueFields.value = ["Select All"]
+    allCatalogueFields.value = [""]
+    filteredCatalogueFields.value = [""]
     for (const x of currentlySelected) {
         let key = x as keyof typeof getHeaderDict // for using string as keys for the object
         const newFields = []
         for (const x1 of getHeaderDict[key])
             newFields.push(key + " " + x1)
+        newFields.push(key + " Select All")
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
         filteredCatalogueFields.value = allCatalogueFields.value
     }
@@ -175,7 +176,7 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
 
 function onCatalogueSelectClear() {
     clearAllSearchTerm()
-    allCatalogueFields.value = ["Select All"]
+    allCatalogueFields.value = [""]
     selectCatalogues.value = []
 }
 
@@ -189,7 +190,7 @@ function filterFunction(filterTerm: string, update: any) {
         update(() => {
             const new_fields = []
             for (const catalogueField of allCatalogueFields.value)
-                if (catalogueField.includes(filterTerm))
+                if (catalogueField.toLowerCase().includes(filterTerm.toLowerCase().trim()))
                     new_fields.push(catalogueField)
             filteredCatalogueFields.value = new_fields
         })
@@ -225,7 +226,7 @@ const onSubmit = handleSubmit(async (_values) => {
                 const field = fieldWithCatPrefix.replace(cat, "").trim()
 
                 //only add search term if the pair are not empty or is "Select All"
-                if ((fieldWithCatPrefix.includes(cat) && field != "" || field == "Select All")
+                if ((fieldWithCatPrefix.includes(cat) && field != "")
                     && (catalogueFieldAndSearchTermPair[1] as String).trim() != "")
                     searchTermsToBeSent[cat][field] = catalogueFieldAndSearchTermPair[1]
             }
