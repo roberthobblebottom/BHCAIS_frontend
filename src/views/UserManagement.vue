@@ -75,7 +75,7 @@
             </q-card-section>
         </q-card>
     </q-dialog>
-    <!-- delete confirmation dialog or Error dialog -->
+    <!-- delete confirmation dialog or Error dialog or sucess dialog-->
     <q-dialog v-model="showAlertDialog">
         <q-card class="column  items-center  justify-center
             q-pb-none  dialog ">
@@ -93,7 +93,7 @@
                         Delete
                     </q-btn>
                 </div>
-                <q-btn v-else label="Ok" color="primary" v-close-popup autofocus />
+                <q-btn class="q-mt-md" v-else label="Ok" color="primary" v-close-popup autofocus />
             </q-card-section>
         </q-card>
     </q-dialog>

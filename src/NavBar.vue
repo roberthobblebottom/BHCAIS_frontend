@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { useAuthStore } from './stores/auth.store.ts';
-import { ref } from 'vue';
+import { ref, onBeforeUpdate } from 'vue';
 
 import { QBtn } from 'quasar'
 
@@ -109,6 +109,7 @@ const handleWindowSizeChange = () => {
     }
 };
 
+
 onMounted(() => {
     window.addEventListener("resize", handleWindowSizeChange);
     handleWindowSizeChange();
@@ -116,5 +117,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener("resize", handleWindowSizeChange);
 });
-
+onBeforeUpdate(() => {
+    miniState.value = false
+})
 </script>

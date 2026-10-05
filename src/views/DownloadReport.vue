@@ -60,7 +60,7 @@
                     <q-avatar class="" icon="error" color="primary" text-color="white" />
                 </q-card-section>
 
-                <label> {{ showNoResultMessage
+                <label class="q-mt-md"> {{ showNoResultMessage
                     ? "All catalogues do not have results."
                     : "There are no results from these catalogues: \n"
                     + cataloguesWithNoResults.join(",")
@@ -248,7 +248,6 @@ const onSubmit = handleSubmit(async (_values) => {
     let response = null
 
     try {
-        console.log(queryData)
         response = await streamFilesDownload(url, queryData)
         reader = response.body!.getReader()
     }
