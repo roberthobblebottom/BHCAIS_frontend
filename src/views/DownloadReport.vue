@@ -168,7 +168,7 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
         const newFields = []
         for (const x1 of getHeaderDict[key])
             newFields.push(key + " " + x1)
-        newFields.push(key + " Select All")
+        // newFields.push(key + " Select All") /./ removed select all option
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
         filteredCatalogueFields.value = allCatalogueFields.value
     }
@@ -225,7 +225,7 @@ const onSubmit = handleSubmit(async (_values) => {
             for (const fieldWithCatPrefix of fieldsWithCatPrefix) {
                 const field = fieldWithCatPrefix.replace(cat, "").trim()
 
-                //only add search term if the pair are not empty or is "Select All"
+                //only add search term if the pair are not empty or 
                 if ((fieldWithCatPrefix.includes(cat) && field != "")
                     && (catalogueFieldAndSearchTermPair[1] as String).trim() != "") {
                     // override previous select all pairs with new ones, becareful 
