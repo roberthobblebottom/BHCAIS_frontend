@@ -168,7 +168,7 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
         const newFields = []
         for (const x1 of getHeaderDict[key])
             newFields.push(key + " " + x1)
-        // newFields.push(key + " Select All") /./ removed select all option
+        // newFields.push(key + " Select All") // removed select all option
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
         filteredCatalogueFields.value = allCatalogueFields.value
     }

@@ -38,8 +38,5 @@ jobs:
           cd ~/BHCAIS_frontend
           # Uses Deploy Key as I have set up before using commands like for id_ed25519 private key
           git pull origin main
-          cd ~/BHCAIS_backend
-
-          git pull origin main
-          bash build_and_run.sh
+           
           EOF
