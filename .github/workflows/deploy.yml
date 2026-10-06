@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: pull and build frontend
 
 on:
   push:
@@ -38,5 +38,5 @@ jobs:
           cd ~/BHCAIS_frontend
           # Uses Deploy Key as I have set up before using commands like for id_ed25519 private key
           git pull origin main
-           
+          npm run build 
           EOF
