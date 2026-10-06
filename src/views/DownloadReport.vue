@@ -227,13 +227,20 @@ const onSubmit = handleSubmit(async (_values) => {
 
                 //only add search term if the pair are not empty or is "Select All"
                 if ((fieldWithCatPrefix.includes(cat) && field != "")
-                    && (catalogueFieldAndSearchTermPair[1] as String).trim() != "")
-                    searchTermsToBeSent[cat][field] = catalogueFieldAndSearchTermPair[1]
+                    && (catalogueFieldAndSearchTermPair[1] as String).trim() != "") {
+                    // override previous select all pairs with new ones, becareful 
+                    let count = 0
+                    for (const x of Object.keys(searchTermsToBeSent[cat]))
+                        count += x.includes(field) ? 1 : 0
+
+                    searchTermsToBeSent[cat][field + "__" + count.toString()] = catalogueFieldAndSearchTermPair[1]
+                }
             }
         }
         if (Object.keys(searchTermsToBeSent[cat]).length == 0)
             delete searchTermsToBeSent[cat]
     }
+    console.log('searchTermsToBeSent', searchTermsToBeSent)
     const queryData = {
         selected_catalogues: [...selectCatalogues.value],
         search_terms: { ...searchTermsToBeSent },
