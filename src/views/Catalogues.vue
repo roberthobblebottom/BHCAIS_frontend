@@ -72,7 +72,7 @@
 
 
                             <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                                @click="props.toggleFullscreen" class="q-ml-md" label="full screen" />
+                                @click="props.toggleFullscreen" class="q-ml-md" label="full windowed mode" />
 
 
                             <p v-if="errorMessage != ''" class="col-4 q-ml-xl alert"> {{ errorMessage }}</p>
