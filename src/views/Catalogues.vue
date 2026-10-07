@@ -1,49 +1,36 @@
 <template>
     <div class="q-pa-md  common  ">
-        <div>
-            <h3>View Catalogues </h3>
-            <q-btn-dropdown color="primary" class="dropdown"
-                :label="catalogueName == '' ? 'Select A Catalogue to View/Delete' : catalogueName">
-                <q-list>
-                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("print")'>
-                        <q-item-section>
-                            <q-item-label>Prints</q-item-label>
-                        </q-item-section>
+        <div class="">
+            <h3 class="">View Catalogues </h3>
+            <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown " :options="catalogueNames"
+                label="Select a Catalogue to View or Delete"
+                @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
+                <template #selected>
+                    <div class="dropdown-selected-display">
+                        {{ formatOption(dropDownCatalogueValue) }}
+                    </div>
+                </template>
+                <template #option="scope">
+                    <q-item v-bind="scope.itemProps">
+                        <div>
+
+                            <q-item-section>
+                                <q-item-label>
+
+                                    {{ formatOption(scope.opt) }}
+
+                                </q-item-label>
+                            </q-item-section>
+                        </div>
                     </q-item>
-                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("oral_history")'>
-                        <q-item-section>
-                            <q-item-label>Oral Histories</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup @click='onCatalogDropDownItemClick("slide")'>
-                        <q-item-section>
-                            <q-item-label>Slides</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup @click="onCatalogDropDownItemClick('negative')">
-                        <q-item-section>
-                            <q-item-label>Negatives</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup @click="onCatalogDropDownItemClick('library_and_archive')">
-                        <q-item-section>
-                            <q-item-label>Library and Archives</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup
-                        @click="onCatalogDropDownItemClick('legacy_and_miscellaneous_items_report')">
-                        <q-item-section>
-                            <q-item-label>Legacy and Misc Items Report</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                </q-list>
-            </q-btn-dropdown>
+                </template>
+            </q-select>
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
-            <q-table class="table-div" v-if="showTable && catalogueName != ''" v-model:rows="rows" :columns="columns"
-                :row-key="rowKey" v-model:pagination="pagination" ref="tableRef" @request="onRequestCatalogData"
-                :visible-columns="visibleColumns" :filter="searchTerm" :loading="isLoadingTable" selection="multiple"
-                v-model:selected="selectedRowsToBeDeleted" @selection="onSelectionForDeletion" :wrap-cells="true"
-                :table-style="{ zoom: '60%' }" :dense="true">
+            <q-table class="table-div col" v-if="showTable && catalogueName != ''" v-model:rows="rows"
+                :columns="columns" :row-key="rowKey" v-model:pagination="pagination" ref="tableRef"
+                @request="onRequestCatalogData" :visible-columns="visibleColumns" :filter="searchTerm"
+                :loading="isLoadingTable" selection="multiple" v-model:selected="selectedRowsToBeDeleted"
+                @selection="onSelectionForDeletion" :wrap-cells="true" :table-style="{ zoom: '60%' }" :dense="true">
 
                 <!-- Headers -->
                 <template v-slot:top="props">
@@ -90,13 +77,13 @@
                 </template>
             </q-table>
 
-            <div v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
+            <div class="" v-if="showDeleteSelectedButton"> Selected: {{selectedRowsToBeDeleted.map((v) => {
                 return Object.values(v)[0]
             })}} </div>
             <p class="alert" v-if="!showTable"> {{ errorMessage }}</p>
         </div>
 
-        <div class="col-1 q-mt-xl" v-if="authStore.user.user_type == 'admin'">
+        <div class=" q-mt-xl" v-if="authStore.user.user_type == 'admin'">
             <q-btn color="red" size="md" @click="showConfirmDeleteAllDialogFunction">
                 <q-icon name="fa-solid fa-square-xmark" class="q-mr-sm" size="sm"></q-icon>
                 PURGE ALL DATA
@@ -163,11 +150,18 @@
 @import "../../public/css/main-content-variants.css";
 
 
+.dropdown-selected-display {
+    width: 100%;
+    font-size: x-large;
+    font-weight: 600;
+    text-align: center;
+}
 
 .dropdown {
-    font-size: x-large;
+    /* font-size: x-large; */
     width: 100%;
     border-radius: 15px;
+    text-align: center;
 }
 
 .alert {
@@ -206,7 +200,8 @@ import { fetchWrapper } from '../helpers/fetch-wrapper'
 import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
-
+import { catalogueNames } from '../constants'
+const dropDownCatalogueValue = ref("")
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
@@ -235,7 +230,23 @@ const authStore = useAuthStore()
 
 defineExpose({ tableRef })
 
+function formatOption(option: string) {
+    if (option == "")
+        return ""
+    else if (option == 'oral_history')
+        return 'Oral Histories'
+    else {
+        let option2 = option.replaceAll("_", " ").split(" ").map(
+            (word: string) => {
+                return word[0]?.toUpperCase() + word.substring(1)
+            }
+        ).join(" ")
+
+        return option2 + "s"
+    }
+}
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
+    console.log('onCatalogDropDownItemClick')
     catalogueName.value = catalogue_name1
     showTable.value = true
     searchTerm.value = ""
