@@ -38,7 +38,7 @@
                 </div>
                 <div class="">
                     <RouterLink to="/DownloadReport" :class="miniState ? 'mini-row' : 'row'">
-                        <i class="fas fa-file-arrow-down q-mr-sm"></i> {{ miniState ? '' : 'Download Reports(s)' }}
+                        <i class="fas fa-file-arrow-down q-mr-sm"></i> {{ miniState ? '' : 'Download Report(s)' }}
                     </RouterLink>
                 </div>
                 <div>
