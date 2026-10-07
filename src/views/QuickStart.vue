@@ -13,7 +13,7 @@
                 flexible data formatting.
             </p>
             <p>
-                Use the Navigation Menu located at the side of the screen to access the various functions.
+                <b> Use the Navigation Menu</b> located at the side of the screen to access the various functions.
             </p>
             <p>
                 <img alt="User
