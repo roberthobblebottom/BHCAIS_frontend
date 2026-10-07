@@ -100,7 +100,6 @@ import { downloadZip, type InputWithoutMeta } from 'client-zip'
 import { Buffer } from 'buffer'
 import { catalogueNames, getHeaderDict } from '../constants'
 import { useAuthStore } from '../stores/auth.store'
-import { symRoundedClosedCaptionDisabled } from '@quasar/extras/material-symbols-rounded'
 
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref([""])
@@ -265,11 +264,11 @@ const onSubmit = handleSubmit(async (_values) => {
     let currentCatalogue = ""
     let buffer = ""
     while (!isReadDone) {
-        let { value, done } = await reader!.read()
+        let { value: encodedValue, done } = await reader!.read()
         isReadDone = done
         if (isReadDone)
             break
-        const decodedValue = textDecoder.decode(value)
+        const decodedValue = textDecoder.decode(encodedValue)
 
         for (let lineString of decodedValue.split('\n')) {
             if (lineString == "")
@@ -278,7 +277,6 @@ const onSubmit = handleSubmit(async (_values) => {
                 lineString = buffer + lineString
             }
 
-            console.log("lineString", lineString, "\n")
             try {
                 const obj = JSON.parse(lineString)
                 if (Object.keys(obj)[0] == 'catalogue_name') {
@@ -303,12 +301,8 @@ const onSubmit = handleSubmit(async (_values) => {
     // const results: any = []
     const noResultString = "no results"
 
-
     for (const catalogName of Object.keys(results)) {
         const resultData: any[] = results[catalogName]!
-
-
-
         const header = Object.keys(resultData[0]).join(',') + "\n"
         //these two maps is for making the string csv compliant.
         const rows = resultData.map(
@@ -332,6 +326,7 @@ const onSubmit = handleSubmit(async (_values) => {
                     .replaceAll("\"", "").replaceAll("{", "")
                     .replaceAll("}", "").replace(":", " eq ")
                 : ""
+
 
         allCatalogueResultsInCSVs.push({
             //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
