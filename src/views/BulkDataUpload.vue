@@ -92,10 +92,10 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
-                    ? "Files with missing Serial Numbers: " + names_of_files_with_missing_serial_numbers.join(",")
+                    ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join(",")
                     : '' }}</p>
 
                 <p> These files will be removed</p>
