@@ -91,8 +91,17 @@ self.onmessage = (event: MessageEvent) => {
                 _send_message_back(file.name, '', '')
             } else if (!content[0]!.includes(',')) {
                 _send_message_back(file.name, '', '')
-            } else
-                _send_message_back('', '', '')
+            }
+
+            for (const row of content) {
+                const serialNumber = row.split(",")[0]
+                if (serialNumber == "" || serialNumber == null) {
+                    _send_message_back('', '', file.name)
+                    return
+                }
+
+            }
+            _send_message_back('', '', '')
         }
         reader.readAsText(file)
     }
