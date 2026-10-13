@@ -92,7 +92,11 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
+
+                <p>{{ names_of_files_with_missing_serial_numbers.length != 0
+                    ? "Files with missing Serial Numbers: " + names_of_files_with_missing_serial_numbers.join(",")
+                    : '' }}</p>
 
                 <p> These files will be removed</p>
             </div>
@@ -147,7 +151,7 @@ const isCheckingFilesValidity = ref(false)
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
-
+let names_of_files_with_missing_serial_numbers: Ref<string[]> = ref([])
 
 async function downloadTemplatesForTheCatalogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token
@@ -175,6 +179,7 @@ const onAddedListener = (files: readonly File[]) => {
     let workersFinishedWork = []
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
+    names_of_files_with_missing_serial_numbers.value = []
     names_of_files_with_zero_bytes.value = []
     const x = files.map((file: File) => {
         return new Promise<void>((_resolve) => {
@@ -197,12 +202,17 @@ const onAddedListener = (files: readonly File[]) => {
                     names_of_files_with_incorrect_headers.value.push(event.data.name_of_file_with_incorrect_headers)
                     fileUploaderRef.value.removeFile(file)
                 }
+                if (event.data.name_of_file_with_missing_serial_number != '') {
+                    names_of_files_with_missing_serial_numbers.value.push(event.data.name_of_file_with_missing_serial_number)
+                    fileUploaderRef.value.removeFile(file)
+                }
                 if (workersFinishedWork.length == files.length) {
                     isCheckingFilesValidity.value = false
                 }
                 if ((names_of_files_with_headers_only.value.length > 0
                     || names_of_files_with_incorrect_headers.value.length > 0
-                    || names_of_files_with_zero_bytes.value.length > 0)
+                    || names_of_files_with_zero_bytes.value.length > 0
+                    || names_of_files_with_missing_serial_numbers.value.length > 0)
                     && workersFinishedWork.length == files.length) {
                     dialogHeader.value = "Error"
                     fileValidationViolationdialogEnable.value = true
