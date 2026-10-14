@@ -13,12 +13,9 @@
                 <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                         <div>
-
                             <q-item-section>
                                 <q-item-label>
-
                                     {{ formatOption(scope.opt) }}
-
                                 </q-item-label>
                             </q-item-section>
                         </div>

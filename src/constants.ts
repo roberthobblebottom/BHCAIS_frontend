@@ -218,7 +218,7 @@
 
 
 //////////////////SQL STRINGS/////////////////////////////////
-const printSqlStringColumns = [
+const printSQLFieldNames = [
     "continuous_sn_no",
     "uid",
     "album_no",
@@ -251,7 +251,7 @@ const printSqlStringColumns = [
     "checked_by",
     "object_condition_qc2",
 ]
-const oralHistoriesSqlStringColumns = [
+const oralHistoriesSQLFieldNames = [
     "sn",
     "name_of_interviewee",
     "name_of_interviewee_2",
@@ -277,7 +277,7 @@ const oralHistoriesSqlStringColumns = [
     "comments",
 ]
 
-const slideSqlStringColumns = [
+const slideSQLFieldNames = [
     "sn_no",
     "uid",
     "box_no",
@@ -314,7 +314,7 @@ const slideSqlStringColumns = [
     "data_tier_2_or_3",
 ]
 
-const libraryAndArchivesSqlStringColumns = [
+const libraryAndArchivesSQLFieldNames = [
     "sn",
     "category",
     "subcategory",
@@ -355,7 +355,7 @@ const libraryAndArchivesSqlStringColumns = [
     "transcription_file_media",
 ]
 
-const negativeSqlStringColumns = [
+const negativeSQLFieldNames = [
     "sn_no",
     "uid",
     "ziplock_bag_no",
@@ -387,7 +387,7 @@ const negativeSqlStringColumns = [
     "checked_by",
     "object_condition_qc2",
 ]
-const legacyAndMiscellaneousItemsReportSqlStringColumns = [
+const legacyAndMiscellaneousItemsReportSQLFieldNames = [
     "sn",
     "category",
     "catalog_number",
@@ -439,13 +439,21 @@ const legacyAndMiscellaneousItemsReportSqlStringColumns = [
     "nas_link",
 
 ]
+const collectionSQLFieldNames = [
+    "sn",
+    "collection_name",
+    "acquisition_year",
+    "collection_description",
+    "gift_agreement_form",
+]
 const getHeaderDict = {
-    "print": printSqlStringColumns,
-    "oral_history": oralHistoriesSqlStringColumns,
-    "negative": negativeSqlStringColumns,
-    "slide": slideSqlStringColumns,
-    "library_and_archive": libraryAndArchivesSqlStringColumns,
-    "legacy_and_miscellaneous_items_report": legacyAndMiscellaneousItemsReportSqlStringColumns
+    "print": printSQLFieldNames,
+    "oral_history": oralHistoriesSQLFieldNames,
+    "negative": negativeSQLFieldNames,
+    "slide": slideSQLFieldNames,
+    "library_and_archive": libraryAndArchivesSQLFieldNames,
+    "legacy_and_miscellaneous_items_report": legacyAndMiscellaneousItemsReportSQLFieldNames,
+    'collection': collectionSQLFieldNames
 }
 ////////////////////////password regex //////////////////////////
 const passwordRegex = /^(?=.*[a-z])(?=.*[0-9])\S{7,}$/
@@ -457,15 +465,17 @@ const catalogueNames = [
     "slide",
     "library_and_archive",
     "legacy_and_miscellaneous_items_report",
+    'collection'
 ]
 
 export {
     catalogueNames, getHeaderDict, passwordRegex, passwordError,
-    printSqlStringColumns,
-    oralHistoriesSqlStringColumns,
-    negativeSqlStringColumns,
-    slideSqlStringColumns,
-    libraryAndArchivesSqlStringColumns,
-    legacyAndMiscellaneousItemsReportSqlStringColumns,
+    printSQLFieldNames,
+    oralHistoriesSQLFieldNames,
+    negativeSQLFieldNames,
+    slideSQLFieldNames,
+    libraryAndArchivesSQLFieldNames,
+    legacyAndMiscellaneousItemsReportSQLFieldNames,
+    collectionSQLFieldNames
     // libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders, legacyAndMiscellaneousItemsReportHeader
 }

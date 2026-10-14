@@ -324,7 +324,7 @@ const onSubmit = handleSubmit(async (_values) => {
             queryData.search_terms[catalogName] != null
                 ? " search term: " + JSON.stringify(searchTermsToBeSent[catalogName])
                     .replaceAll("\"", "").replaceAll("{", "")
-                    .replaceAll("}", "").replace(":", " eq ")
+                    .replaceAll("}", "").replace(":", " LIKE ")
                 : ""
 
 

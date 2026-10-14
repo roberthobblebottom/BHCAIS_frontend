@@ -1,10 +1,11 @@
 import {
-    printSqlStringColumns,
-    oralHistoriesSqlStringColumns,
-    negativeSqlStringColumns,
-    slideSqlStringColumns,
-    libraryAndArchivesSqlStringColumns,
-    legacyAndMiscellaneousItemsReportSqlStringColumns,
+    printSQLFieldNames,
+    oralHistoriesSQLFieldNames,
+    negativeSQLFieldNames,
+    slideSQLFieldNames,
+    libraryAndArchivesSQLFieldNames,
+    legacyAndMiscellaneousItemsReportSQLFieldNames,
+    collectionSQLFieldNames,
 
 } from '../constants'
 import * as xlsx from 'xlsx'
@@ -19,12 +20,13 @@ function _send_message_back(name_of_file_with_headers_only: string, name_of_file
 }
 
 function isHeadersCorrect(headersString: string, fileName: string) {
-    if (headersString != printSqlStringColumns.join(",")
-        && headersString != negativeSqlStringColumns.join(",")
-        && headersString != slideSqlStringColumns.join(",")
-        && headersString != libraryAndArchivesSqlStringColumns.join(",")
-        && headersString != oralHistoriesSqlStringColumns.join(',')
-        && headersString != legacyAndMiscellaneousItemsReportSqlStringColumns.join(",")
+    if (headersString != printSQLFieldNames.join(",")
+        && headersString != negativeSQLFieldNames.join(",")
+        && headersString != slideSQLFieldNames.join(",")
+        && headersString != libraryAndArchivesSQLFieldNames.join(",")
+        && headersString != oralHistoriesSQLFieldNames.join(',')
+        && headersString != legacyAndMiscellaneousItemsReportSQLFieldNames.join(",")
+        && headersString != collectionSQLFieldNames.join(",")
     ) {
         _send_message_back("", fileName, '')
         return false
@@ -42,7 +44,6 @@ self.onmessage = (event: MessageEvent) => {
             const workbook = xlsx.read(data, { type: 'array', dense: true })
             const sheetName = workbook.SheetNames[0]!
             const worksheet: any = workbook.Sheets[sheetName]
-            console.log('worksheet: ', worksheet)
 
             let tempHeadersValues: any[] = xlsx.utils.sheet_to_json(worksheet, {
                 header: 1,
@@ -53,8 +54,6 @@ self.onmessage = (event: MessageEvent) => {
             const firstRow: string[][] = tempHeadersValues[1]!
             const content: any[][] = tempHeadersValues.slice(1)
 
-            console.log('headers', headers)
-            console.log('content', content)
             const headersString: string = Object.values(headers).map(
                 (col: string) => col.trim().toLocaleLowerCase())
                 .toString().replace(",,", ",")
@@ -67,9 +66,7 @@ self.onmessage = (event: MessageEvent) => {
 
             for (const row of content) {
                 const serialNumber = row[0]
-                console.log(serialNumber, typeof serialNumber)
                 if (serialNumber === undefined || serialNumber === '') {
-                    console.log("serial number null")
                     _send_message_back('', '', file.name)
                     return
                 }
@@ -94,7 +91,12 @@ self.onmessage = (event: MessageEvent) => {
             }
 
             for (const row of content) {
+                if (row == "")
+                    continue
                 const serialNumber = row.split(",")[0]
+
+                console.log('row', row)
+                console.log('serialNumber', serialNumber)
                 if (serialNumber == "" || serialNumber == null) {
                     _send_message_back('', '', file.name)
                     return
