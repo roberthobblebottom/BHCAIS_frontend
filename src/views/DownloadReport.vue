@@ -41,7 +41,10 @@
                         </template>
                     </q-select>
 
-                    <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term" />
+                    <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term"
+                        :error="x[0]?.includes('sn') ? snError : false"
+                        :error-message="x[0]?.includes('sn') ? snErrorMessage : ''"
+                        @update:model-value="x[0]?.includes('sn') ? snValidation(x[1]!) : ''" />
                 </div>
             </div>
 
@@ -113,6 +116,9 @@ const cataloguesWithNoResults: Ref<string[]> = ref([])
 const showCataloguesWithNoResultsAlertDialog = ref(false)
 const showNoResultMessage = ref(false)
 
+
+const snError = ref(false)
+const snErrorMessage = ref('')
 //field validation
 const schema = yup.object().shape({
     selectCatalogues: yup.array()
@@ -201,10 +207,24 @@ function addSearchTerm() {
     selectedSearchTerms.value.push(["", ""])
 }
 
+function snValidation(value: string) {
+    console.log("snValidation", value)
+    const regex = new RegExp('^[0-9, ]+$')
+
+    if (!regex.test(value)) {
+        snError.value = true
+        snErrorMessage.value = 'Invalid value, only commas or numbers allow in sn selection.'
+    }
+    else {
+        snError.value = false
+        snErrorMessage.value = ''
+    }
+}
 
 
 const onSubmit = handleSubmit(async (_values) => {
-
+    if (snError.value)
+        return
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
         selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
