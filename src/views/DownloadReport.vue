@@ -27,7 +27,7 @@
                     </div>
                 </div>
 
-                <div class="row " v-for="x of selectedSearchTerms">
+                <div class="row " v-for="(x, index) of selectedSearchTerms">
                     <!--- Note: No more multiple selection. 
                     there are problems manpilation with this value in 3 times nested reference. 
                     also it is hard to see if you have selected multiple catalogues in one search fields--->
@@ -42,9 +42,9 @@
                     </q-select>
 
                     <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term"
-                        :error="x[0]?.includes('sn') ? snError : false"
-                        :error-message="x[0]?.includes('sn') ? snErrorMessage : ''"
-                        @update:model-value="x[0]?.includes('sn') ? snValidation(x[1]!) : ''" />
+                        :error="x[0]?.includes('sn') ? snError[index] : false"
+                        :error-message="x[0]?.includes('sn') ? snErrorMessage[index] : ''"
+                        @update:model-value="x[0]?.includes('sn') ? snValidation(x[1]!, index) : ''" />
                 </div>
             </div>
 
@@ -117,8 +117,8 @@ const showCataloguesWithNoResultsAlertDialog = ref(false)
 const showNoResultMessage = ref(false)
 
 
-const snError = ref(false)
-const snErrorMessage = ref('')
+const snError = ref([false])
+const snErrorMessage = ref([''])
 //field validation
 const schema = yup.object().shape({
     selectCatalogues: yup.array()
@@ -207,17 +207,17 @@ function addSearchTerm() {
     selectedSearchTerms.value.push(["", ""])
 }
 
-function snValidation(value: string) {
+function snValidation(value: string, iteration: number) {
     console.log("snValidation", value)
     const regex = new RegExp('^[0-9, ]+$')
 
     if (!regex.test(value)) {
-        snError.value = true
-        snErrorMessage.value = 'Invalid value, only commas or numbers allow in sn selection.'
+        snError.value[iteration] = true
+        snErrorMessage.value[iteration] = 'Invalid value, only spaces, commas or numbers allow in sn selection.'
     }
     else {
-        snError.value = false
-        snErrorMessage.value = ''
+        snError.value[iteration] = false
+        snErrorMessage.value[iteration] = ''
     }
 }
 
