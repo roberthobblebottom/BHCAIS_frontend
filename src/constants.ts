@@ -219,7 +219,7 @@
 
 //////////////////SQL STRINGS/////////////////////////////////
 const printSQLFieldNames = [
-    "continuous_sn_no",
+    "sn",
     "uid",
     "album_no",
     "object_condition_qc1",
@@ -278,7 +278,7 @@ const oralHistoriesSQLFieldNames = [
 ]
 
 const slideSQLFieldNames = [
-    "sn_no",
+    "sn",
     "uid",
     "box_no",
     "object_condition_qc1",
@@ -356,7 +356,7 @@ const libraryAndArchivesSQLFieldNames = [
 ]
 
 const negativeSQLFieldNames = [
-    "sn_no",
+    "sn",
     "uid",
     "ziplock_bag_no",
     "object_condition_qc1",
