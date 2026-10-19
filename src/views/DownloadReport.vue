@@ -223,8 +223,11 @@ function snValidation(value: string, iteration: number) {
 
 
 const onSubmit = handleSubmit(async (_values) => {
-    if (snError.value)
-        return
+    console.log(snError.value)
+    for (const boo of snError.value)
+        if (boo == true)
+            return
+    console.log()
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
         selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
