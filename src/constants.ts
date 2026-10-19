@@ -273,7 +273,7 @@ const oralHistoriesSQLFieldNames = [
     "interviewers",
     "associated_materials",
     "catalogued_by",
-    "catalogue_date",
+    "catalogued_date",
     "comments",
 ]
 
