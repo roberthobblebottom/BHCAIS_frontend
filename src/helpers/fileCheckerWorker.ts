@@ -55,8 +55,9 @@ self.onmessage = (event: MessageEvent) => {
             const content: any[][] = tempHeadersValues.slice(1)
 
             const headersString: string = Object.values(headers).map(
-                (col: string) => col.trim().toLocaleLowerCase())
+                (col: string) => col.trim().toLocaleLowerCase().replaceAll(" ", "_"))
                 .toString().replace(",,", ",")
+            console.log('headersString', headersString)
             if (!isHeadersCorrect(headersString, file.name))
                 return
             const isInvalidContent = (firstRow == null) ? true : firstRow.length == 0 ? true : false
