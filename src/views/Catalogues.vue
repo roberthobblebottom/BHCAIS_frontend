@@ -4,7 +4,8 @@
             <div class="flex row ">
                 <h3 class="col-7">Viewing Catalogue: </h3>
                 <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown col q-mt-xl q-pb-sm"
-                    :options="catalogueNames" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
+                    hint="Choose a Catalogue" :options="catalogueNames"
+                    @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
                     <template #selected>
                         <div class="dropdown-selected-display">
                             {{ formatOption(dropDownCatalogueValue) }}
