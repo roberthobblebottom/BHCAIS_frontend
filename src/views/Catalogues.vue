@@ -1,26 +1,28 @@
 <template>
     <div class="q-pa-md  common  ">
         <div class="">
-            <h3 class="">View Catalogues </h3>
-            <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown " :options="catalogueNames"
-                label="Select a Catalogue" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
-                <template #selected>
-                    <div class="dropdown-selected-display">
-                        {{ formatOption(dropDownCatalogueValue) }}
-                    </div>
-                </template>
-                <template #option="scope">
-                    <q-item v-bind="scope.itemProps">
-                        <div>
-                            <q-item-section>
-                                <q-item-label>
-                                    {{ formatOption(scope.opt) }}
-                                </q-item-label>
-                            </q-item-section>
+            <div class="flex row ">
+                <h3 class="col-7">Viewing Catalogue: </h3>
+                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown col q-mt-xl q-pb-sm"
+                    :options="catalogueNames" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
+                    <template #selected>
+                        <div class="dropdown-selected-display">
+                            {{ formatOption(dropDownCatalogueValue) }}
                         </div>
-                    </q-item>
-                </template>
-            </q-select>
+                    </template>
+                    <template #option="scope">
+                        <q-item v-bind="scope.itemProps">
+                            <div>
+                                <q-item-section>
+                                    <q-item-label>
+                                        {{ formatOption(scope.opt) }}
+                                    </q-item-label>
+                                </q-item-section>
+                            </div>
+                        </q-item>
+                    </template>
+                </q-select>
+            </div>
             <!-- I have no idea how the column hiding works i just copied from the example: https://quasar.dev/vue-components/table#visible-columns-custom-top-fullscreen -->
             <q-table class="table-div col" v-if="showTable && catalogueName != ''" v-model:rows="rows"
                 :columns="columns" :row-key="rowKey" v-model:pagination="pagination" ref="tableRef"
@@ -153,11 +155,14 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
+h3 {
+    margin-bottom: 0vh;
+}
 
 .dropdown-selected-display {
     width: 100%;
     font-size: x-large;
-    font-weight: 600;
+    /* font-weight: 600; */
     text-align: center;
 }
 
