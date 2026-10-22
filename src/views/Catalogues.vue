@@ -3,8 +3,7 @@
         <div class="">
             <h3 class="">View Catalogues </h3>
             <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown " :options="catalogueNames"
-                label="Select a Catalogue to View or Delete"
-                @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
+                label="Select a Catalogue" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
                 <template #selected>
                     <div class="dropdown-selected-display">
                         {{ formatOption(dropDownCatalogueValue) }}
@@ -33,17 +32,25 @@
                 <template v-slot:top="props">
                     <div class="row flex  items-end table-header">
                         <div class="col-5">
-                            <q-btn-dropdown class="col-5 rounded-borders  " label="hide columns">
+                            <q-btn-dropdown class="col-5 rounded-borders  " label="Columns Visibility">
+
                                 <div class="q-pa-md rounded-borders">
-                                    <p>These toggles are for hiding individual rows</p>
-                                    <div class="check flex content-start" v-if="$q.screen.gt.xs">
-                                        <div v-for="v in columns">
-                                            <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
-                                        </div>
+                                    <div class="flex row justify-between">
+                                        <p class="col-6">These toggles are for hiding individual rows</p>
+                                        <q-btn class="col-3" text-color="black" size="md" color="orange"
+                                            label="Hide All" @click="hideAllColumnsFunction" />
                                     </div>
-                                    <q-select v-else v-model="visibleColumns" multiple borderless dense options-dense
-                                        :display-value="$q.lang.table.columns" emit-value map-options :options="columns"
-                                        option-value="name" style="min-width: 150px" />
+                                    <div>
+                                        <div class="check flex content-start" v-if="$q.screen.gt.xs">
+
+                                            <div v-for="v in columns">
+                                                <q-toggle v-model="visibleColumns" :val="v.name" :label="v.name" />
+                                            </div>
+                                        </div>
+                                        <q-select v-else v-model="visibleColumns" multiple borderless dense
+                                            options-dense :display-value="$q.lang.table.columns" emit-value map-options
+                                            :options="columns" option-value="name" style="min-width: 150px" />
+                                    </div>
                                 </div>
                             </q-btn-dropdown>
                         </div>
@@ -197,10 +204,11 @@ import { fetchWrapper } from '../helpers/fetch-wrapper'
 import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
-import { catalogueNames } from '../constants'
+import { catalogueNames, getFieldNames } from '../constants'
 const dropDownCatalogueValue = ref("")
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
+const hideAllColumns = ref(false)
 const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")
@@ -227,6 +235,11 @@ const authStore = useAuthStore()
 
 defineExpose({ tableRef })
 
+function hideAllColumnsFunction() {
+    visibleColumns.value = []
+}
+
+
 function formatOption(option: string) {
     if (option == "")
         return ""
@@ -243,7 +256,6 @@ function formatOption(option: string) {
     }
 }
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
-    console.log('onCatalogDropDownItemClick')
     catalogueName.value = catalogue_name1
     showTable.value = true
     searchTerm.value = ""

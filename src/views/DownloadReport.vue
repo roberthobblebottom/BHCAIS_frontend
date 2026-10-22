@@ -101,7 +101,7 @@ import * as yup from 'yup'
 import { streamFilesDownload } from '../helpers/fetch-wrapper'
 import { downloadZip, type InputWithoutMeta } from 'client-zip'
 import { Buffer } from 'buffer'
-import { catalogueNames, getHeaderDict } from '../constants'
+import { catalogueNames, getFieldNames } from '../constants'
 import { useAuthStore } from '../stores/auth.store'
 
 const catalogueOptions = ref(catalogueNames)
@@ -169,9 +169,9 @@ function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
     allCatalogueFields.value = [""]
     filteredCatalogueFields.value = [""]
     for (const x of currentlySelected) {
-        let key = x as keyof typeof getHeaderDict // for using string as keys for the object
+        let key = x as keyof typeof getFieldNames // for using string as keys for the object
         const newFields = []
-        for (const x1 of getHeaderDict[key])
+        for (const x1 of getFieldNames[key])
             newFields.push(key + " " + x1)
         // newFields.push(key + " Select All") // removed select all option
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)

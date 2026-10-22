@@ -446,7 +446,7 @@ const collectionSQLFieldNames = [
     "collection_description",
     "gift_agreement_form",
 ]
-const getHeaderDict = {
+const getFieldNames: any = {
     "print": printSQLFieldNames,
     "oral_history": oralHistoriesSQLFieldNames,
     "negative": negativeSQLFieldNames,
@@ -469,7 +469,7 @@ const catalogueNames = [
 ]
 
 export {
-    catalogueNames, getHeaderDict, passwordRegex, passwordError,
+    catalogueNames, getFieldNames, passwordRegex, passwordError,
     printSQLFieldNames,
     oralHistoriesSQLFieldNames,
     negativeSQLFieldNames,
