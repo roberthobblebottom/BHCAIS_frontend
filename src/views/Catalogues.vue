@@ -1,9 +1,9 @@
 <template>
     <div class="q-pa-md  common  ">
         <div class="">
-            <div class="flex row ">
-                <h3 class="col-7">Viewing Catalogue: </h3>
-                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown col q-mt-xl q-pb-sm"
+            <div class="   header-div">
+                <h3 class=" ">Viewing Catalogue: </h3>
+                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown  q-mt-xl q-pb-sm"
                     hint="Choose a Catalogue" :options="catalogueNames"
                     @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
                     <template #selected>
@@ -161,17 +161,13 @@ h3 {
 }
 
 .dropdown-selected-display {
-    width: 100%;
     font-size: x-large;
-    /* font-weight: 600; */
-    text-align: center;
+    text-align: center !important;
 }
 
 .dropdown {
-    /* font-size: x-large; */
-    width: 100%;
+    width: 30%;
     border-radius: 15px;
-    text-align: center;
 }
 
 .alert {
@@ -201,6 +197,10 @@ h3 {
 
 .common {
     overflow-y: auto;
+}
+
+.header-div {
+    display: flex;
 }
 </style>
 
@@ -314,7 +314,7 @@ async function onRequestCatalogData(props: any) {
 
     const temp: any = []
     const visibleColumnsTemp: any = []
-    for (const h of Object.keys(results[0])) {
+    for (let h of Object.keys(results[0])) {
         temp.push({
             name: h,
             required: false,
