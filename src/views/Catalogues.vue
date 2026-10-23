@@ -1,14 +1,17 @@
 <template>
     <div class=" common  ">
         <div class="">
-            <div class="   header1 ">
+            <div class="header1 ">
                 <h3>View Catalogue: </h3>
-                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown   q-pb-sm"
-                    hint="Choose a Catalogue" :options="catalogueNames"
-                    @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
+                <q-select v-model="dropDownCatalogueValue" class="dropdown q-pb-sm" hint="Choose a Catalogue"
+                    :options="catalogueNames" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)"
+                    rounded outlined>
                     <template #selected>
                         <div class="dropdown-selected-display">
-                            {{ formatOption(dropDownCatalogueValue) }}
+                            <label :style="{ 'font-size': dropDownCatalogueNameFontSize }">
+
+                                {{ formatOption(dropDownCatalogueValue) }}
+                            </label>
                         </div>
                     </template>
                     <template #option="scope">
@@ -156,6 +159,14 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
+.common {
+    overflow-y: auto;
+}
+
+.header1 {
+    display: flex;
+}
+
 h3 {
     margin-top: 0vh;
     word-wrap: break-word;
@@ -168,7 +179,7 @@ h3 {
 
 .dropdown-selected-display {
     font-weight: 400;
-    font-size: xx-large;
+    /* font-size: xx-large; */
     color: black;
     white-space: nowrap;
 }
@@ -199,14 +210,6 @@ h3 {
 .search-term-input {
     width: 10vw;
 }
-
-.common {
-    overflow-y: auto;
-}
-
-.header1 {
-    display: flex;
-}
 </style>
 
 <script setup lang="ts">
@@ -217,6 +220,7 @@ import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { catalogueNames } from '../constants'
 const dropDownCatalogueValue = ref("")
+const dropDownCatalogueNameFontSize = ref("xx-large")
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
 const rows: Ref<QTr[]> = ref([])
@@ -266,6 +270,10 @@ function formatOption(option: string) {
 }
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
+    if (catalogue_name1 == "legacy_and_miscellaneous_items_report")
+        dropDownCatalogueNameFontSize.value = 'medium'
+    else if (catalogue_name1 == "library_and_archive")
+        dropDownCatalogueNameFontSize.value = 'x-large'
     showTable.value = true
     searchTerm.value = ""
     pagination.value.sortBy = ''
