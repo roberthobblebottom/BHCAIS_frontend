@@ -1,9 +1,9 @@
 <template>
     <div class="q-pa-md  common  ">
         <div class="">
-            <div class="   header-div">
-                <h3 class=" ">Viewing Catalogue: </h3>
-                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown  q-mt-xl q-pb-sm"
+            <div class="   header1 ">
+                <h3>View Catalogue: </h3>
+                <q-select v-model="dropDownCatalogueValue" color="primary" class="dropdown   q-pb-sm"
                     hint="Choose a Catalogue" :options="catalogueNames"
                     @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
                     <template #selected>
@@ -157,20 +157,32 @@
 @import "../../public/css/main-content-variants.css";
 
 h3 {
-    margin-bottom: 0vh;
+    margin-top: 0vh;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    font-size: xx-large;
+    font-weight: 400;
+
 }
 
 .dropdown-selected-display {
-    font-size: x-large;
-    text-align: center !important;
+    font-weight: 400;
+    font-size: xx-large;
+    color: black;
+    white-space: nowrap;
 }
 
 .dropdown {
-    width: 30%;
+    width: 50%;
     border-radius: 15px;
+
+
+    margin-left: 1%;
 }
 
 .alert {
+    margin-top: 5%;
     color: red;
 }
 
@@ -182,9 +194,7 @@ h3 {
     width: 100%
 }
 
-.header-right {
-    width: 40%;
-}
+
 
 .button {
     float: none !important;
@@ -199,8 +209,9 @@ h3 {
     overflow-y: auto;
 }
 
-.header-div {
+.header1 {
     display: flex;
+    margin-top: 4vh;
 }
 </style>
 
@@ -210,11 +221,10 @@ import { fetchWrapper } from '../helpers/fetch-wrapper'
 import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
-import { catalogueNames, getFieldNames } from '../constants'
+import { catalogueNames } from '../constants'
 const dropDownCatalogueValue = ref("")
 const columns: Ref<any[]> = ref([])
 const visibleColumns: Ref<string[]> = ref([])
-const hideAllColumns = ref(false)
 const rows: Ref<QTr[]> = ref([])
 const showTable = ref(false)
 const errorMessage = ref("")

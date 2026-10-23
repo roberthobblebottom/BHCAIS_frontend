@@ -69,14 +69,14 @@
     <q-dialog v-model="fileValidationViolationdialogEnable" :persistent="dialogPersistentIsEnabled"
         backdrop-filter="blur(4px)" ref="dialogRef">
         <q-card class="dialog">
-            <q-card-section class="card-section-avatar">
+            <q-card-section>
                 <q-avatar :icon="dialogHeader == 'Sucessful' ? 'done' : 'error'" color="primary" text-color="white"
                     class="" />
             </q-card-section>
 
-            <h3 class='dialog-h3'>{{ dialogHeader }}</h3>
+            <label class='dialog-header'>{{ dialogHeader }}</label>
 
-            <p v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
+            <p class="p-mb-xl" v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
             <div v-if="dialogHeader.toLocaleLowerCase() == 'error'">
                 <p>{{ names_of_files_with_headers_only.length != 0 ?
                     "Files with headers only: " +
@@ -92,7 +92,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join(",")
@@ -119,12 +119,11 @@
     height: 100%;
 }
 
-.card-section-avatar {
-    margin-bottom: 1%;
-}
-
-.dialog-h3 {
-    margin-top: -1vh;
+.dialog-header {
+    font-size: xx-large;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 </style>
 <script setup lang='ts'>
