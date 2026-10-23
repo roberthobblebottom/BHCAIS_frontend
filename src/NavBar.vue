@@ -11,8 +11,10 @@
             <div class="sidebar">
                 <div class="col">
                     <p :class="miniState ? 'text-subtitle2 app-name' : 'text-h4 app-name'">BHCAIS</p>
-                    <p class="user-details">User: {{ authStore.user.email }}</p>
-                    <p class="user-details">User Type: {{ authStore.user.user_type }}</p>
+                    <p :class="miniState ? 'text-caption  user-details' : 'text-body1 user-details'">User: {{
+                        authStore.user.email }}</p>
+                    <p :class="miniState ? 'text-caption  user-details' : 'text-body1 user-details'">User Type: {{
+                        authStore.user.user_type }}</p>
                 </div>
                 <div>
                     <RouterLink to="/QuickStart" :class="miniState ? 'mini-row' : 'row'">
