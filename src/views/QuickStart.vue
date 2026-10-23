@@ -1,10 +1,10 @@
 <template>
     <div class=" common">
         <div>
-            <h3 class="text-weight-bold">Welcome to BHCAIS</h3>
+            <h3 class="text-weight-bold ">Welcome to BHCAIS</h3>
         </div>
         <div>
-            <h4 class="q-mb-md">Quick Start:</h4>
+            <h4 class="q-mb-md quick-start-header">Quick Start:</h4>
         </div>
         <div class="quick-start">
             <p>
@@ -109,16 +109,12 @@
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
-
 .quick-start {
-    /* display: grid;
-    row-gap: 4%;*/
     overflow: auto;
 }
 
-
-.section {
-    border-bottom: 1px dotted grey;
+.quick-start-header {
+    margin-top: 3%;
 }
 </style>
 <script setup lang="ts">
