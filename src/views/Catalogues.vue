@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md  common  ">
+    <div class=" common  ">
         <div class="">
             <div class="   header1 ">
                 <h3>View Catalogue: </h3>
@@ -176,8 +176,6 @@ h3 {
 .dropdown {
     width: 50%;
     border-radius: 15px;
-
-
     margin-left: 1%;
 }
 
@@ -194,15 +192,12 @@ h3 {
     width: 100%
 }
 
-
-
 .button {
     float: none !important;
 }
 
 .search-term-input {
     width: 10vw;
-
 }
 
 .common {
@@ -211,7 +206,6 @@ h3 {
 
 .header1 {
     display: flex;
-    margin-top: 4vh;
 }
 </style>
 

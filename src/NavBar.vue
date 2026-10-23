@@ -61,8 +61,9 @@
             </div>
         </q-drawer>
         <q-page-container class="all">
+            <!-- padding is required or there will be visual bugs -->
             <q-page padding>
-                <div class="main-content">
+                <div>
                     <RouterView />
                 </div>
             </q-page>

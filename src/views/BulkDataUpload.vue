@@ -1,7 +1,7 @@
 <template>
     <div class=" common">
         <form>
-            <div class="">
+            <div>
                 <h3>Bulk Data Upload</h3>
                 <p>Entries with existing data will be overwritten. As identified by each catalogue's first column,
                     where the name is usually with sn in it. <br>
@@ -92,7 +92,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join(",")

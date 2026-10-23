@@ -3,11 +3,8 @@
     width: 100%;
     background-color: white;
     border-radius: 15px;
-    padding-left: 2%;
-    padding-right: 2%;
-    padding-bottom: 2%;
-    padding-top: 1px;
-    margin-top: 5%;
+    padding: 2%;
+    margin-top: 3%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
     display: flex;
@@ -20,4 +17,8 @@
 
 .medium {
     width: 70%;
+}
+
+h3 {
+    margin-top: 0%;
 }
