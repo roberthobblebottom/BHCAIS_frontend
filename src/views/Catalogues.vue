@@ -3,9 +3,8 @@
         <div class="">
             <div class="header1 ">
                 <h3>View Catalogue: </h3>
-                <q-select v-model="dropDownCatalogueValue" class="dropdown q-pb-sm" hint="Choose a Catalogue"
-                    :options="catalogueNames" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)"
-                    rounded outlined>
+                <q-select rounded borderless v-model="dropDownCatalogueValue" class="dropdown q-pb-sm"
+                    :options="catalogueNames" @update:model-value="onCatalogDropDownItemClick(dropDownCatalogueValue)">
                     <template #selected>
                         <div class="dropdown-selected-display">
                             <label :style="{ 'font-size': dropDownCatalogueNameFontSize }">
@@ -75,7 +74,7 @@
 
                             <p v-if="errorMessage != ''" class="col-4 q-ml-xl alert"> {{ errorMessage }}</p>
 
-                            <q-input class="col-3 float-right q-ml-xl search-term-input " borderless dense
+                            <q-input class="col-4 float-right q-ml-xl search-term-input " borderless dense
                                 debounce="300" v-model="searchTerm" placeholder="Search">
                                 <template v-slot:append>
                                     <q-icon name="search" />
@@ -165,6 +164,7 @@
 
 .header1 {
     display: flex;
+    margin-bottom: 01vh;
 }
 
 h3 {
@@ -179,15 +179,19 @@ h3 {
 
 .dropdown-selected-display {
     font-weight: 400;
-    /* font-size: xx-large; */
     color: black;
     white-space: nowrap;
 }
 
 .dropdown {
     width: 50%;
-    border-radius: 15px;
+    border-radius: 10px;
     margin-left: 1%;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-bottom: 0.2vh;
+    padding-top: 0%;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .alert {
@@ -205,10 +209,6 @@ h3 {
 
 .button {
     float: none !important;
-}
-
-.search-term-input {
-    width: 10vw;
 }
 </style>
 
