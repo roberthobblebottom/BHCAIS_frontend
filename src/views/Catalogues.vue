@@ -243,7 +243,6 @@ const pagination = ref({
     rowsNumber: 10
 })
 const catalogueName = ref("")
-const currentPrimaryKeyUsedForDeleteSelected = ref("")
 const showConfirmDeleteSelectDialog = ref(false)
 const showConfirmDeleteAllDialog = ref(false)
 const isDeleteInProgress = ref(false)
@@ -337,7 +336,6 @@ async function onRequestCatalogData(props: any) {
         visibleColumnsTemp.push(h)
     }
 
-    currentPrimaryKeyUsedForDeleteSelected.value = temp[0].name
     columns.value = temp
     rowKey.value = columns.value[0].name
     rows.value = results
@@ -366,7 +364,6 @@ async function deleteSelected() {
         {
             ids_to_be_deleted: selectedIds,
             catalogue_name: catalogueName.value,
-            current_primary_key: currentPrimaryKeyUsedForDeleteSelected.value,
         })
 
 

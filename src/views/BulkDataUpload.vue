@@ -92,7 +92,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join(",")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join(",")
@@ -141,7 +141,7 @@ const fileUploaderRef = ref()
 
 
 let authStore = useAuthStore()
-const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/?user_id=${authStore.user.user_id}`)
+const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/`)
 
 const headers = ref(
     [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]

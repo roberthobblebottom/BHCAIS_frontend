@@ -38,7 +38,6 @@ a,
 
 
 .all {
-
   background-image: url('../images/01-0101.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -48,7 +47,6 @@ a,
   overflow: hidden;
 }
 
-.main-content {}
 
 .loginDetails {
   margin-left: 15px;
@@ -64,7 +62,6 @@ a,
 .nav-links .nav-item,
 .user-message {
   margin: 22px 0;
-  /* More spacing between items */
 }
 
 .nav-links .nav-item {
@@ -77,8 +74,6 @@ a,
   transition: background 0.3s;
   text-align: left !important;
 }
-
-
 
 .nav-links li a:hover {
   background-color: #7e3ff2;
