@@ -477,5 +477,4 @@ export {
     libraryAndArchivesSQLFieldNames,
     legacyAndMiscellaneousItemsReportSQLFieldNames,
     collectionSQLFieldNames
-    // libraryAndArchiveHeader, negativeHeaders, slideHeaders, oralHistoryHeaders, printHeaders, legacyAndMiscellaneousItemsReportHeader
 }

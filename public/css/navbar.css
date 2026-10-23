@@ -2,10 +2,19 @@
   font-size: medium;
 }
 
+.mini-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30% !important;
+}
+
+.row {
+  margin-top: 5% !important;
+}
 
 .app-name {
   margin-top: 5%;
-  font-size: x-large !important;
   text-align: center;
   font-weight: 900;
   color: white;
