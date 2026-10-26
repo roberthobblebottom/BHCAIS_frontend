@@ -394,7 +394,7 @@ const onSubmit = handleSubmit(async (_values) => {
 
     for (const catalogName of Object.keys(results)) {
         const resultData: any[] = results[catalogName]!
-        const header = Object.keys(resultData[0]).join(',') + "\n"
+        const header = Object.keys(resultData[0]).map(c => format1(c, false)).join(',') + "\n"
         //these two maps is for making the string csv compliant.
         const rows = resultData.map(
             (row: Object) => Object.values(row).map(

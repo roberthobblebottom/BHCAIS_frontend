@@ -80,7 +80,7 @@ self.onmessage = (event: MessageEvent) => {
         reader.onload = (e: ProgressEvent<FileReader>) => {
             const csv = e.target?.result as string
             let headersString = csv.split('\n')[0]?.split(",")
-                .map(col => col.trim().toLocaleLowerCase()).toString().replace(",,", ",")
+                .map(col => col.trim().toLocaleLowerCase().replaceAll(" ", "_")).toString().replace(",,", ",")
 
             if (!isHeadersCorrect(headersString!, file.name))
                 return

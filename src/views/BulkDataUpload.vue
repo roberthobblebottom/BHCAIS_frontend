@@ -80,22 +80,22 @@
             <div v-if="dialogHeader.toLocaleLowerCase() == 'error'">
                 <p>{{ names_of_files_with_headers_only.length != 0 ?
                     "Files with headers only: " +
-                    names_of_files_with_headers_only.join(",")
+                    names_of_files_with_headers_only.join(",\n")
                     : '' }}</p>
 
                 <p>{{ names_of_files_with_incorrect_headers.length != 0 ?
                     "Files with incorrect header: " +
-                    names_of_files_with_incorrect_headers.join(",")
+                    names_of_files_with_incorrect_headers.join(",\n")
                     : '' }}</p>
 
                 <p> {{ names_of_files_with_zero_bytes.length != 0
                     ? "Empty files: " +
-                    names_of_files_with_zero_bytes.join(",")
+                    names_of_files_with_zero_bytes.join("\n")
                     : ''
                     }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
-                    ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join(",")
+                    ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join("\n")
                     : '' }}</p>
 
                 <p> These files will be removed</p>
