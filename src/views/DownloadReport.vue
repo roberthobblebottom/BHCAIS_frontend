@@ -5,8 +5,9 @@
 
             <q-select v-model="selectCatalogues" @clear="onCatalogueSelectClear" @add="onCatalogueSelectAdd"
                 @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
-                label="Select catalogue(s). " multiple clearable hint="Click on the same catalogue to unselect"
-                :error-message="errorMessage" :error="errorMessage != ''"></q-select>
+                :option-label="formatOption" label="Select catalogue(s). " multiple clearable
+                hint="Click on the same catalogue to unselect" :error-message="errorMessage"
+                :error="errorMessage != ''"></q-select>
 
             <!-- inner div for one or more search term -->
             <div class="col search-terms-div">
@@ -49,7 +50,6 @@
             </div>
 
             <q-btn color="blue" size="md" :disable='isDownloading' class="flex float-right q-mt-md " @click="onSubmit">
-
                 <q-icon :name="isDownloading
                     ? 'fa-solid fa-spinner fa-spin-pulse'
                     : 'fas fa-file-arrow-down'" class="q-mr-sm" size="sm"></q-icon>
@@ -103,7 +103,7 @@ import { downloadZip, type InputWithoutMeta } from 'client-zip'
 import { Buffer } from 'buffer'
 import { catalogueNames, getFieldNames } from '../constants'
 import { useAuthStore } from '../stores/auth.store'
-
+import { formatOption } from '../helpers/otherHelperFunctions'
 const catalogueOptions = ref(catalogueNames)
 const allCatalogueFields: Ref<string[]> = ref([""])
 const filteredCatalogueFields: Ref<string[]> = ref([""])

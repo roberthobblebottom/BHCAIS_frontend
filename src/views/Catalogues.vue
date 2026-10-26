@@ -219,6 +219,7 @@ import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { catalogueNames } from '../constants'
+import { formatOption } from '../helpers/otherHelperFunctions'
 const dropDownCatalogueValue = ref("")
 const dropDownCatalogueNameFontSize = ref("xx-large")
 const columns: Ref<any[]> = ref([])
@@ -253,21 +254,7 @@ function hideAllColumnsFunction() {
 }
 
 
-function formatOption(option: string) {
-    if (option == "")
-        return ""
-    else if (option == 'oral_history')
-        return 'Oral Histories'
-    else {
-        let option2 = option.replaceAll("_", " ").split(" ").map(
-            (word: string) => {
-                return word[0]?.toUpperCase() + word.substring(1)
-            }
-        ).join(" ")
 
-        return option2 + "s"
-    }
-}
 async function onCatalogDropDownItemClick(catalogue_name1: string) {
     catalogueName.value = catalogue_name1
     if (catalogue_name1 == "legacy_and_miscellaneous_items_report")
