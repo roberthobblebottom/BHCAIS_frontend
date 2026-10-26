@@ -263,7 +263,13 @@ async function onCatalogDropDownItemClick(catalogue_name1: string) {
         dropDownCatalogueNameFontSize.value = 'x-large'
     showTable.value = true
     searchTerm.value = ""
-    pagination.value.sortBy = ''
+    pagination.value = {
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 10
+    }
     selectedRowsToBeDeleted.value = []
     showDeleteSelectedButton.value = false
     await nextTick() // required for updating catalogue Name
