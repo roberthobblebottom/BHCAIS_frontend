@@ -220,6 +220,7 @@ import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { catalogueNames } from '../constants'
 import { format1 } from '../helpers/otherHelperFunctions'
+import { biTypeH3 } from '@quasar/extras/bootstrap-icons'
 const dropDownCatalogueValue = ref("")
 const dropDownCatalogueNameFontSize = ref("xx-large")
 const columns: Ref<any[]> = ref([])
@@ -319,6 +320,17 @@ async function onRequestCatalogData(props: any) {
     const temp: any = []
     const visibleColumnsTemp: any = []
     for (let h of Object.keys(results[0])) {
+        const h2 = h.trim().toLowerCase()
+        let style = ""
+        if (h2.includes('photograph_information') || h2.includes("box_information_new"))
+            style = "min-width:500px"
+        if (h2.includes('remarks') || h2.includes('slides_information')
+            || h2.includes("full_title") || h2.includes('collection_name')
+            || h2.includes('organisation') || h2.includes('physical_description')
+            || h2.includes('abstract'))
+            style = "min-width:300px"
+        if (h2.includes('keywords'))
+            style = "min-width:200px"
         temp.push({
             name: h,
             required: false,
@@ -326,7 +338,8 @@ async function onRequestCatalogData(props: any) {
             align: 'left',
             field: (row: any) => row[h],
             format: (val: any) => val == null ? "" : val,
-            sortable: true
+            sortable: true,
+            style: style
         })
         visibleColumnsTemp.push(h)
     }
