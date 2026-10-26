@@ -276,9 +276,10 @@ function addSearchTerm() {
 
 function snValidation(value: string, iteration: number) {
     console.log("snValidation", value)
+
     const regex = new RegExp('^[0-9, ]+$')
 
-    if (!regex.test(value)) {
+    if (!regex.test(value) && value != "") {
         snError.value[iteration] = true
         snErrorMessage.value[iteration] = 'Invalid value, only spaces, commas or numbers allow in sn selection.'
     }
