@@ -1,4 +1,4 @@
-export function formatOption(option: string) {
+export function format1(option: string, addSChar = true) {
     if (option == "")
         return ""
     else if (option == 'oral_history')
@@ -10,6 +10,6 @@ export function formatOption(option: string) {
             }
         ).join(" ")
 
-        return option2 + "s"
+        return addSChar ? option2 + "s" : option2
     }
 }

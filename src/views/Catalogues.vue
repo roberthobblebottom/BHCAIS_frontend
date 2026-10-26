@@ -9,7 +9,7 @@
                         <div class="dropdown-selected-display">
                             <label :style="{ 'font-size': dropDownCatalogueNameFontSize }">
 
-                                {{ formatOption(dropDownCatalogueValue) }}
+                                {{ format1(dropDownCatalogueValue) }}
                             </label>
                         </div>
                     </template>
@@ -18,7 +18,7 @@
                             <div>
                                 <q-item-section>
                                     <q-item-label>
-                                        {{ formatOption(scope.opt) }}
+                                        {{ format1(scope.opt) }}
                                     </q-item-label>
                                 </q-item-section>
                             </div>
@@ -219,7 +219,7 @@ import { QTable, QTr } from 'quasar'
 import { nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { catalogueNames } from '../constants'
-import { formatOption } from '../helpers/otherHelperFunctions'
+import { format1 } from '../helpers/otherHelperFunctions'
 const dropDownCatalogueValue = ref("")
 const dropDownCatalogueNameFontSize = ref("xx-large")
 const columns: Ref<any[]> = ref([])

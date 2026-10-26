@@ -455,6 +455,7 @@ const getFieldNames: any = {
     "legacy_and_miscellaneous_items_report": legacyAndMiscellaneousItemsReportSQLFieldNames,
     'collection': collectionSQLFieldNames
 }
+
 ////////////////////////password regex //////////////////////////
 const passwordRegex = /^(?=.*[a-z])(?=.*[0-9])\S{7,}$/
 const passwordError = "Passwords must at least have 7 charactors, one lower case and numbers"

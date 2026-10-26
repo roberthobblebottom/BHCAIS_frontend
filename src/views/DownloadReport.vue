@@ -4,10 +4,9 @@
             <h3>Download Reports</h3>
 
             <q-select v-model="selectCatalogues" @clear="onCatalogueSelectClear" @add="onCatalogueSelectAdd"
-                @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions"
-                :option-label="formatOption" label="Select catalogue(s). " multiple clearable
-                hint="Click on the same catalogue to unselect" :error-message="errorMessage"
-                :error="errorMessage != ''"></q-select>
+                @remove="onCatalogueSelectRemove" class="select" :options="catalogueOptions" :option-label="format1"
+                label="Select catalogue(s). " multiple clearable hint="Click on the same catalogue to unselect"
+                :error-message="errorMessage" :error="errorMessage != ''"></q-select>
 
             <!-- inner div for one or more search term -->
             <div class="col search-terms-div">
@@ -28,22 +27,56 @@
                     </div>
                 </div>
 
-                <div class="row " v-for="(x, index) of selectedSearchTerms">
+                <div class=" row items-end" v-for="(x, index) of selectedSearchTerms">
                     <!--- Note: No more multiple selection. 
                     there are problems manpilation with this value in 3 times nested reference. 
                     also it is hard to see if you have selected multiple catalogues in one search fields--->
-                    <q-select v-model=x[0] class="select col" :options="filteredCatalogueFields"
-                        label="Select catalogue field" @filter="filterFunction" clearable style="width: 250px" use-input
-                        input-debounce="0">
-                        <template v-slot:no-option>
-                            <q-item>
-                                <q-item-section class="text-grey"> No results </q-item-section>
-                            </q-item>
-                        </template>
-                    </q-select>
+                    <div class="">
+                        <div class="select-catalogue-name">
+                            <label v-if="x[0] !== null">
+                                {{ format1(formatFields(x[0]!)[0]!, false) }}
+                            </label>
+                        </div>
+                        <q-select v-model=x[0] class="select2 " :options="filteredCatalogueFields"
+                            @filter="filterFunction" clearable style="width: 250px" use-input input-debounce="0"
+                            emit-value>
+                            <template #no-option>
+                                <q-item>
+                                    <q-item-section class="text-grey"> No results </q-item-section>
+                                </q-item>
+                            </template>
+                            <template #selected=>
+                                <q-item class="selected-item" v-if="x[0] !== null">
+                                    <q-item-section>
+                                        <q-item-label>
+                                            {{ format1(formatFields(x[0]!)[1]!, false) }}
+                                        </q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item class="selected-item" v-else></q-item>
 
-                    <q-input v-model=x[1] class="col" :style="{ ' margin-left': '5px' }" label="Search Term"
-                        :error="x[0]?.includes('sn') ? snError[index] : false"
+                            </template>
+                            <template #option="{ opt, itemProps }">
+                                <q-item class="flex column" v-bind="itemProps" v-if="opt.value !== undefined">
+                                    <q-item-section class="row option-catalogue-name">
+                                        {{
+                                            format1(opt.catalogueName)
+                                        }}
+                                    </q-item-section>
+                                    <q-item-section class="row">
+                                        <q-item-label class="option-catalogue-field">
+                                            {{ format1(opt.label, false) }}
+                                        </q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item v-else></q-item>
+
+                            </template>
+                        </q-select>
+
+                    </div>
+                    <q-input v-model=x[1] class="col" :style="{ 'margin-left': '5px', 'padding-bottom': '0px' }"
+                        label="Enter Search Term" :error="x[0]?.includes('sn') ? snError[index] : false"
                         :error-message="x[0]?.includes('sn') ? snErrorMessage[index] : ''"
                         @update:model-value="x[0]?.includes('sn') ? snValidation(x[1]!, index) : ''" />
                 </div>
@@ -84,12 +117,33 @@
     background-color: rgb(253, 253, 253);
 }
 
-
-
-
 .search-terms-label {
     color: grey !important;
     font-size: 16px;
+}
+
+.select2 {
+    width: 4vw;
+    max-width: 25vw;
+}
+
+.selected-item {
+    margin-left: -8.5%;
+    overflow-x: hidden;
+}
+
+.option-catalogue-field {
+    margin-left: -3.5%;
+}
+
+.option-catalogue-name {
+
+    font-size: x-small;
+}
+
+.select-catalogue-name {
+    margin-bottom: -7%;
+    font-size: x-small;
 }
 </style>
 
@@ -103,11 +157,11 @@ import { downloadZip, type InputWithoutMeta } from 'client-zip'
 import { Buffer } from 'buffer'
 import { catalogueNames, getFieldNames } from '../constants'
 import { useAuthStore } from '../stores/auth.store'
-import { formatOption } from '../helpers/otherHelperFunctions'
+import { format1 } from '../helpers/otherHelperFunctions'
 const catalogueOptions = ref(catalogueNames)
-const allCatalogueFields: Ref<string[]> = ref([""])
+const allCatalogueFields: Ref<any[]> = ref([""])
 const filteredCatalogueFields: Ref<string[]> = ref([""])
-const selectedSearchTerms = ref([["", ""]]) // for list of select catalogue field and written search term pairs
+const selectedSearchTerms: Ref<any[]> = ref([[null, null]]) // for list of select catalogue field and written search term pairs
 const errorMessage = ref("")
 const isDownloading = ref(false)
 
@@ -140,7 +194,14 @@ const quasarConfig = (state: any) => ({
 const [selectCatalogues, selectCataloguesProps] = defineField("selectCatalogues" as MaybeRefOrGetter, quasarConfig)
 
 
-
+function formatFields(value: string | null) {
+    if (value === null)
+        return ''
+    const splitValue = value === "" ? ["", ""] : value.trim().split(" ")
+    const catalogueName = splitValue[0]
+    const fieldName = splitValue[1]
+    return catalogueName == "" ? '' : [catalogueName, fieldName]
+}
 
 
 
@@ -161,18 +222,22 @@ function onCatalogueSelectRemove(details: { index: number, value: string }) {
         if (cats.includes(details.value))
             selectedSearchTerms.value.splice(selectedSearchTerms.value.indexOf(aSearchTerm), 1)
         if (selectedSearchTerms.value.length == 0)
-            selectedSearchTerms.value = [["", ""]]
+            selectedSearchTerms.value = [[null, null]]
     }
 }
 
 function setCatalogueFieldOptionsForSomeSelectUIs(currentlySelected: string[]) {
-    allCatalogueFields.value = [""]
-    filteredCatalogueFields.value = [""]
+    allCatalogueFields.value = []
+    filteredCatalogueFields.value = []
     for (const x of currentlySelected) {
         let key = x as keyof typeof getFieldNames // for using string as keys for the object
         const newFields = []
         for (const x1 of getFieldNames[key])
-            newFields.push(key.toString() + " " + x1)
+            newFields.push({
+                catalogueName: key.toString(),
+                label: x1,
+                value: key.toString() + " " + x1
+            })
         // newFields.push(key + " Select All") // removed select all option
         allCatalogueFields.value = allCatalogueFields.value.concat(newFields)
         filteredCatalogueFields.value = allCatalogueFields.value
@@ -186,17 +251,19 @@ function onCatalogueSelectClear() {
 }
 
 function clearAllSearchTerm() {
-    selectedSearchTerms.value = [["", ""]]
+    selectedSearchTerms.value = [[null, null]]
 
 }
 
 function filterFunction(filterTerm: string, update: any) {
+    console.log(filterTerm)
     if (filterTerm.length > 2)
         update(() => {
             const new_fields = []
-            for (const catalogueField of allCatalogueFields.value)
-                if (catalogueField.toLowerCase().includes(filterTerm.toLowerCase().trim()))
+            for (const catalogueField of allCatalogueFields.value) {
+                if (catalogueField.value.toLowerCase().includes(filterTerm.toLowerCase().trim()))
                     new_fields.push(catalogueField)
+            }
             filteredCatalogueFields.value = new_fields
         })
     else
@@ -204,7 +271,7 @@ function filterFunction(filterTerm: string, update: any) {
 }
 
 function addSearchTerm() {
-    selectedSearchTerms.value.push(["", ""])
+    selectedSearchTerms.value.push([null, null])
 }
 
 function snValidation(value: string, iteration: number) {
@@ -227,7 +294,7 @@ const onSubmit = handleSubmit(async (_values) => {
     for (const boo of snError.value)
         if (boo == true)
             return
-    console.log()
+    console.log('----')
     if (selectCatalogues.value.length == 0) {
         selectCataloguesProps.value['error'] = true
         selectCataloguesProps.value['error-message'] = "Please select a catalogue(s)."
