@@ -421,7 +421,7 @@ const onSubmit = handleSubmit(async (_values) => {
 
         allCatalogueResultsInCSVs.push({
             //for some reason if name is too long, I can't open the csv???? it is not because of search term or new date it seems.
-            name: catalogName + "_raw" + searchTermStringified + '.csv',
+            name: format1(catalogName, false) + " raw" + searchTermStringified + '.csv',
             input: Buffer.from(tableInStringFormat)
         })
     }
@@ -439,7 +439,7 @@ const onSubmit = handleSubmit(async (_values) => {
     ).blob()
     const link = document.createElement("a")
     link.href = URL.createObjectURL(blob)
-    link.download = "BHCAIS " + queryData.selected_catalogues + '.zip'
+    link.download = "BHCAIS " + queryData.selected_catalogues.map(c => format1(c, false)) + '.zip'
     link.click()
     link.remove()
 
