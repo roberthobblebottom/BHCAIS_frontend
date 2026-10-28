@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { login } from '../helpers/fetch-wrapper'
+import { loginFetch } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
 const baseUrl = `${import.meta.env.VITE_API_URL}`
 export const useAuthStore = defineStore(
@@ -12,7 +12,7 @@ export const useAuthStore = defineStore(
     actions: {
         async login(username: string, password: string) {
             try {
-                const user = await login(`${baseUrl}/Login`, { username, password })
+                const user = await loginFetch(`${baseUrl}/Login`, { username, password })
 
                 this.user = user
 

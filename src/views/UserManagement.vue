@@ -118,7 +118,7 @@
 <script setup lang="ts">
 import { QForm, QTr } from 'quasar'
 import { onBeforeMount, ref, type MaybeRefOrGetter, type Ref } from 'vue'
-import { fetchWrapper, noCacheRequestFunction, } from '../helpers/fetch-wrapper'
+import { fetchWrapper, noCacheRequestFetch, } from '../helpers/fetch-wrapper'
 import { useForm } from 'vee-validate'
 import { passwordRegex, passwordError } from '../constants'
 import { QBtn } from 'quasar'
@@ -204,7 +204,7 @@ const [isEditMode, _isEditModeProps] = defineField("isEditMode" as MaybeRefOrGet
 
 const getAllUsers = async () => {
     const url = `${import.meta.env.VITE_API_URL}/GetAllUsers/`
-    const response = await noCacheRequestFunction(url, 'get')
+    const response = await noCacheRequestFetch(url, 'get')
 
     const results = response.results
     const temp: any = []

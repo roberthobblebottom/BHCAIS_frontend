@@ -141,7 +141,7 @@
 import { nextTick, ref, toRaw, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { streamFilesDownload } from '../helpers/fetch-wrapper'
+import { streamFilesDownloadFetch } from '../helpers/fetch-wrapper'
 import { downloadZip, type InputWithoutMeta } from 'client-zip'
 import { Buffer } from 'buffer'
 import { catalogueNames, getFieldNames } from '../constants'
@@ -393,7 +393,7 @@ const onSubmit = handleSubmit(async (_values) => {
     let currentCatalogue = ""
     let buffer = ""
 
-    reader = await streamFilesDownload(url, queryData)
+    reader = await streamFilesDownloadFetch(url, queryData)
 
     while (!isReadDone) {
         let { value: encodedValue, done } = await reader!.read()

@@ -93,7 +93,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join("\n")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join("\n")
@@ -132,7 +132,7 @@
 <script setup lang='ts'>
 import { ref, type Ref } from 'vue'
 import { QUploader, QDialog } from 'quasar'
-import { getTemplatesFiles } from '../helpers/fetch-wrapper'
+import { downloadTemplateFilesFetch } from '../helpers/fetch-wrapper'
 import { useAuthStore } from '../stores/auth.store'
 
 /**
@@ -164,7 +164,7 @@ let names_of_files_with_missing_serial_numbers: Ref<string[]> = ref([])
 async function downloadTemplatesForTheCatalogs() {
     const url = `${import.meta.env.VITE_API_URL}/DownloadTemplatesForTheCatalogs/?token=` + authStore.user.token
     try {
-        getTemplatesFiles(url).then((download) => {
+        downloadTemplateFilesFetch(url).then((download) => {
             var url = window.URL.createObjectURL(download)
             var a = document.createElement('a')
             a.href = url
