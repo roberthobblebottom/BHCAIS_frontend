@@ -3,6 +3,7 @@ export function format1(option: string, addSChar = true) {
     console.log('option', option)
     if (option == "")
         return ""
+
     else if (option == 'oral_history')
         return 'Oral Histories'
     else {
