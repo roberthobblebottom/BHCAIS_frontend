@@ -29,7 +29,7 @@
                 also select rows via checkboxes to delete entries.
             </p>
             <p>
-                <img src="../../public/images/download-reports.png" alt="Download Report(s)" />
+                <img alt="Download Report(s)" src="../../public/images/download-reports.png" />
                 : Download Data from the system. Search terms filters are also possible.
             </p>
             <!-- <p class="section">
@@ -106,6 +106,7 @@
         </div>
     </div>
 </template>
+
 <style scoped>
 @import "../../public/css/main-content-variants.css";
 
@@ -117,6 +118,7 @@
     margin-top: 3%;
 }
 </style>
+
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '../stores/auth.store'
