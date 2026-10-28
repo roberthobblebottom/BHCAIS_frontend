@@ -266,7 +266,7 @@ const showDeleteSelectedButton = ref(false)
 const searchTerm = ref('')
 
 /**
- * Table Bottom row References
+ * Table Bottom row
  */
 const selectedRowsToBeDeleted = ref([])
 

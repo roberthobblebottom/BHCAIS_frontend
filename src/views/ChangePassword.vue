@@ -1,73 +1,70 @@
 <template>
-    <div class="common medium">
-        <q-form validation-observer>
+    <div class="common ">
+        <q-form class="flex column" validation-observer>
             <h3>Change Password</h3>
 
-            <div class="form-group">
-                <q-input name="oldPassword" label="Old Password" class="form-control" v-model="oldPassword"
-                    v-bind="oldPasswordProps" :type="showPassword ? 'text' : 'password'">
+            <div class="flex justify-center">
+                <q-input label="Old Password" :type="showPassword ? 'text' : 'password'" name="oldPassword"
+                    v-model="oldPassword" v-bind="oldPasswordProps">
                     <template v-slot:append>
-                        <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                        <q-icon class="cursor-pointer" :name="showPassword ? 'visibility_off' : 'visibility'"
                             @click="showPassword = !showPassword" />
-                    </template></q-input>
+                    </template>
+                </q-input>
             </div>
-            <div class="form-group">
-                <q-input name="newPassword" label="New Password" :type="showNewPassword ? 'text' : 'password'"
-                    class="form-control " v-model="newPassword" v-bind="newPasswordProps">
+
+            <div class="flex justify-center">
+                <q-input label="New Password" :type="showNewPassword ? 'text' : 'password'" name="newPassword"
+                    v-model="newPassword" v-bind="newPasswordProps">
                     <template v-slot:append>
-                        <q-icon :name="showNewPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                        <q-icon class="cursor-pointer" :name="showNewPassword ? 'visibility_off' : 'visibility'"
                             @click="showNewPassword = !showNewPassword" />
                     </template>
                 </q-input>
             </div>
-            <div class="form-group">
-                <q-input name="confirmNewPassword" label="Confirm New Password"
-                    :type="showConfirmNewPassword ? 'text' : 'password'" class="form-control "
-                    v-model="confirmNewPassword" v-bind="confirmNewPasswordProps">
+            <div class="flex justify-center">
+                <q-input label="Confirm New Password" :type="showConfirmNewPassword ? 'text' : 'password'"
+                    name="confirmNewPassword" v-model="confirmNewPassword" v-bind="confirmNewPasswordProps">
                     <template v-slot:append>
-                        <q-icon :name="showConfirmNewPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                        <q-icon class="cursor-pointer" :name="showConfirmNewPassword ? 'visibility_off' : 'visibility'"
                             @click=" showConfirmNewPassword = !showConfirmNewPassword" />
                     </template>
                 </q-input>
             </div>
-            <div class="justify-center">
-                <q-btn :disable='isSubmitting' color="blue" class="flex float-right q-mt-md" size='md'
-                    @click.prevent="onSubmit">
+            <div class="flex justify-end">
+                <q-btn class="q-mt-sm" color="blue" size='md' :disable='isSubmitting' @click.prevent="onSubmit">
                     <q-icon size="sm" class="q-mr-sm" :name="isSubmitting
                         ? 'fa-solid fa-spinner fa-spin-pulse'
                         : 'fa-regular fa-pen-to-square'
                         "></q-icon>
-
                     Change
                 </q-btn>
             </div>
         </q-form>
 
-        <q-dialog v-model="showAlert" backdrop-filter="blur(4px)">
-            <q-card-section class="column items-center 
-            q-pb-none  dialog ">
+        <q-dialog backdrop-filter="blur(4px)" v-model="showAlertDialog">
+            <q-card-section class="column items-center q-pb-none dialog ">
                 <q-avatar v-if="isError" icon="error" color="primary" text-color="white" />
                 <q-avatar v-else icon="check" color="primary" text-color="white" />
+
                 <div class="q-mt-md"> {{ alertMessage }}</div>
-                <q-btn label="Ok" color="primary" v-close-popup size="md" class="q-mt-md" />
+
+                <q-btn label="Ok" color="primary" size="md" class="q-mt-md" v-close-popup />
             </q-card-section>
         </q-dialog>
     </div>
 </template>
+
 <style scoped>
-/* @import '../../public/css/login.css'; */
 @import '../../public/css/main-content-variants.css';
 @import '../../public/css/dialog.css';
 
-.invalid-feedback {
-    color: red;
+.common {
+    max-width: 250px;
 }
 
-.button2 {
-
-    margin-top: 2vh;
-    width: 50% !important;
-    float: right;
+.invalid-feedback {
+    color: red;
 }
 </style>
 
@@ -85,13 +82,17 @@ import { QBtn } from 'quasar'
 QBtn.props.noCaps = { type: Boolean, default: true }
 
 
-const showAlert = ref(false)
+const showAlertDialog = ref(false)
 const alertMessage = ref('')
+
 const isSubmitting = ref(false)
+
 const showPassword = ref(false)
 const showNewPassword = ref(false)
 const showConfirmNewPassword = ref(false)
+
 const isError = ref(false)
+
 const schema = Yup.object().shape({
     oldPassword: Yup.string().required('Required'),
     newPassword: Yup.string()
@@ -121,6 +122,10 @@ const [newPassword, newPasswordProps] = defineField("newPassword" as MaybeRefOrG
 const [confirmNewPassword, confirmNewPasswordProps] = defineField("confirmNewPassword" as MaybeRefOrGetter, quasarConfig)
 
 const onSubmit = handleSubmit(async (_values) => {
+    /**
+     * Sent password details to server and handles UI 
+     */
+
     isSubmitting.value = true
     const url = `${import.meta.env.VITE_API_URL}/ChangePassword/`
     let response = null
@@ -132,14 +137,16 @@ const onSubmit = handleSubmit(async (_values) => {
         'confirm_new_password': confirmNewPassword.value,
         'token': useAuthStore().user.token
     }).catch((error) => {
+        //Show Email Dialog
         alertMessage.value = "ERROR: " + error.toString()
-        showAlert.value = true
+        showAlertDialog.value = true
         isError.value = true
     }).finally(() => { resetForm() })
 
+    //Show Success Dialog
     if (response != null) {
         alertMessage.value = "Sucessfully changed password"
-        showAlert.value = true
+        showAlertDialog.value = true
         isError.value = false
     }
 
