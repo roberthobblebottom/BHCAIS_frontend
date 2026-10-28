@@ -22,9 +22,12 @@
                     </template>
                 </q-input>
             </div>
-            <div class="flex justify-center">
-                <q-input label="Confirm New Password" :type="showConfirmNewPassword ? 'text' : 'password'"
-                    name="confirmNewPassword" v-model="confirmNewPassword" v-bind="confirmNewPasswordProps">
+            <div class="flex justify-center confirm-new-password">
+                <q-input :type="showConfirmNewPassword ? 'text' : 'password'" name="confirmNewPassword"
+                    v-model="confirmNewPassword" v-bind="confirmNewPasswordProps" label-slot>
+                    <template #label>
+                        <div> Confirm New Password</div>
+                    </template>
                     <template v-slot:append>
                         <q-icon class="cursor-pointer" :name="showConfirmNewPassword ? 'visibility_off' : 'visibility'"
                             @click=" showConfirmNewPassword = !showConfirmNewPassword" />
@@ -33,6 +36,7 @@
             </div>
             <div class="flex justify-end">
                 <q-btn class="q-mt-sm" color="blue" size='md' :disable='isSubmitting' @click.prevent="onSubmit">
+
                     <q-icon size="sm" class="q-mr-sm" :name="isSubmitting
                         ? 'fa-solid fa-spinner fa-spin-pulse'
                         : 'fa-regular fa-pen-to-square'
