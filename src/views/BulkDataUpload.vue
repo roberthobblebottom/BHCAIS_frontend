@@ -12,20 +12,20 @@
                     Only csv and single sheet xlsx are accepted.</p>
             </div>
 
-            <q-uploader class="fu " multiple persistent accept=".csv,.xlsx" @added="onAddedListener"
-                ref="fileUploaderRef" :url="uploadUrl" field-name="files" method="POST" @uploaded="onUploadedListener"
-                @failed="onFailedListener" color="grey-9" batch :headers="headers">
+            <q-uploader ref="fileUploaderRef" class="fu" color="grey-9" :headers="headers" multiple persistent batch
+                accept=".csv,.xlsx" :url="uploadUrl" method="POST" field-name="files" @added="onAddedListener"
+                @uploaded="onUploadedListener" @failed="onFailedListener">
 
                 <!-- header -->
                 <template v-slot:header="scope">
-                    <div class="row no-wrap items-center q-pa-sm q-gutter-xs ">
-                        <q-btn class="q-mr-md" v-if="scope.queuedFiles.length > 0" :disable="isCheckingFilesValidity"
-                            icon="clear_all" @click="scope.removeQueuedFiles" round dense flat>
+                    <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
+                        <q-btn v-if="scope.queuedFiles.length > 0" class="q-mr-md" icon="clear_all" round dense flat
+                            :disable="isCheckingFilesValidity" @click="scope.removeQueuedFiles">
                             Clear All
                         </q-btn>
 
-                        <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles"
-                            round dense flat>
+                        <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" round dense flat
+                            @click="scope.removeUploadedFiles">
                             <q-tooltip>Remove Uploaded Files</q-tooltip>
                         </q-btn>
 
@@ -37,19 +37,19 @@
                                 {{ scope.uploadProgressLabel }}</div>
                         </div>
 
-                        <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense
-                            flat :disable="isCheckingFilesValidity">
+                        <q-btn v-if="scope.canAddFiles" round dense flat icon="add_box" type="a"
+                            @click="scope.pickFiles" :disable="isCheckingFilesValidity">
                             Pick File(s)
                             <q-uploader-add-trigger />
                         </q-btn>
 
-                        <q-btn class="q-ml-md" v-if="scope.canUpload && scope.queuedFiles.length > 0"
-                            :disable="isCheckingFilesValidity" icon="cloud_upload" @click="scope.upload" round dense
-                            flat>
+                        <q-btn v-if="scope.canUpload && scope.queuedFiles.length > 0" class="q-ml-md"
+                            icon="cloud_upload" round dense flat :disable="isCheckingFilesValidity"
+                            @click="scope.upload">
                             Upload File(s)
                         </q-btn>
 
-                        <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat>
+                        <q-btn v-if="scope.isUploading" icon="clear" round dense flat @click="scope.abort">
                             Abort Upload
                         </q-btn>
                     </div>
@@ -60,7 +60,7 @@
                 </template>
             </q-uploader>
 
-            <q-btn class="float-left" @click.prevent="downloadTemplatesForTheCatalogs" size="md">
+            <q-btn class="float-left" size="md" @click.prevent="downloadTemplatesForTheCatalogs">
                 <q-icon name="fas fa-file-arrow-down" class="q-mr-sm" size="sm"></q-icon> Download Templates
             </q-btn>
         </form>
@@ -76,6 +76,7 @@
 
             <label class='dialog-header'>{{ dialogHeader }}</label>
 
+            <!-- Message -->
             <p class="p-mb-xl" v-if="dialogHeader.toLocaleLowerCase() == 'successful'">Sucessfully uploaded files</p>
             <div v-if="dialogHeader.toLocaleLowerCase() == 'error'">
                 <p>{{ names_of_files_with_headers_only.length != 0 ?
@@ -100,14 +101,15 @@
 
                 <p> These files will be removed</p>
             </div>
-            <q-btn size="md" color="primary" v-close-popup autofocus>
 
+            <q-btn size="md" color="primary" v-close-popup autofocus>
                 <q-icon name="fa-solid fa-check" class="q-mr-sm" size="sm"></q-icon>
                 Ok
             </q-btn>
         </q-card>
     </q-dialog>
 </template>
+
 <style>
 @import '../../public/css/dialog.css';
 @import '../../public/css/main-content-variants.css';
@@ -126,27 +128,34 @@
     margin-bottom: 0;
 }
 </style>
+
 <script setup lang='ts'>
 import { ref, type Ref } from 'vue'
 import { QUploader, QDialog } from 'quasar'
-
 import { getTemplatesFiles } from '../helpers/fetch-wrapper'
 import { useAuthStore } from '../stores/auth.store'
 
+/**
+ * Dialog References
+ */
 const dialogHeader = ref("")
 const dialogMessage = ref("")
 const fileValidationViolationdialogEnable = ref(false)
 const dialogPersistentIsEnabled = ref(false)
-const fileUploaderRef = ref()
 
+const fileUploaderRef = ref()
 
 let authStore = useAuthStore()
 const uploadUrl = ref(`${import.meta.env.VITE_API_URL}/UploadFiles/`)
-
 const headers = ref(
     [{ name: 'Authorization', value: `Bearer ${authStore.user.token}` }]
 )
+
 const isCheckingFilesValidity = ref(false)
+
+/**
+ * Names of files with violations references:
+ */
 let names_of_files_with_headers_only: Ref<string[]> = ref([])
 const names_of_files_with_zero_bytes: Ref<string[]> = ref([])
 let names_of_files_with_incorrect_headers: Ref<string[]> = ref([])
@@ -167,20 +176,22 @@ async function downloadTemplatesForTheCatalogs() {
     }
     catch (err: any) {
         console.log("The response is " + err + " please check on the backend for any errors")
-        if (err.toString().includes("NetworkError")) {
+        if (err.toString().includes("NetworkError"))
             useAuthStore().logout()
-        }
     }
 }
 
 const onAddedListener = (files: readonly File[]) => {
+    /**
+     * Initialise background task workers to check for file validity. 
+     */
     isCheckingFilesValidity.value = true
     let workersFinishedWork = []
     names_of_files_with_headers_only.value = []
     names_of_files_with_incorrect_headers.value = []
     names_of_files_with_missing_serial_numbers.value = []
     names_of_files_with_zero_bytes.value = []
-    const x = files.map((file: File) => {
+    files.map((file: File) => {
         return new Promise<void>((_resolve) => {
             if (file.size == 0) {
                 names_of_files_with_zero_bytes.value.push(file.name)
@@ -205,9 +216,8 @@ const onAddedListener = (files: readonly File[]) => {
                     names_of_files_with_missing_serial_numbers.value.push(event.data.name_of_file_with_missing_serial_number)
                     fileUploaderRef.value.removeFile(file)
                 }
-                if (workersFinishedWork.length == files.length) {
+                if (workersFinishedWork.length == files.length)
                     isCheckingFilesValidity.value = false
-                }
                 if ((names_of_files_with_headers_only.value.length > 0
                     || names_of_files_with_incorrect_headers.value.length > 0
                     || names_of_files_with_zero_bytes.value.length > 0
@@ -229,7 +239,10 @@ const onAddedListener = (files: readonly File[]) => {
     //Promise all then is very slow so I don't use it.
 
 }
-const onUploadedListener = (info: { files: readonly any[], xhr: XMLHttpRequest }) => {
+const onUploadedListener = (_info: { files: readonly any[], xhr: XMLHttpRequest }) => {
+    /***
+     * Display successful dialog
+     */
     dialogHeader.value = "Successful"
     dialogMessage.value = "Sucessfully uploaded file(s)"
     dialogPersistentIsEnabled.value = false
@@ -240,6 +253,9 @@ const onUploadedListener = (info: { files: readonly any[], xhr: XMLHttpRequest }
 
 const onFailedListener = (info: { files: readonly any[], xhr: XMLHttpRequest }) => {
     // this listener calls out even when there is not Failure of upload so i have to check:
+    /**
+     * Display failure dialog with error message from server.
+     */
     if (info.xhr.status == 0)
         return
     dialogHeader.value = "Error: Upload Failed"
