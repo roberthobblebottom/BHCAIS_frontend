@@ -27,7 +27,7 @@ function requestFetch(method: string) {
     }
 }
 
-export const streamFilesDownload = (url: string, body: any = null) => {
+export const streamFilesDownloadFetch = (url: string, body: any = null) => {
     /**
      * For DownloadReport.vue to stream
      */
