@@ -1,8 +1,8 @@
 export function format1(option: string, addSChar = true) {
     // turns underscores to spaces, capitalises first letter and add pural if stated by addSChar
+
     if (option == "")
         return ""
-
     else if (option == 'oral_history')
         return 'Oral Histories'
     else {

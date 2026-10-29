@@ -8,6 +8,9 @@ import Catalogues from '../views/Catalogues.vue'
 import DownloadReport from '../views/DownloadReport.vue'
 import UserManagement from '../views/UserManagement.vue'
 
+/**
+ * Router for the app. Includes route authentication hook.
+ */
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     linkActiveClass: 'active',
@@ -23,10 +26,14 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    // redirect to login page if not logged in and trying to access a restricted page
+    /**
+     * Acts as a route authentication hook, if user is authenticated or if user is admin.
+     * redirect to login page if not logged in and trying to access a restricted page
+     */
     const publicPages = ['/', '/Login']
     const authRequired = !publicPages.includes(to.path)
     const auth = useAuthStore()
+
     if (authRequired && !auth.user) {
         console.log("unauthorized access detected, going back to login page")
         auth.returnUrl = to.fullPath

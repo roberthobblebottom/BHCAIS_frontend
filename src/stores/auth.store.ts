@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia'
 import { loginFetch } from '../helpers/fetch-wrapper'
 import { router } from '../helpers/router'
+
 const baseUrl = `${import.meta.env.VITE_API_URL}`
+
+/**
+ * login authentication and storage of user data
+ */
+
 export const useAuthStore = defineStore(
     'auth', {
     state: () => ({
@@ -16,10 +22,11 @@ export const useAuthStore = defineStore(
 
                 this.user = user
 
-                // redirect to previous url or default to home page
+                // redirect to previous url or default to Quick Star page
                 router.push(this.returnUrl || '/QuickStart')
             }
             catch (error) {
+                //for returning error like invalid credentials.
                 return Promise.reject(error)
             }
         },
@@ -29,8 +36,6 @@ export const useAuthStore = defineStore(
             router.push('/Login')
         }
     },
-    persist: {
-        storage: sessionStorage
-    }
+    persist: { storage: sessionStorage }
 }
 )
