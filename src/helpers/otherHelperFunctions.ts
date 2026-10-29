@@ -1,6 +1,5 @@
 export function format1(option: string, addSChar = true) {
     // turns underscores to spaces, capitalises first letter and add pural if stated by addSChar
-    console.log('option', option)
     if (option == "")
         return ""
 
