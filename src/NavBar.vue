@@ -1,9 +1,9 @@
 <template>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <q-layout view="hHh lpR fFf">
-        <q-drawer show-if-above v-model="drawerLeft" :mini="miniState" style="background-color: #280401;"
-            @mouseenter="miniState = !miniState && isPassedWidthThreshold" :breakpoint="100"
-            @mouseleave="miniState = !miniState && isPassedWidthThreshold" v-if="isUserLoggedIn" side="left" :width=200>
+        <q-drawer elevated style="background-color: #280401;" :width=200 v-model="drawerLeft" :mini="miniState"
+            show-if-above @mouseenter="miniState = !miniState && isPassedWidthThreshold" :breakpoint="100"
+            @mouseleave="miniState = !miniState && isPassedWidthThreshold" v-if="isUserLoggedIn" side="left">
 
             <!-- <div class="logo"> -->
             <!-- <img src="/images/Group-1.svg" alt="LKCNHM Logo" /> -->
