@@ -6,7 +6,9 @@
 }
 
 .row {
-  margin-top: 5% !important;
+  margin: 5% !important;
+  margin-bottom: 10%;
+  padding: 2%;
 }
 
 .app-name {
@@ -23,10 +25,8 @@
 }
 
 
-.row {
-  margin-bottom: 10%;
-  margin-left: 5%;
-}
+
+
 
 a,
 .nav-links {
@@ -59,22 +59,10 @@ a,
   overflow-wrap: break-word;
 }
 
-.nav-links .nav-item,
-.user-message {
-  margin: 22px 0;
-}
-
-.nav-links .nav-item {
-  text-decoration: none;
-  color: white;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  border-radius: 10px;
-  transition: background 0.3s;
-  text-align: left !important;
-}
-
-.nav-links li a:hover {
+.row:hover,
+.mini-row:hover {
+  transition: background-color 0.3s ease-in-out;
   background-color: #7e3ff2;
+  border-radius: 15px;
+  width: 80%;
 }
