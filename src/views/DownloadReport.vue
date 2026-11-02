@@ -28,15 +28,14 @@
                     <!--- Note: No more multiple selection. 
                     there are problems manpilation with this value in 3 times nested reference. 
                     also it is hard to see if you have selected multiple catalogues in one search fields--->
-                    <div class="">
+                    <div class="col">
                         <div class="select-catalogue-name">
                             <label v-if="x[0] !== null">
                                 {{ format1(formatFields(x[0]!)[0]!, false) }}
                             </label>
                         </div>
-                        <q-select v-model=x[0] class="select2 " :options="filteredCatalogueFields"
-                            @filter="filterFunction" clearable style="width: 250px" use-input input-debounce="0"
-                            emit-value>
+                        <q-select v-model=x[0] :options="filteredCatalogueFields" @filter="filterFunction" clearable
+                            use-input input-debounce="0" emit-value>
                             <template #no-option>
                                 <q-item>
                                     <q-item-section class="text-grey"> No results </q-item-section>
@@ -112,10 +111,7 @@
     color: grey !important;
 }
 
-.select2 {
-    width: 4vw;
-    max-width: 25vw;
-}
+
 
 .option-catalogue-field {
     margin-left: -3.5%;
@@ -133,6 +129,10 @@
 .select-catalogue-name {
     margin-bottom: -7%;
     font-size: x-small;
+}
+
+.common {
+    max-width: 800px;
 }
 </style>
 
