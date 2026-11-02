@@ -25,9 +25,6 @@
 }
 
 
-
-
-
 a,
 .nav-links {
   color: #b67300;
@@ -59,10 +56,9 @@ a,
   overflow-wrap: break-word;
 }
 
-.row:hover,
-.mini-row:hover {
+.row:hover {
   transition: background-color 0.3s ease-in-out;
   background-color: #7e3ff2;
-  border-radius: 15px;
-  width: 80%;
+  border-radius: 10px;
+  width: 90%;
 }
