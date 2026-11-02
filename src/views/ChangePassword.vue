@@ -64,7 +64,7 @@
 @import '../../public/css/dialog.css';
 
 .common {
-    max-width: 250px;
+    max-width: 280px;
 }
 
 .invalid-feedback {
