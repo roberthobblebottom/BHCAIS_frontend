@@ -3,13 +3,10 @@
         <form>
             <div>
                 <h3>Bulk Data Upload</h3>
-                <p>Entries with existing data will be overwritten. As identified by each catalogue's first column,
-                    where the name is usually with sn in it. <br>
-                    If you a file that have two rows of the same sn, only the
-                    second
-                    row will be uploaded as
-                    the second row will override the first row. <br>
-                    Only csv and single sheet xlsx are accepted.</p>
+                <p>
+                    New column values for rows with SN(s) already in the system will override existing values including
+                    null values. Check SN(s) carefully before changing row values.
+                </p>
             </div>
 
             <q-uploader ref="fileUploaderRef" class="fu" color="grey-9" :headers="headers" multiple persistent batch
@@ -93,7 +90,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join("\n")
                     : ''
-                    }}</p>
+                }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join("\n")

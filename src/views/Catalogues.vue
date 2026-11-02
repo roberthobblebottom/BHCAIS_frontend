@@ -40,7 +40,7 @@
 
                         <!-- Drop down select for hiding columns -->
                         <div class="col-5">
-                            <q-btn-dropdown class="col-5 rounded-borders" label="Columns Visibility">
+                            <q-btn-dropdown class="col-5 rounded-borders" label="Column Visibility">
                                 <div class="q-pa-md rounded-borders">
                                     <div class="flex row justify-between">
                                         <p class="col-6">These toggles are for hiding individual rows</p>
