@@ -93,7 +93,7 @@
                     ? "Empty files: " +
                     names_of_files_with_zero_bytes.join("\n")
                     : ''
-                }}</p>
+                    }}</p>
 
                 <p>{{ names_of_files_with_missing_serial_numbers.length != 0
                     ? "Files with missing Serial Number(s): " + names_of_files_with_missing_serial_numbers.join("\n")
@@ -110,7 +110,7 @@
     </q-dialog>
 </template>
 
-<style>
+<style scoped>
 @import '../../public/css/dialog.css';
 @import '../../public/css/main-content-variants.css';
 
@@ -126,6 +126,10 @@
     font-weight: 500;
     margin-top: 0;
     margin-bottom: 0;
+}
+
+.common {
+    max-width: 800px;
 }
 </style>
 
