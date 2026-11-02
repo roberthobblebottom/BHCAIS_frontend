@@ -3,7 +3,7 @@
 
         <q-form @submit.prevent="onSubmit" validation-observer>
             <h3>BHCAIS</h3>
-            <h3>Login</h3>
+            <h4>Login</h4>
             <div v-if="apiError" class="alert alert-danger mt-3 mb-0">{{ apiError }}
             </div>
             <q-input class="form-control" label="Email" name="email" type="text" v-model="email" v-bind="emailProps" />
@@ -34,15 +34,21 @@
 }
 
 h3 {
-    margin-bottom: 0vh !important;
+    margin-bottom: -3vh !important;
     margin-top: 5% !important;
 
 }
 
+h4 {
+
+    margin-bottom: 1vh !important;
+}
+
 .common {
-    position: absolute;
-    top: 10%;
-    left: 25%;
+    max-width: 300px !important;
+    padding: 3%;
+    margin: 0 auto;
+    margin-top: 10vh;
 }
 </style>
 
