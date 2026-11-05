@@ -3,17 +3,16 @@
     font-size: medium;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     white-space: pre-wrap;
-    position-anchor: --siderbar;
     position: fixed;
     right: anchor(left);
     min-height: 10%;
     min-width: 10%;
-    border-radius: 30px;
     padding: 3%;
-    display: flex;
 
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     border-radius: 15px !important;
 }

@@ -167,6 +167,7 @@
 
 <style scoped>
 @import "../../public/css/main-content-variants.css";
+@import "../../public/css/dialog.css";
 
 .common {
     overflow-y: auto;
