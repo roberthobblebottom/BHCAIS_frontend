@@ -23,6 +23,7 @@ export const useAuthStore = defineStore(
                 this.user = user
 
                 // redirect to previous url or default to Quick Star page
+                console.log(this.returnUrl)
                 router.push(this.returnUrl || '/QuickStart')
             }
             catch (error) {
