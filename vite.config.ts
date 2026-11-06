@@ -7,7 +7,16 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import { join } from 'node:path'
 import { quasar } from '@quasar/vite-plugin'
 export default defineConfig({
-  server: { port: 5173 },
+  server: {
+    port: 5173,
+
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true
+      }
+    }
+  },
   plugins: [
     vue(),
     vueDevTools(),
@@ -25,6 +34,7 @@ export default defineConfig({
     },
     tsconfigPaths: true
   },
+
   build: {
     rollupOptions: {
       output: {
