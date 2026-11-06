@@ -30,6 +30,7 @@ router.beforeEach(async (to: any) => {
      * Acts as a route authentication hook, if user is authenticated or if user is admin.
      * redirect to login page if not logged in and trying to access a restricted page
      */
+    console.log('to.path', to.path)
     const publicPages = ['/', '/Login']
     const authRequired = !publicPages.includes(to.path)
     const auth = useAuthStore()

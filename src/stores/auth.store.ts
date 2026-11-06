@@ -23,10 +23,7 @@ export const useAuthStore = defineStore(
                 this.user = user
 
                 // redirect to previous url or default to Quick Star page
-                // console.log(this.returnUrl)
-                // if (this.returnUrl == "/api")
-                // this.returnUrl = null
-                router.push('/QuickStart')
+                router.push(this.returnUrl || '/QuickStart')
             }
             catch (error) {
                 //for returning error like invalid credentials.
